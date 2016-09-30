@@ -1,7 +1,4 @@
-﻿-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/1.x/1.0/src/01.types-domains-tables-and-constraints/auditing.sql --<--<--
-
-
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/1.x/1.0/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
+﻿-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
 DROP SCHEMA IF EXISTS inventory CASCADE;
 
 CREATE SCHEMA inventory;
@@ -63,11 +60,23 @@ CREATE TABLE inventory.suppliers
 );
 
 
+CREATE TABLE inventory.customer_types
+(
+    customer_type_id                        SERIAL PRIMARY KEY,
+    customer_type_code                      national character varying(24) NOT NULL,
+    customer_type_name                      national character varying(500) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
+
+
 CREATE TABLE inventory.customers
 (
     customer_id                             SERIAL PRIMARY KEY,
     customer_code                           national character varying(24) NOT NULL,
     customer_name                           national character varying(500) NOT NULL,
+    customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
     company_name                            national character varying(1000),
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
@@ -193,9 +202,14 @@ CREATE TABLE inventory.checkout_details
     checkout_detail_id                      BIGSERIAL PRIMARY KEY,
     checkout_id                             bigint NOT NULL REFERENCES inventory.checkouts,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    rate                                    decimal(24, 3) NOT NULL CHECK(rate > 0),
+    price                                   public.money_strict NOT NULL,
+    discount                                public.money_strict2 NOT NULL DEFAULT(0),    
+    cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
+    shipping_charge                         public.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
-    quantity                                public.integer_strict2 NOT NULL
+    quantity                                public.integer_strict2 NOT NULL,
+    base_unit_id                            integer NOT NULL REFERENCES inventory.units,
+    base_quantity                           numeric NOT NULL
 );
 
 CREATE TABLE inventory.inventory_transfer_requests
@@ -254,7 +268,7 @@ CREATE TABLE inventory.inventory_transfer_deliveries
     statement_reference                     national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
-	deleted									boolean DEFAULT(false)    
+	deleted									boolean DEFAULT(false)
 );
 
 
@@ -271,8 +285,48 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
 );
 
 
+CREATE TABLE inventory.shippers
+(
+    shipper_id                              SERIAL PRIMARY KEY,
+    shipper_code                            national character varying(24) NULL,
+    company_name                            national character varying(128) NOT NULL,
+    shipper_name                            national character varying(150) NULL,
+    po_box                                  national character varying(128) NULL,
+    address_line_1                          national character varying(128) NULL,   
+    address_line_2                          national character varying(128) NULL,
+    street                                  national character varying(50) NULL,
+    city                                    national character varying(50) NULL,
+    state                                   national character varying(50) NULL,
+    country                                 national character varying(50) NULL,
+    phone                                   national character varying(50) NULL,
+    fax                                     national character varying(50) NULL,
+    cell                                    national character varying(50) NULL,
+    email                                   national character varying(128) NULL,
+    url                                     national character varying(50) NULL,
+    contact_person                          national character varying(50) NULL,
+    contact_po_box                          national character varying(128) NULL,
+    contact_address_line_1                  national character varying(128) NULL,   
+    contact_address_line_2                  national character varying(128) NULL,
+    contact_street                          national character varying(50) NULL,
+    contact_city                            national character varying(50) NULL,
+    contact_state                           national character varying(50) NULL,
+    contact_country                         national character varying(50) NULL,
+    contact_email                           national character varying(128) NULL,
+    contact_phone                           national character varying(50) NULL,
+    contact_cell                            national character varying(50) NULL,
+    factory_address                         national character varying(250) NULL,
+    pan_number                              national character varying(50) NULL,
+    sst_number                              national character varying(50) NULL,
+    cst_number                              national character varying(50) NULL,
+    account_id                              bigint NOT NULL REFERENCES finance.accounts(account_id),
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/1.x/1.0/src/03.menus/menus.sql --<--<--
+
+
+-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/03.menus/menus.sql --<--<--
 DELETE FROM auth.menu_access_policy
 WHERE menu_id IN
 (
@@ -339,13 +393,13 @@ SELECT * FROM auth.create_app_menu_policy
 
 
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/1.x/1.0/src/04.default-values/01.default-values.sql --<--<--
+-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/04.default-values/01.default-values.sql --<--<--
 
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/1.x/1.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
+-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
 
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/1.x/1.0/src/99.ownership.sql --<--<--
+-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.ownership.sql --<--<--
 DO
 $$
     DECLARE this record;
