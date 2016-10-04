@@ -1,0 +1,67 @@
+﻿@using Frapid.ApplicationState.Cache
+@model dynamic
+
+@{
+    ViewBag.Title = "Inventory";
+    Layout = ViewBag.Layout;
+}
+<div class="ui attached segment" style="min-height: 100%;padding:3em;">
+    <div class="" >
+        <div class="ui huge header">Inventory Transfer</div>
+        <div class="ui divider"></div>
+        <div class="ui stackable grid">
+            <div class="twelve wide column">
+                <div class="ui basic buttons">
+                    <a id="AddNewButton" class="ui basic button" style="" href="/dashboard/inventory/tasks/inventory-transfer/new">
+                        Add New
+                    </a>
+                    <div class="ui icon top left pointing dropdown basic button" id="ExportDropDown" tabindex="0">
+                        <span>
+                            Export
+                        </span>
+                        <div class="menu">
+                            <div class="header">
+                                Export This Document
+                            </div>
+                            <a class="item" href="javascript:void(0);" onclick="createDoc();">
+                                <i class="file word outline blue icon"></i> Export to Doc
+                            </a>
+                            <a class="item" href="javascript:void(0);" onclick="createXls();">
+                                <i class="file excel outline green icon"></i> Export to Excel
+                            </a>
+                            <a class="item" href="javascript:void(0);" onclick="createPDF();">
+                                <i class="file pdf outline red icon"></i> Export to PDF
+                            </a>
+                        </div>
+                    </div>
+                    <a id="PrintButton" href="javascript:void(0);" onclick="print()" class="ui basic button">
+                        Print
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="ui stackable form query segment">
+            <div class="twelve fields">
+                <div class="field">
+                    <input class="date" placeholder="DateFrom" id="DateFromInputDate" title="DateFrom" type="date">
+                </div>
+                <div class="field">
+                    <input class="date" placeholder="DateTo" id="DateToInputDate" title="DateTo" type="date">
+                </div>
+                <div class="field">
+                    <input placeholder="Office" id="OfficeInputText" title="Office" type="text">
+                </div>
+                <div class="field">
+                    <input placeholder="ReferenceNumber" id="ReferenceNumberInputText" title="ReferenceNumber" type="text">
+                </div>
+                <div class="field">
+                    <input placeholder="StatementReference" id="StatementReferenceInputText" title="StatementReference" type="text">
+                </div>
+                <div class="field">
+                    <div class="ui green button" id="ShowButton">Show</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

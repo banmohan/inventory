@@ -130,6 +130,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaRegistration.cs" />
+    <Compile Include="Controllers\Backend\HomeController.cs" />
+    <Compile Include="Controllers\Backend\Services\UnitController.cs" />
+    <Compile Include="Controllers\Backend\Setup\InventoryItemController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\InventoryTransferController.cs" />
+    <Compile Include="Controllers\InventoryBackendController.cs" />
+    <Compile Include="DAL\Backend\Service\Units.cs" />
+    <Compile Include="DTO\AssociatedUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +147,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="web.config" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Setup\ItemVariants.cshtml" />
+    <Content Include="Views\Setup\Variants.cshtml" />
+    <Content Include="Views\Setup\Suppliers.cshtml" />
+    <Content Include="Views\Setup\Brands.cshtml" />
+    <Content Include="Views\Setup\UnitsOfMeasure.cshtml" />
+    <Content Include="Views\Setup\CompoundUnitsOfMeasure.cshtml" />
+    <Content Include="Views\Setup\Shippers.cshtml" />
+    <Content Include="Views\Setup\Attributes.cshtml" />
+    <Content Include="Views\Setup\ItemTypes.cshtml" />
+    <Content Include="Views\Setup\ItemGroups.cshtml" />
+    <Content Include="Views\Setup\InventoryItems.cshtml" />
+    <Content Include="Views\Setup\StoreTypes.cshtml" />
+    <Content Include="Views\Setup\Stores.cshtml" />
+    <Content Include="Views\Setup\CustomerTypes.cshtml" />
+    <Content Include="Views\Setup\Counters.cshtml" />
+    <Content Include="Views\Setup\SupplierTypes.cshtml" />
+    <Content Include="Views\Setup\Customers.cshtml" />
+    <Content Include="Views\Tasks\InventoryTrasnfer\Index.cshtml" />
+    <Content Include="Views\Tasks\InventoryTrasnfer\New.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -148,9 +175,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DAL\" />
-    <Folder Include="DTO\" />
     <Folder Include="Models\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>

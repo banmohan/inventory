@@ -26,12 +26,26 @@ CREATE TABLE inventory.compound_units
 );
 
 
+CREATE TABLE inventory.supplier_types
+(
+    supplier_type_id                        SERIAL PRIMARY KEY,
+    supplier_type_code                      national character varying(24) NOT NULL,
+    supplier_type_name                      national character varying(500) NOT NULL,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
+
 CREATE TABLE inventory.suppliers
 (
     supplier_id                             SERIAL PRIMARY KEY,
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
+	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
     company_name                            national character varying(1000),
+    company_address_line_1                  national character varying(128) NULL,   
+    company_address_line_2                  national character varying(128) NULL,
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -44,6 +58,8 @@ CREATE TABLE inventory.suppliers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
+    contact_address_line_1                  national character varying(128) NULL,   
+    contact_address_line_2                  national character varying(128) NULL,
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -64,6 +80,7 @@ CREATE TABLE inventory.customer_types
     customer_type_id                        SERIAL PRIMARY KEY,
     customer_type_code                      national character varying(24) NOT NULL,
     customer_type_name                      national character varying(500) NOT NULL,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
@@ -77,6 +94,8 @@ CREATE TABLE inventory.customers
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
     company_name                            national character varying(1000),
+    company_address_line_1                  national character varying(128) NULL,   
+    company_address_line_2                  national character varying(128) NULL,
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -89,6 +108,8 @@ CREATE TABLE inventory.customers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
+    contact_address_line_1                  national character varying(128) NULL,   
+    contact_address_line_2                  national character varying(128) NULL,
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -110,6 +131,14 @@ CREATE TABLE inventory.item_groups
     item_group_name                         national character varying(500) NOT NULL,
     exclude_from_purchase                   boolean NOT NULL DEFAULT(false),
     exclude_from_sales                      boolean NOT NULL DEFAULT(false),    
+    sales_account_id                        bigint NOT NULL REFERENCES finance.accounts,
+    sales_discount_account_id               bigint NOT NULL REFERENCES finance.accounts,
+    sales_return_account_id                 bigint NOT NULL REFERENCES finance.accounts,
+    purchase_account_id                     bigint NOT NULL REFERENCES finance.accounts,
+    purchase_discount_account_id            bigint NOT NULL REFERENCES finance.accounts,
+    inventory_account_id                    bigint NOT NULL REFERENCES finance.accounts,
+    cost_of_goods_sold_account_id           bigint NOT NULL REFERENCES finance.accounts,    
+    parent_item_group_id                    integer NULL REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -125,13 +154,33 @@ CREATE TABLE inventory.brands
 	deleted									boolean DEFAULT(false)    
 );
 
+CREATE TABLE inventory.item_types
+(
+    item_type_id                            SERIAL PRIMARY KEY,
+    item_type_code                          national character varying(12) NOT NULL,
+    item_type_name                          national character varying(50) NOT NULL,
+	is_component							boolean NOT NULL DEFAULT(false),
+    audit_user_id                           integer NULL REFERENCES account.users(user_id),
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)    
+);
+
+CREATE UNIQUE INDEX item_type_item_type_code_uix
+ON inventory.item_types(UPPER(item_type_code));
+
+
+CREATE UNIQUE INDEX item_type_item_type_name_uix
+ON inventory.item_types(UPPER(item_type_name));
+
+
 CREATE TABLE inventory.items
 (
     item_id                                 SERIAL PRIMARY KEY,
     item_code                               national character varying(24) NOT NULL,
     item_name                               national character varying(500) NOT NULL,
-    barcode                                 national character varying(100),
+    barcode                                 national character varying(100), --UNIQUE
     item_group_id                           integer NOT NULL REFERENCES inventory.item_groups,
+	item_type_id							integer NOT NULL REFERENCES inventory.item_types,
     brand_id                                integer REFERENCES inventory.brands,
     preferred_supplier_id                   integer REFERENCES inventory.suppliers,
     lead_time_in_days                       integer,
@@ -141,6 +190,7 @@ CREATE TABLE inventory.items
     selling_price                           public.decimal_strict2,
     reorder_level                           public.integer_strict2 NOT NULL DEFAULT(0),
     reorder_quantity                        public.integer_strict2 NOT NULL DEFAULT(0),
+	reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
     maintain_inventory                      boolean NOT NULL DEFAULT(true),
     photo                                   public.photo,
     allow_sales                             boolean NOT NULL DEFAULT(true),
@@ -152,11 +202,33 @@ CREATE TABLE inventory.items
 );
 
 
+CREATE TABLE inventory.store_types
+(
+    store_type_id                           SERIAL PRIMARY KEY,
+    store_type_code                         national character varying(12) NOT NULL,
+    store_type_name                         national character varying(50) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)    
+);
+
 CREATE TABLE inventory.stores
 (
     store_id                                SERIAL PRIMARY KEY,
     store_code                              national character varying(24) NOT NULL,
     store_name                              national character varying(100) NOT NULL,
+    store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
+	office_id								integer NOT NULL REFERENCES core.offices,
+    address_line_1                          national character varying(128) NULL,   
+    address_line_2                          national character varying(128) NULL,
+    street                                  national character varying(50) NULL,
+    city                                    national character varying(50) NULL,
+    state                                   national character varying(50) NULL,
+    country                                 national character varying(50) NULL,
+    phone                                   national character varying(50) NULL,
+    fax                                     national character varying(50) NULL,
+    cell                                    national character varying(50) NULL,
+    allow_sales                             boolean NOT NULL DEFAULT(true),	
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -323,3 +395,34 @@ CREATE TABLE inventory.shippers
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE TABLE inventory.attributes
+(
+	attribute_id                            SERIAL NOT NULL PRIMARY KEY,
+	attribute_code                          national character varying(12) NOT NULL UNIQUE,
+	attribute_name                          national character varying(100) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
+
+CREATE TABLE inventory.variants
+(
+	variant_id                              SERIAL NOT NULL PRIMARY KEY,
+	variant_code                            national character varying(12) NOT NULL UNIQUE,
+	variant_name                            national character varying(100) NOT NULL,
+	attribute_id                            integer NOT NULL REFERENCES inventory.attributes,
+	attribute_value                         national character varying(200) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
+
+CREATE TABLE inventory.item_variants
+(
+	item_variant_id                         SERIAL NOT NULL PRIMARY KEY,
+	item_id                                 integer NOT NULL REFERENCES inventory.items,
+	variant_id                              integer NOT NULL REFERENCES inventory.variants,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);

@@ -1,64 +1,44 @@
-﻿DELETE FROM auth.menu_access_policy
-WHERE menu_id IN
-(
-    SELECT menu_id FROM core.menus
-    WHERE app_name = 'CineSys'
-);
+﻿SELECT * FROM core.create_app('Inventory', 'Inventory', '1.0', 'MixERP Inc.', 'December 1, 2015', 'cart teal', '/dashboard/inventory/home', NULL::text[]);
 
-DELETE FROM auth.group_menu_access_policy
-WHERE menu_id IN
-(
-    SELECT menu_id FROM core.menus
-    WHERE app_name = 'CineSys'
-);
+SELECT * FROM core.create_menu('Inventory', 'Tasks', '', 'lightning', '');
+SELECT * FROM core.create_menu('Inventory', 'Home', '/dashboard/inventory/home', 'user', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer', '/dashboard/inventory/tasks/inventory-transfer', 'user', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Adjustments', '/dashboard/inventory/tasks/inventory-adjustments', 'ticket', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Request', '/dashboard/inventory/tasks/inventory-transfer/request', 'food', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Authorization', '/dashboard/inventory/tasks/inventory-transfer/authorization', 'keyboard', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Delivery', '/dashboard/inventory/tasks/inventory-transfer/delivery', 'users', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
 
-DELETE FROM core.menus
-WHERE app_name = 'CineSys';
+SELECT * FROM core.create_menu('Inventory', 'Setup', 'square outline', 'configure', '');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Items', '/dashboard/inventory/setup/inventory-items', 'users', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Item Groups', '/dashboard/inventory/setup/item-groups', 'users', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Item Types', '/dashboard/inventory/setup/item-types', 'users', 'Setup');
+--SELECT * FROM core.create_menu('Inventory', 'Selling Prices', '/dashboard/inventory/setup/selling-prices', 'money', 'Setup');
+--SELECT * FROM core.create_menu('Inventory', 'Cost Prices', '/dashboard/inventory/setup/cost-prices', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Store Types', '/dashboard/inventory/setup/store-types', 'desktop', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Stores', '/dashboard/inventory/setup/stores', 'film', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Counters', '/dashboard/inventory/setup/counters', 'square outline', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Customer Types', '/dashboard/inventory/setup/customer-types', 'clock', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Supplier Types', '/dashboard/inventory/setup/supplier-types', 'clock', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Customers', '/dashboard/inventory/setup/customers', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Suppliers', '/dashboard/inventory/setup/suppliers', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Brands', '/dashboard/inventory/setup/brands', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Units of Measure', '/dashboard/inventory/setup/units-of-measure', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Compound Units of Measure', '/dashboard/inventory/setup/compound-units-of-measure', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Shippers', '/dashboard/inventory/setup/shippers', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'money', 'Setup');
 
-
-SELECT * FROM core.create_app('CineSys', 'Cinema', '1.0', 'MixERP Inc.', 'December 1, 2015', 'teal film', '/dashboard/cinesys/home', NULL::text[]);
-
-SELECT * FROM core.create_menu('CineSys', 'Tasks', '/dashboard/cinesys/home', 'lightning', '');
-SELECT * FROM core.create_menu('CineSys', 'Home', '/dashboard/cinesys/home', 'user', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Ticketing', '/dashboard/cinesys/ticketing', 'ticket', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Food Court', '/dashboard/cinesys/foodcourt', 'food', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Counters', '/dashboard/cinesys/counters', 'keyboard', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Cashiers', '/dashboard/cinesys/cashiers', 'users', 'Tasks');
-
-SELECT * FROM core.create_menu('CineSys', 'Cinema', 'square outline', 'configure', '');
-SELECT * FROM core.create_menu('CineSys', 'Screens', '/dashboard/cinesys/screens', 'desktop', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Movies', '/dashboard/cinesys/movies', 'film', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Cinemas', '/dashboard/cinesys/cinemas', 'square outline', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Shows', '/dashboard/cinesys/shows', 'clock', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Pricing Types', '/dashboard/cinesys/pricing-types', 'money', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Pricings', '/dashboard/cinesys/pricings', 'money', 'Cinema');
-
-SELECT * FROM core.create_menu('CineSys', 'Setup', '/dashboard/cinesys/setup', 'configure', '');
-SELECT * FROM core.create_menu('CineSys', 'Genres', '/dashboard/cinesys/genres', 'lightning', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Film Formats', '/dashboard/cinesys/film-formats', 'film', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Ratings', '/dashboard/cinesys/ratings', 'star', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Categories', '/dashboard/cinesys/categories', 'sitemap', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Distributors', '/dashboard/cinesys/distributors', 'users', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Seat Types', '/dashboard/cinesys/seat-types', 'grid layout', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Arrangement', '/dashboard/cinesys/seating-arrangement', 'grid layout', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Shifts', '/dashboard/cinesys/shifts', 'clock', 'Setup');
-
-SELECT * FROM core.create_menu('CineSys', 'Reports', '/dashboard/cinesys/setup', 'bar chart', '');
-SELECT * FROM core.create_menu('CineSys', 'Sales by Cashier', '/dashboard/cinesys/reports/sales-by-cashier', 'money', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'Anusuchi 7', '/dashboard/cinesys/reports/anusuchi-7', 'money', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'Sales book', '/dashboard/cinesys/reports/sales-book', 'grid layout', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'User Audits', '/dashboard/cinesys/reports/user-audit', 'grid layout', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'Cancelled Transactions', '/dashboard/cinesys/reports/cancelled-transactions', 'grid layout', 'Reports');
-
-SELECT * FROM core.create_menu('CineSys', 'Help', '/dashboard/cinesys/help', 'help circle', '');
-SELECT * FROM core.create_menu('CineSys', 'User Manual', '/Static/UserManual.pdf', 'star', 'Help');
-
+SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/inventory/reports/inventory-account-statement', 'money', 'Reports');
 
 SELECT * FROM auth.create_app_menu_policy
  (
     'Admin', 
     core.get_office_id_by_office_name('PCP'), 
-    'Cinesys',
+    'Inventory',
     '{*}'::text[]
 );
 

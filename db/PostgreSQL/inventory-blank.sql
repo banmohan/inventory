@@ -1,4 +1,4 @@
-﻿-->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
+﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
 DROP SCHEMA IF EXISTS inventory CASCADE;
 
 CREATE SCHEMA inventory;
@@ -27,12 +27,26 @@ CREATE TABLE inventory.compound_units
 );
 
 
+CREATE TABLE inventory.supplier_types
+(
+    supplier_type_id                        SERIAL PRIMARY KEY,
+    supplier_type_code                      national character varying(24) NOT NULL,
+    supplier_type_name                      national character varying(500) NOT NULL,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
+
 CREATE TABLE inventory.suppliers
 (
     supplier_id                             SERIAL PRIMARY KEY,
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
+	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
     company_name                            national character varying(1000),
+    company_address_line_1                  national character varying(128) NULL,   
+    company_address_line_2                  national character varying(128) NULL,
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -45,6 +59,8 @@ CREATE TABLE inventory.suppliers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
+    contact_address_line_1                  national character varying(128) NULL,   
+    contact_address_line_2                  national character varying(128) NULL,
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -65,6 +81,7 @@ CREATE TABLE inventory.customer_types
     customer_type_id                        SERIAL PRIMARY KEY,
     customer_type_code                      national character varying(24) NOT NULL,
     customer_type_name                      national character varying(500) NOT NULL,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
@@ -78,6 +95,8 @@ CREATE TABLE inventory.customers
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
     company_name                            national character varying(1000),
+    company_address_line_1                  national character varying(128) NULL,   
+    company_address_line_2                  national character varying(128) NULL,
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -90,6 +109,8 @@ CREATE TABLE inventory.customers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
+    contact_address_line_1                  national character varying(128) NULL,   
+    contact_address_line_2                  national character varying(128) NULL,
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -111,6 +132,14 @@ CREATE TABLE inventory.item_groups
     item_group_name                         national character varying(500) NOT NULL,
     exclude_from_purchase                   boolean NOT NULL DEFAULT(false),
     exclude_from_sales                      boolean NOT NULL DEFAULT(false),    
+    sales_account_id                        bigint NOT NULL REFERENCES finance.accounts,
+    sales_discount_account_id               bigint NOT NULL REFERENCES finance.accounts,
+    sales_return_account_id                 bigint NOT NULL REFERENCES finance.accounts,
+    purchase_account_id                     bigint NOT NULL REFERENCES finance.accounts,
+    purchase_discount_account_id            bigint NOT NULL REFERENCES finance.accounts,
+    inventory_account_id                    bigint NOT NULL REFERENCES finance.accounts,
+    cost_of_goods_sold_account_id           bigint NOT NULL REFERENCES finance.accounts,    
+    parent_item_group_id                    integer NULL REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -126,13 +155,33 @@ CREATE TABLE inventory.brands
 	deleted									boolean DEFAULT(false)    
 );
 
+CREATE TABLE inventory.item_types
+(
+    item_type_id                            SERIAL PRIMARY KEY,
+    item_type_code                          national character varying(12) NOT NULL,
+    item_type_name                          national character varying(50) NOT NULL,
+	is_component							boolean NOT NULL DEFAULT(false),
+    audit_user_id                           integer NULL REFERENCES account.users(user_id),
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)    
+);
+
+CREATE UNIQUE INDEX item_type_item_type_code_uix
+ON inventory.item_types(UPPER(item_type_code));
+
+
+CREATE UNIQUE INDEX item_type_item_type_name_uix
+ON inventory.item_types(UPPER(item_type_name));
+
+
 CREATE TABLE inventory.items
 (
     item_id                                 SERIAL PRIMARY KEY,
     item_code                               national character varying(24) NOT NULL,
     item_name                               national character varying(500) NOT NULL,
-    barcode                                 national character varying(100),
+    barcode                                 national character varying(100), --UNIQUE
     item_group_id                           integer NOT NULL REFERENCES inventory.item_groups,
+	item_type_id							integer NOT NULL REFERENCES inventory.item_types,
     brand_id                                integer REFERENCES inventory.brands,
     preferred_supplier_id                   integer REFERENCES inventory.suppliers,
     lead_time_in_days                       integer,
@@ -142,6 +191,7 @@ CREATE TABLE inventory.items
     selling_price                           public.decimal_strict2,
     reorder_level                           public.integer_strict2 NOT NULL DEFAULT(0),
     reorder_quantity                        public.integer_strict2 NOT NULL DEFAULT(0),
+	reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
     maintain_inventory                      boolean NOT NULL DEFAULT(true),
     photo                                   public.photo,
     allow_sales                             boolean NOT NULL DEFAULT(true),
@@ -153,11 +203,33 @@ CREATE TABLE inventory.items
 );
 
 
+CREATE TABLE inventory.store_types
+(
+    store_type_id                           SERIAL PRIMARY KEY,
+    store_type_code                         national character varying(12) NOT NULL,
+    store_type_name                         national character varying(50) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)    
+);
+
 CREATE TABLE inventory.stores
 (
     store_id                                SERIAL PRIMARY KEY,
     store_code                              national character varying(24) NOT NULL,
     store_name                              national character varying(100) NOT NULL,
+    store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
+	office_id								integer NOT NULL REFERENCES core.offices,
+    address_line_1                          national character varying(128) NULL,   
+    address_line_2                          national character varying(128) NULL,
+    street                                  national character varying(50) NULL,
+    city                                    national character varying(50) NULL,
+    state                                   national character varying(50) NULL,
+    country                                 national character varying(50) NULL,
+    phone                                   national character varying(50) NULL,
+    fax                                     national character varying(50) NULL,
+    cell                                    national character varying(50) NULL,
+    allow_sales                             boolean NOT NULL DEFAULT(true),	
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -324,82 +396,383 @@ CREATE TABLE inventory.shippers
 	deleted									boolean DEFAULT(false)
 );
 
-
-
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/03.menus/menus.sql --<--<--
-DELETE FROM auth.menu_access_policy
-WHERE menu_id IN
+CREATE TABLE inventory.attributes
 (
-    SELECT menu_id FROM core.menus
-    WHERE app_name = 'CineSys'
+	attribute_id                            SERIAL NOT NULL PRIMARY KEY,
+	attribute_code                          national character varying(12) NOT NULL UNIQUE,
+	attribute_name                          national character varying(100) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
 );
 
-DELETE FROM auth.group_menu_access_policy
-WHERE menu_id IN
+CREATE TABLE inventory.variants
 (
-    SELECT menu_id FROM core.menus
-    WHERE app_name = 'CineSys'
+	variant_id                              SERIAL NOT NULL PRIMARY KEY,
+	variant_code                            national character varying(12) NOT NULL UNIQUE,
+	variant_name                            national character varying(100) NOT NULL,
+	attribute_id                            integer NOT NULL REFERENCES inventory.attributes,
+	attribute_value                         national character varying(200) NOT NULL,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
 );
 
-DELETE FROM core.menus
-WHERE app_name = 'CineSys';
+CREATE TABLE inventory.item_variants
+(
+	item_variant_id                         SERIAL NOT NULL PRIMARY KEY,
+	item_id                                 integer NOT NULL REFERENCES inventory.items,
+	variant_id                              integer NOT NULL REFERENCES inventory.variants,
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
 
 
-SELECT * FROM core.create_app('CineSys', 'Cinema', '1.0', 'MixERP Inc.', 'December 1, 2015', 'teal film', '/dashboard/cinesys/home', NULL::text[]);
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_associated_units.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_associated_units(_any_unit_id integer);
 
-SELECT * FROM core.create_menu('CineSys', 'Tasks', '/dashboard/cinesys/home', 'lightning', '');
-SELECT * FROM core.create_menu('CineSys', 'Home', '/dashboard/cinesys/home', 'user', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Ticketing', '/dashboard/cinesys/ticketing', 'ticket', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Food Court', '/dashboard/cinesys/foodcourt', 'food', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Counters', '/dashboard/cinesys/counters', 'keyboard', 'Tasks');
-SELECT * FROM core.create_menu('CineSys', 'Cashiers', '/dashboard/cinesys/cashiers', 'users', 'Tasks');
+CREATE FUNCTION inventory.get_associated_units(_any_unit_id integer)
+RETURNS TABLE
+(
+    unit_id integer, 
+    unit_code text, 
+    unit_name text
+)
+VOLATILE
+AS
+$$
+    DECLARE root_unit_id integer;
+BEGIN
+    CREATE TEMPORARY TABLE IF NOT EXISTS temp_unit(unit_id integer) ON COMMIT DROP; 
+    
+    SELECT inventory.get_root_unit_id(_any_unit_id) INTO root_unit_id;
+    
+    INSERT INTO temp_unit(unit_id) 
+    SELECT root_unit_id
+    WHERE NOT EXISTS
+    (
+        SELECT * FROM temp_unit
+        WHERE temp_unit.unit_id=root_unit_id
+    );
+    
+    WITH RECURSIVE cte(unit_id)
+    AS
+    (
+         SELECT 
+            compare_unit_id
+         FROM 
+            inventory.compound_units
+         WHERE 
+            base_unit_id = root_unit_id
 
-SELECT * FROM core.create_menu('CineSys', 'Cinema', 'square outline', 'configure', '');
-SELECT * FROM core.create_menu('CineSys', 'Screens', '/dashboard/cinesys/screens', 'desktop', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Movies', '/dashboard/cinesys/movies', 'film', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Cinemas', '/dashboard/cinesys/cinemas', 'square outline', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Shows', '/dashboard/cinesys/shows', 'clock', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Pricing Types', '/dashboard/cinesys/pricing-types', 'money', 'Cinema');
-SELECT * FROM core.create_menu('CineSys', 'Pricings', '/dashboard/cinesys/pricings', 'money', 'Cinema');
+        UNION ALL
 
-SELECT * FROM core.create_menu('CineSys', 'Setup', '/dashboard/cinesys/setup', 'configure', '');
-SELECT * FROM core.create_menu('CineSys', 'Genres', '/dashboard/cinesys/genres', 'lightning', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Film Formats', '/dashboard/cinesys/film-formats', 'film', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Ratings', '/dashboard/cinesys/ratings', 'star', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Categories', '/dashboard/cinesys/categories', 'sitemap', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Distributors', '/dashboard/cinesys/distributors', 'users', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Seat Types', '/dashboard/cinesys/seat-types', 'grid layout', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Arrangement', '/dashboard/cinesys/seating-arrangement', 'grid layout', 'Setup');
-SELECT * FROM core.create_menu('CineSys', 'Shifts', '/dashboard/cinesys/shifts', 'clock', 'Setup');
+         SELECT
+            units.compare_unit_id
+         FROM 
+            inventory.compound_units units
+         INNER JOIN cte 
+         ON cte.unit_id = units.base_unit_id
+    )
+    
+    INSERT INTO temp_unit(unit_id)
+    SELECT cte.unit_id FROM cte;
+    
+    DELETE FROM temp_unit
+    WHERE temp_unit.unit_id IS NULL;
+    
+    RETURN QUERY 
+    SELECT 
+        inventory.units.unit_id,
+        inventory.units.unit_code::text,
+        inventory.units.unit_name::text
+    FROM
+        inventory.units
+    WHERE
+        inventory.units.unit_id 
+    IN
+    (
+        SELECT temp_unit.unit_id FROM temp_unit
+    );
+END
+$$
+LANGUAGE plpgsql;
 
-SELECT * FROM core.create_menu('CineSys', 'Reports', '/dashboard/cinesys/setup', 'bar chart', '');
-SELECT * FROM core.create_menu('CineSys', 'Sales by Cashier', '/dashboard/cinesys/reports/sales-by-cashier', 'money', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'Anusuchi 7', '/dashboard/cinesys/reports/anusuchi-7', 'money', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'Sales book', '/dashboard/cinesys/reports/sales-book', 'grid layout', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'User Audits', '/dashboard/cinesys/reports/user-audit', 'grid layout', 'Reports');
-SELECT * FROM core.create_menu('CineSys', 'Cancelled Transactions', '/dashboard/cinesys/reports/cancelled-transactions', 'grid layout', 'Reports');
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_associated_units_by_item_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_associated_units_by_item_id(_item_id integer);
 
-SELECT * FROM core.create_menu('CineSys', 'Help', '/dashboard/cinesys/help', 'help circle', '');
-SELECT * FROM core.create_menu('CineSys', 'User Manual', '/Static/UserManual.pdf', 'star', 'Help');
+CREATE FUNCTION inventory.get_associated_units_by_item_id(_item_id integer)
+RETURNS TABLE
+(
+    unit_id integer, 
+    unit_code text, 
+    unit_name text
+)
+AS
+$$
+    DECLARE _unit_id integer;
+BEGIN
+    SELECT inventory.items.unit_id INTO _unit_id
+    FROM inventory.items
+    WHERE item_id = _item_id;
 
+    RETURN QUERY
+    SELECT * FROM inventory.get_associated_units(_unit_id);
+END
+$$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS inventory.get_associated_units_by_item_code(_item_code text);
+
+CREATE FUNCTION inventory.get_associated_units_by_item_code(_item_code text)
+RETURNS TABLE
+(
+    unit_id integer, 
+    unit_code text, 
+    unit_name text
+)
+AS
+$$
+    DECLARE _unit_id integer;
+BEGIN
+    SELECT inventory.items.unit_id INTO _unit_id
+    FROM inventory.items
+    WHERE LOWER(item_code) = LOWER(_item_code);
+
+    RETURN QUERY
+    SELECT * FROM inventory.get_associated_units(_unit_id);
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_brand_id_by_brand_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_brand_id_by_brand_code(text);
+
+CREATE FUNCTION inventory.get_brand_id_by_brand_code(text)
+RETURNS integer
+AS
+$$
+BEGIN
+        RETURN brand_id
+        FROM inventory.brands
+        WHERE brand_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_id_by_customer_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_customer_id_by_customer_code(text);
+
+CREATE FUNCTION inventory.get_customer_id_by_customer_code(text)
+RETURNS integer
+AS
+$$
+BEGIN
+        RETURN customer_id
+        FROM inventory.customers
+        WHERE customer_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_type_id_by_customer_type_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_customer_type_id_by_customer_type_code(text);
+
+CREATE FUNCTION inventory.get_customer_type_id_by_customer_type_code(text)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN customer_type_id
+    FROM inventory.customer_types
+    WHERE customer_type_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_group_id_by_item_group_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_item_group_id_by_item_group_code(text);
+
+CREATE FUNCTION inventory.get_item_group_id_by_item_group_code(text)
+RETURNS integer
+AS
+$$
+BEGIN
+        RETURN item_group_id
+        FROM inventory.item_groups
+        WHERE item_group_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_type_id_by_item_type_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_item_type_id_by_item_type_code(text);
+
+CREATE FUNCTION inventory.get_item_type_id_by_item_type_code(text)
+RETURNS integer
+AS
+$$
+BEGIN
+        RETURN item_type_id
+        FROM inventory.item_types
+        WHERE item_type_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_root_unit_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_root_unit_id(_any_unit_id integer);
+
+CREATE FUNCTION inventory.get_root_unit_id(_any_unit_id integer)
+RETURNS integer
+AS
+$$
+    DECLARE root_unit_id integer;
+BEGIN
+    SELECT base_unit_id INTO root_unit_id
+    FROM inventory.compound_units
+    WHERE compare_unit_id=_any_unit_id;
+
+    IF(root_unit_id IS NULL) THEN
+        RETURN _any_unit_id;
+    ELSE
+        RETURN inventory.get_root_unit_id(root_unit_id);
+    END IF; 
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_store_type_id_by_store_type_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_store_type_id_by_store_type_code(text);
+
+CREATE FUNCTION inventory.get_store_type_id_by_store_type_code(text)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN store_type_id
+    FROM inventory.store_types
+    WHERE store_type_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_id_by_supplier_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_supplier_id_by_supplier_code(text);
+
+CREATE FUNCTION inventory.get_supplier_id_by_supplier_code(text)
+RETURNS integer
+AS
+$$
+BEGIN
+        RETURN supplier_id
+        FROM inventory.suppliers
+        WHERE supplier_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_type_id_by_supplier_type_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_supplier_type_id_by_supplier_type_code(text);
+
+CREATE FUNCTION inventory.get_supplier_type_id_by_supplier_type_code(text)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN supplier_type_id
+    FROM inventory.supplier_types
+    WHERE supplier_type_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_unit_id_by_unit_code(text);
+
+CREATE FUNCTION inventory.get_unit_id_by_unit_code(text)
+RETURNS integer
+AS
+$$
+BEGIN
+        RETURN unit_id
+        FROM inventory.units
+        WHERE unit_code=$1;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/03.menus/menus.sql --<--<--
+SELECT * FROM core.create_app('Inventory', 'Inventory', '1.0', 'MixERP Inc.', 'December 1, 2015', 'cart teal', '/dashboard/inventory/home', NULL::text[]);
+
+SELECT * FROM core.create_menu('Inventory', 'Tasks', '', 'lightning', '');
+SELECT * FROM core.create_menu('Inventory', 'Home', '/dashboard/inventory/home', 'user', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer', '/dashboard/inventory/tasks/inventory-transfer', 'user', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Adjustments', '/dashboard/inventory/tasks/inventory-adjustments', 'ticket', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Request', '/dashboard/inventory/tasks/inventory-transfer/request', 'food', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Authorization', '/dashboard/inventory/tasks/inventory-transfer/authorization', 'keyboard', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Delivery', '/dashboard/inventory/tasks/inventory-transfer/delivery', 'users', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
+
+SELECT * FROM core.create_menu('Inventory', 'Setup', 'square outline', 'configure', '');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Items', '/dashboard/inventory/setup/inventory-items', 'users', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Item Groups', '/dashboard/inventory/setup/item-groups', 'users', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Item Types', '/dashboard/inventory/setup/item-types', 'users', 'Setup');
+--SELECT * FROM core.create_menu('Inventory', 'Selling Prices', '/dashboard/inventory/setup/selling-prices', 'money', 'Setup');
+--SELECT * FROM core.create_menu('Inventory', 'Cost Prices', '/dashboard/inventory/setup/cost-prices', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Store Types', '/dashboard/inventory/setup/store-types', 'desktop', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Stores', '/dashboard/inventory/setup/stores', 'film', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Counters', '/dashboard/inventory/setup/counters', 'square outline', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Customer Types', '/dashboard/inventory/setup/customer-types', 'clock', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Supplier Types', '/dashboard/inventory/setup/supplier-types', 'clock', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Customers', '/dashboard/inventory/setup/customers', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Suppliers', '/dashboard/inventory/setup/suppliers', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Brands', '/dashboard/inventory/setup/brands', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Units of Measure', '/dashboard/inventory/setup/units-of-measure', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Compound Units of Measure', '/dashboard/inventory/setup/compound-units-of-measure', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Shippers', '/dashboard/inventory/setup/shippers', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'money', 'Setup');
+
+SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/inventory/reports/inventory-account-statement', 'money', 'Reports');
 
 SELECT * FROM auth.create_app_menu_policy
  (
     'Admin', 
     core.get_office_id_by_office_name('PCP'), 
-    'Cinesys',
+    'Inventory',
     '{*}'::text[]
 );
 
 
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/04.default-values/01.default-values.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/04.default-values/01.default-values.sql --<--<--
 
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
 
 
--->-->-- C:/Users/nirvan/Desktop/mixerp/frapid/src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.ownership.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.ownership.sql --<--<--
 DO
 $$
     DECLARE this record;

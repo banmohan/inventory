@@ -1,0 +1,72 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Compound Units of Measure";
+    Layout = ViewBag.Layout;
+}
+
+<script>
+    var scrudFactory = new Object();
+
+    scrudFactory.title = "Compound Units of Measure";
+
+    scrudFactory.viewAPI = "/api/forms/inventory/compound-units";
+    scrudFactory.viewTableName = "inventory.compound_units";
+
+    scrudFactory.formAPI = "/api/forms/inventory/compound-units";
+    scrudFactory.formTableName = "inventory.compound_units";
+
+    scrudFactory.excludedColumns = ["audit_user_id", "audit_ts"];
+
+    scrudFactory.allowDelete = true;
+    scrudFactory.allowEdit = true;
+
+    //scrudFactory.live = "";
+
+    //scrudFactory.card = {
+    //    header: "",
+    //    description: "",
+    //    image: ""
+    //};
+
+    //scrudFactory.layout = [
+    //    {
+    //        tab: "",
+    //        fields: [
+    //            ["", ""],
+    //            ["", ""],
+    //        ]
+    //    }
+    //];
+
+    scrudFactory.keys = [
+        {
+            property: "BaseUnitId",
+            url: '/api/forms/inventory/units/display-fields',
+            data: null,
+            valueField: "Key",
+            textField: "Value"
+        },
+        {
+            property: "CompareUnitId",
+            url: '/api/forms/inventory/units/display-fields',
+            data: null,
+            valueField: "Key",
+            textField: "Value"
+        }
+    ];
+
+
+
+    $.get('/ScrudFactory/View.html', function (view) {
+        $.get('/ScrudFactory/Form.html', function (form) {
+            $("#ScrudFactoryView").html(view);
+            $("#ScrudFactoryForm").html(form);
+            $.cachedScript("/assets/js/scrudfactory-view.js");
+            $.cachedScript("/assets/js/scrudfactory-form.js");
+        });
+    });
+</script>
+
+<div id="ScrudFactoryForm"></div>
+<div id="ScrudFactoryView"></div>
