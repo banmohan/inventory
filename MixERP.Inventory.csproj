@@ -167,6 +167,7 @@
     <Content Include="Views\Setup\Customers.cshtml" />
     <Content Include="Views\Tasks\InventoryTrasnfer\Index.cshtml" />
     <Content Include="Views\Tasks\InventoryTrasnfer\New.cshtml" />
+    <Content Include="Views\Tasks\InventoryAdjustment\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

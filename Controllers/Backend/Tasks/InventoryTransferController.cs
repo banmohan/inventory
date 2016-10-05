@@ -3,7 +3,7 @@ using System.Web.Mvc;
 
 namespace MixERP.Inventory.Controllers.Backend.Tasks
 {
-    public class InventoryTransferController:InventoryBackendController
+    public class InventoryTransferController : InventoryBackendController
     {
         [Route("dashboard/inventory/tasks/inventory-transfer")]
         [MenuPolicy]
@@ -17,6 +17,15 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
         public ActionResult New()
         {
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/InventoryTrasnfer/New.cshtml", this.Tenant));
+        }
+    }
+    public class InventoryAdjustmentController : InventoryBackendController
+    {
+        [Route("dashboard/inventory/tasks/inventory-adjustments")]
+        [MenuPolicy]
+        public ActionResult Index()
+        {
+            return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/InventoryAdjustment/Index.cshtml", this.Tenant));
         }
     }
 }
