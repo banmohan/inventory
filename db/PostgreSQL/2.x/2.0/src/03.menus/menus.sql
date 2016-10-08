@@ -34,10 +34,11 @@ SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/invento
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/inventory/reports/inventory-account-statement', 'money', 'Reports');
 
+
 SELECT * FROM auth.create_app_menu_policy
- (
+(
     'Admin', 
-    core.get_office_id_by_office_name('PCP'), 
+    core.get_office_id_by_office_name('Default'), 
     'Inventory',
     '{*}'::text[]
 );
