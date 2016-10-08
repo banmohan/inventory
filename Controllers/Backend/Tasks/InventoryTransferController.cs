@@ -19,13 +19,4 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/InventoryTrasnfer/New.cshtml", this.Tenant));
         }
     }
-    public class InventoryAdjustmentController : InventoryBackendController
-    {
-        [Route("dashboard/inventory/tasks/inventory-adjustments")]
-        [MenuPolicy]
-        public ActionResult Index()
-        {
-            return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/InventoryAdjustment/Index.cshtml", this.Tenant));
-        }
-    }
 }

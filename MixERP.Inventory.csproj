@@ -131,12 +131,32 @@
   <ItemGroup>
     <Compile Include="AreaRegistration.cs" />
     <Compile Include="Controllers\Backend\HomeController.cs" />
+    <Compile Include="Controllers\Backend\Services\ItemController.cs" />
     <Compile Include="Controllers\Backend\Services\UnitController.cs" />
+    <Compile Include="Controllers\Backend\Setup\AttributeController.cs" />
+    <Compile Include="Controllers\Backend\Setup\BrandController.cs" />
+    <Compile Include="Controllers\Backend\Setup\CompoundUnitsOfMeasureController.cs" />
+    <Compile Include="Controllers\Backend\Setup\CounterController.cs" />
+    <Compile Include="Controllers\Backend\Setup\CustomerController.cs" />
+    <Compile Include="Controllers\Backend\Setup\CustomerTypeController.cs" />
     <Compile Include="Controllers\Backend\Setup\InventoryItemController.cs" />
+    <Compile Include="Controllers\Backend\Setup\ItemGroupController.cs" />
+    <Compile Include="Controllers\Backend\Setup\ItemTypeController.cs" />
+    <Compile Include="Controllers\Backend\Setup\ItemVariantController.cs" />
+    <Compile Include="Controllers\Backend\Setup\ShipperController.cs" />
+    <Compile Include="Controllers\Backend\Setup\StoreController.cs" />
+    <Compile Include="Controllers\Backend\Setup\StoreTypeController.cs" />
+    <Compile Include="Controllers\Backend\Setup\SupplierController.cs" />
+    <Compile Include="Controllers\Backend\Setup\SupplierTypeController.cs" />
+    <Compile Include="Controllers\Backend\Setup\UnitsOfMeasureController.cs" />
+    <Compile Include="Controllers\Backend\Setup\VariantController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\InventoryAdjustmentController.cs" />
     <Compile Include="Controllers\Backend\Tasks\InventoryTransferController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
+    <Compile Include="DAL\Backend\Service\Items.cs" />
     <Compile Include="DAL\Backend\Service\Units.cs" />
     <Compile Include="DTO\AssociatedUnit.cs" />
+    <Compile Include="DTO\Item.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
