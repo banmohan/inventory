@@ -1,0 +1,14 @@
+﻿@using Frapid.ApplicationState.Cache
+@model dynamic
+
+@{
+    ViewBag.Title = "Inventory";
+    Layout = ViewBag.Layout;
+}
+<div class="inventory layout container">
+    @RenderBody()
+</div>
+
+<script>
+    loadDatepicker();
+</script>

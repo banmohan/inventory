@@ -43,6 +43,7 @@ CREATE TABLE inventory.suppliers
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128) NULL,   
     company_address_line_2                  national character varying(128) NULL,
@@ -93,6 +94,7 @@ CREATE TABLE inventory.customers
     customer_code                           national character varying(24) NOT NULL,
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128) NULL,   
     company_address_line_2                  national character varying(128) NULL,
@@ -248,8 +250,10 @@ CREATE TABLE inventory.counters
 CREATE TABLE inventory.checkouts
 (
     checkout_id                             BIGSERIAL PRIMARY KEY,
+	value_date								date NOT NULL,
+	book_date								date NOT NULL,
+	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
-    transaction_date                        date NOT NULL,
     transaction_type                        national character varying(2) NOT NULL
                                             CHECK(transaction_type IN('IN', 'OUT')),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
@@ -260,8 +264,7 @@ CREATE TABLE inventory.checkouts
     /*LOOKUP FIELDS */    
     cancelled                               boolean NOT NULL DEFAULT(false),
 	cancellation_reason						text,
-    amount                                  decimal(24, 4) NOT NULL CHECK(amount > 0),
-    discount                                decimal(24, 4) NOT NULL DEFAULT(0),
+	shipper_id								integer REFERENCES inventory.shippers,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -272,6 +275,8 @@ CREATE TABLE inventory.checkout_details
 (
     checkout_detail_id                      BIGSERIAL PRIMARY KEY,
     checkout_id                             bigint NOT NULL REFERENCES inventory.checkouts,
+	value_date								date NOT NULL,
+	book_date								date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
@@ -425,4 +430,13 @@ CREATE TABLE inventory.item_variants
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
+);
+
+CREATE TABLE inventory.inventory_setup
+(
+	office_id								integer NOT NULL PRIMARY KEY REFERENCES core.offices,
+	inventory_system						national character varying(50) NOT NULL
+											CHECK(inventory_system IN('Periodic', 'Perpetual')),
+	cogs_calculation_method					national character varying(50) NOT NULL
+											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO'))
 );

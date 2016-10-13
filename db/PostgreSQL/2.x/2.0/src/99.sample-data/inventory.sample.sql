@@ -37,19 +37,19 @@ SELECT 'C', 'Customer', finance.get_account_id_by_account_number('10400');
 INSERT INTO inventory.supplier_types(supplier_type_code, supplier_type_name, account_id) 
 SELECT 'S', 'Supplier', finance.get_account_id_by_account_number('20100');
 
-INSERT INTO inventory.suppliers(supplier_code, supplier_name, supplier_type_id, company_name)
-SELECT 'APP', 'Apple', inventory.get_supplier_type_id_by_supplier_type_code('S'),       'Apple' UNION ALL
-SELECT 'MIC', 'Microsoft', inventory.get_supplier_type_id_by_supplier_type_code('S'),   'Microsoft' UNION ALL
-SELECT 'SAM', 'Samsung', inventory.get_supplier_type_id_by_supplier_type_code('S'),     'Samsung' UNION ALL
-SELECT 'ACE', 'Acer', inventory.get_supplier_type_id_by_supplier_type_code('S'),        'Acer' UNION ALL
-SELECT 'DEL', 'Dell', inventory.get_supplier_type_id_by_supplier_type_code('S'),        'Dell' UNION ALL
-SELECT 'IBM', 'IBM', inventory.get_supplier_type_id_by_supplier_type_code('S'),         'IBM' UNION ALL
-SELECT 'MIX', 'MixERP', inventory.get_supplier_type_id_by_supplier_type_code('S'),      'MixERP' UNION ALL
-SELECT 'ITX', 'Intex', inventory.get_supplier_type_id_by_supplier_type_code('S'),       'Intext';
+INSERT INTO inventory.suppliers(supplier_code, supplier_name, supplier_type_id, company_name, account_id)
+SELECT 'APP', 'Apple', inventory.get_supplier_type_id_by_supplier_type_code('S'),       'Apple',        finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'MIC', 'Microsoft', inventory.get_supplier_type_id_by_supplier_type_code('S'),   'Microsoft',    finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'SAM', 'Samsung', inventory.get_supplier_type_id_by_supplier_type_code('S'),     'Samsung',      finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'ACE', 'Acer', inventory.get_supplier_type_id_by_supplier_type_code('S'),        'Acer',         finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'DEL', 'Dell', inventory.get_supplier_type_id_by_supplier_type_code('S'),        'Dell',         finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'IBM', 'IBM', inventory.get_supplier_type_id_by_supplier_type_code('S'),         'IBM',          finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'MIX', 'MixERP', inventory.get_supplier_type_id_by_supplier_type_code('S'),      'MixERP',       finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'ITX', 'Intex', inventory.get_supplier_type_id_by_supplier_type_code('S'),       'Intext',       finance.get_account_id_by_account_number('20100');
 
 
-INSERT INTO inventory.shippers(company_name, account_id)
-SELECT 'Default', finance.get_account_id_by_account_number('20110');
+INSERT INTO inventory.shippers(shipper_name, company_name, account_id)
+SELECT 'Default', 'Default', finance.get_account_id_by_account_number('20110');
 
 
 INSERT INTO inventory.item_groups(item_group_code, item_group_name, sales_account_id, sales_discount_account_id, sales_return_account_id, purchase_account_id, purchase_discount_account_id, inventory_account_id, cost_of_goods_sold_account_id)
@@ -113,4 +113,6 @@ SELECT 'MIX',   'MixERP Community Edition',             inventory.get_item_group
 SELECT 'SGT',   'Samsung Galaxy Tab 10.1',              inventory.get_item_group_id_by_item_group_code('LPT'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('SNG'),       inventory.get_supplier_id_by_supplier_code('SAM'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    300,     450,  inventory.get_unit_id_by_unit_code('PC'), 20;
 
 
+UPDATE inventory.items
+SET photo = '/dashboard/inventory/services/attachments/' || item_code || '.jpg';
 --ROLLBACK TRANSACTION;

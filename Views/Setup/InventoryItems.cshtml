@@ -10,18 +10,19 @@
 
     scrudFactory.title = "Inventory Items";
 
-    scrudFactory.viewAPI = "/api/forms/inventory/items";
-    scrudFactory.viewTableName = "inventory.items";
+    scrudFactory.viewAPI = "/api/views/inventory/item-scrud_view";
+    scrudFactory.viewTableName = "inventory.item-scrud-view";
 
     scrudFactory.formAPI = "/api/forms/inventory/items";
     scrudFactory.formTableName = "inventory.items";
 
-    scrudFactory.excludedColumns = ["audit_user_id", "audit_ts"];
+    scrudFactory.excludedColumns = ["audit_user_id", "audit_ts", "photo"];
 
     scrudFactory.allowDelete = true;
     scrudFactory.allowEdit = true;
 
     scrudFactory.live = "ItemName";
+    scrudFactory.uploadHanlder = "/dashboard/inventory/services/attachments";
 
     //scrudFactory.card = {
     //    header: "",

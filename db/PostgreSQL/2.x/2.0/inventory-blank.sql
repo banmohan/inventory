@@ -44,6 +44,7 @@ CREATE TABLE inventory.suppliers
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128) NULL,   
     company_address_line_2                  national character varying(128) NULL,
@@ -94,6 +95,7 @@ CREATE TABLE inventory.customers
     customer_code                           national character varying(24) NOT NULL,
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
+	account_id								integer NOT NULL REFERENCES finance.accounts,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128) NULL,   
     company_address_line_2                  national character varying(128) NULL,
@@ -249,8 +251,10 @@ CREATE TABLE inventory.counters
 CREATE TABLE inventory.checkouts
 (
     checkout_id                             BIGSERIAL PRIMARY KEY,
+	value_date								date NOT NULL,
+	book_date								date NOT NULL,
+	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
-    transaction_date                        date NOT NULL,
     transaction_type                        national character varying(2) NOT NULL
                                             CHECK(transaction_type IN('IN', 'OUT')),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
@@ -261,8 +265,7 @@ CREATE TABLE inventory.checkouts
     /*LOOKUP FIELDS */    
     cancelled                               boolean NOT NULL DEFAULT(false),
 	cancellation_reason						text,
-    amount                                  decimal(24, 4) NOT NULL CHECK(amount > 0),
-    discount                                decimal(24, 4) NOT NULL DEFAULT(0),
+	shipper_id								integer REFERENCES inventory.shippers,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -273,6 +276,8 @@ CREATE TABLE inventory.checkout_details
 (
     checkout_detail_id                      BIGSERIAL PRIMARY KEY,
     checkout_id                             bigint NOT NULL REFERENCES inventory.checkouts,
+	value_date								date NOT NULL,
+	book_date								date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
@@ -428,6 +433,151 @@ CREATE TABLE inventory.item_variants
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE TABLE inventory.inventory_setup
+(
+	office_id								integer NOT NULL PRIMARY KEY REFERENCES core.offices,
+	inventory_system						national character varying(50) NOT NULL
+											CHECK(inventory_system IN('Periodic', 'Perpetual')),
+	cogs_calculation_method					national character varying(50) NOT NULL
+											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO'))
+);
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.convert_unit.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.convert_unit(from_unit integer, to_unit integer);
+
+CREATE FUNCTION inventory.convert_unit(from_unit integer, to_unit integer)
+RETURNS decimal
+STABLE
+AS
+$$
+    DECLARE _factor decimal;
+BEGIN
+    IF(inventory.get_root_unit_id($1) != inventory.get_root_unit_id($2)) THEN
+        RETURN 0;
+    END IF;
+
+    IF($1 = $2) THEN
+        RETURN 1.00;
+    END IF;
+    
+    IF(inventory.is_parent_unit($1, $2)) THEN
+            WITH RECURSIVE unit_cte(unit_id, value) AS 
+            (
+                SELECT tn.compare_unit_id, tn.value
+                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $1
+
+                UNION ALL
+
+                SELECT 
+                c.compare_unit_id, c.value * p.value
+                FROM unit_cte AS p, 
+                inventory.compound_units AS c 
+                WHERE base_unit_id = p.unit_id
+            )
+        SELECT 1.00/value INTO _factor
+        FROM unit_cte
+        WHERE unit_id=$2;
+    ELSE
+            WITH RECURSIVE unit_cte(unit_id, value) AS 
+            (
+             SELECT tn.compare_unit_id, tn.value
+                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $2
+            UNION ALL
+             SELECT 
+                c.compare_unit_id, c.value * p.value
+                FROM unit_cte AS p, 
+              inventory.compound_units AS c 
+                WHERE base_unit_id = p.unit_id
+            )
+
+        SELECT value INTO _factor
+        FROM unit_cte
+        WHERE unit_id=$1;
+    END IF;
+
+    RETURN _factor;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_supplier_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_account_id_by_supplier_id(_supplier_id integer);
+
+CREATE FUNCTION inventory.get_account_id_by_supplier_id(_supplier_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN
+        inventory.suppliers.account_id
+    FROM inventory.suppliers
+    WHERE inventory.suppliers.supplier_id = _supplier_id
+    AND NOT inventory.suppliers.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_associated_unit_list.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_associated_unit_list(_any_unit_id integer);
+
+CREATE FUNCTION inventory.get_associated_unit_list(_any_unit_id integer)
+RETURNS integer[]
+VOLATILE
+AS
+$$
+    DECLARE root_unit_id integer;
+BEGIN
+    DROP TABLE IF EXISTS temp_unit;
+    CREATE TEMPORARY TABLE IF NOT EXISTS temp_unit(unit_id integer) ON COMMIT DROP; 
+    
+    SELECT inventory.get_root_unit_id(_any_unit_id) INTO root_unit_id;
+    
+    INSERT INTO temp_unit(unit_id) 
+    SELECT root_unit_id
+    WHERE NOT EXISTS
+    (
+        SELECT * FROM temp_unit
+        WHERE temp_unit.unit_id=root_unit_id
+    );
+    
+    WITH RECURSIVE cte(unit_id)
+    AS
+    (
+         SELECT 
+            compare_unit_id
+         FROM 
+            inventory.compound_units
+         WHERE 
+            base_unit_id = root_unit_id
+
+        UNION ALL
+
+         SELECT
+            units.compare_unit_id
+         FROM 
+            inventory.compound_units units
+         INNER JOIN cte 
+         ON cte.unit_id = units.base_unit_id
+    )
+    
+    INSERT INTO temp_unit(unit_id)
+    SELECT cte.unit_id FROM cte;
+    
+    DELETE FROM temp_unit
+    WHERE temp_unit.unit_id IS NULL;
+    
+    RETURN ARRAY(SELECT temp_unit.unit_id FROM temp_unit);
+END
+$$
+LANGUAGE plpgsql;
+
+--SELECT * FROM inventory.get_associated_unit_list(1);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_associated_units.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_associated_units(_any_unit_id integer);
@@ -548,6 +698,64 @@ LANGUAGE plpgsql;
 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_base_quantity_by_unit_name.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, integer);
+
+CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, integer)
+RETURNS decimal
+STABLE
+AS
+$$
+	DECLARE _unit_id integer;
+	DECLARE _root_unit_id integer;
+	DECLARE _factor decimal;
+BEGIN
+    _unit_id := inventory.get_unit_id_by_unit_name($1);
+    _root_unit_id = inventory.get_root_unit_id(_unit_id);
+    _factor = inventory.convert_unit(_unit_id, _root_unit_id);
+
+    RETURN _factor * $2;
+END
+$$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_id(integer, integer);
+
+CREATE FUNCTION inventory.get_base_quantity_by_unit_id(integer, integer)
+RETURNS decimal
+STABLE
+AS
+$$
+	DECLARE _root_unit_id integer;
+	DECLARE _factor decimal;
+BEGIN
+    _root_unit_id = inventory.get_root_unit_id($1);
+    _factor = inventory.convert_unit($1, _root_unit_id);
+
+    RETURN _factor * $2;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_base_unit_id_by_unit_name.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_base_unit_id_by_unit_name(text);
+
+CREATE FUNCTION inventory.get_base_unit_id_by_unit_name(text)
+RETURNS integer
+STABLE
+AS
+$$
+DECLARE _unit_id integer;
+BEGIN
+    _unit_id := inventory.get_unit_id_by_unit_name($1);
+
+    RETURN inventory.get_root_unit_id(_unit_id);
+END
+$$
+LANGUAGE plpgsql;
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_brand_id_by_brand_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_brand_id_by_brand_code(text);
 
@@ -597,6 +805,25 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_inventory_account_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_inventory_account_id(_item_id integer);
+
+CREATE FUNCTION inventory.get_inventory_account_id(_item_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN
+        inventory_account_id
+    FROM inventory.item_groups
+    INNER JOIN inventory.items
+    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+    WHERE inventory.items.item_id = $1;    
+END
+$$
+LANGUAGE plpgsql;
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_group_id_by_item_group_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_item_group_id_by_item_group_code(text);
 
@@ -613,6 +840,21 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_id_by_item_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_item_id_by_item_code(_item_code text);
+
+CREATE FUNCTION inventory.get_item_id_by_item_code(_item_code text)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN item_id
+    FROM inventory.items
+    WHERE item_code = _item_code;
+END
+$$
+LANGUAGE plpgsql;
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_type_id_by_item_type_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_item_type_id_by_item_type_code(text);
 
@@ -627,6 +869,46 @@ BEGIN
 END
 $$
 LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_purchase_account_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_purchase_account_id(_item_id integer);
+
+CREATE FUNCTION inventory.get_purchase_account_id(_item_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN
+        purchase_account_id
+    FROM inventory.item_groups
+    INNER JOIN inventory.items
+    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+    WHERE inventory.items.item_id = $1;    
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_purchase_discount_account_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_purchase_discount_account_id(_item_id integer);
+
+CREATE FUNCTION inventory.get_purchase_discount_account_id(_item_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN
+        purchase_discount_account_id
+    FROM inventory.item_groups
+    INNER JOIN inventory.items
+    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+    WHERE inventory.items.item_id = $1;    
+END
+$$
+LANGUAGE plpgsql;
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_root_unit_id.sql --<--<--
@@ -719,6 +1001,101 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_name.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_unit_id_by_unit_name(_unit_name text);
+
+CREATE FUNCTION inventory.get_unit_id_by_unit_name(_unit_name text)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN unit_id
+    FROM inventory.units
+    WHERE unit_name = _unit_name;
+END
+$$
+LANGUAGE plpgsql;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.is_parent_unit.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.is_parent_unit(parent integer, child integer);
+
+CREATE FUNCTION inventory.is_parent_unit(parent integer, child integer)
+RETURNS boolean
+AS
+$$      
+BEGIN
+    IF $1!=$2 THEN
+        IF EXISTS
+        (
+            WITH RECURSIVE unit_cte(unit_id) AS 
+            (
+             SELECT tn.compare_unit_id
+                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $1
+            UNION ALL
+             SELECT
+                c.compare_unit_id
+                FROM unit_cte AS p, 
+              inventory.compound_units AS c 
+                WHERE base_unit_id = p.unit_id
+            )
+
+            SELECT * FROM unit_cte
+            WHERE unit_id=$2
+        ) THEN
+            RETURN TRUE;
+        END IF;
+    END IF;
+    RETURN false;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.is_periodic_inventory.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.is_periodic_inventory(_office_id integer);
+
+CREATE FUNCTION inventory.is_periodic_inventory(_office_id integer)
+RETURNS boolean
+AS
+$$
+BEGIN
+    IF EXISTS(SELECT * FROM inventory.inventory_setup WHERE inventory_system = 'Periodic' AND office_id = _office_id) THEN
+        RETURN true;
+    END IF;
+
+    RETURN false;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.is_valid_unit_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.is_valid_unit_id(_unit_id integer, _item_id integer);
+
+CREATE FUNCTION inventory.is_valid_unit_id(_unit_id integer, _item_id integer)
+RETURNS boolean
+AS
+$$
+BEGIN
+    IF EXISTS
+    (
+        SELECT 1
+        FROM inventory.items
+        WHERE item_id = $2
+        AND inventory.get_root_unit_id($1) = inventory.get_root_unit_id(unit_id)
+    ) THEN
+        RETURN true;
+    END IF;
+
+    RETURN false;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/03.menus/menus.sql --<--<--
 SELECT * FROM core.create_app('Inventory', 'Inventory', '1.0', 'MixERP Inc.', 'December 1, 2015', 'cart teal', '/dashboard/inventory/home', NULL::text[]);
 
@@ -756,10 +1133,11 @@ SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/invento
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/inventory/reports/inventory-account-statement', 'money', 'Reports');
 
+
 SELECT * FROM auth.create_app_menu_policy
- (
+(
     'Admin', 
-    core.get_office_id_by_office_name('PCP'), 
+    core.get_office_id_by_office_name('Default'), 
     'Inventory',
     '{*}'::text[]
 );
@@ -767,9 +1145,54 @@ SELECT * FROM auth.create_app_menu_policy
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/04.default-values/01.default-values.sql --<--<--
+INSERT INTO inventory.inventory_setup(office_id, inventory_system, cogs_calculation_method)
+SELECT office_id, 'Perpetual', 'FIFO'
+FROM core.offices;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.scrud-views/inventory.item_scrud_view.sql --<--<--
+DROP VIEW IF EXISTS inventory.item_scrud_view;
+
+CREATE VIEW inventory.item_scrud_view
+AS
+SELECT
+    inventory.items.item_id,
+    inventory.items.item_code,
+    inventory.items.item_name,
+    inventory.items.barcode,
+    inventory.items.item_group_id,
+    inventory.item_groups.item_group_name,
+    inventory.item_types.item_type_id,
+    inventory.item_types.item_type_name,
+    inventory.items.brand_id,
+    inventory.brands.brand_name,
+    inventory.items.preferred_supplier_id,
+    inventory.items.unit_id,
+    inventory.units.unit_code,
+    inventory.units.unit_name,
+    inventory.items.hot_item,
+    inventory.items.cost_price,
+    inventory.items.selling_price,
+    inventory.items.maintain_inventory,
+    inventory.items.allow_sales,
+    inventory.items.allow_purchase,
+    inventory.items.photo
+FROM inventory.items
+INNER JOIN inventory.item_groups
+ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+INNER JOIN inventory.item_types
+ON inventory.item_types.item_type_id = inventory.items.item_type_id
+INNER JOIN inventory.brands
+ON inventory.brands.brand_id = inventory.items.brand_id
+INNER JOIN inventory.units
+ON inventory.units.unit_id = inventory.items.unit_id
+WHERE NOT inventory.items.deleted
+AND inventory.items.allow_purchase
+AND inventory.items.maintain_inventory;
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.ownership.sql --<--<--
