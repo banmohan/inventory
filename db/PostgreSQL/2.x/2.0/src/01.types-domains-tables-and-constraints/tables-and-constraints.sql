@@ -247,6 +247,46 @@ CREATE TABLE inventory.counters
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE TABLE inventory.shippers
+(
+    shipper_id                              SERIAL PRIMARY KEY,
+    shipper_code                            national character varying(24) NULL,
+    company_name                            national character varying(128) NOT NULL,
+    shipper_name                            national character varying(150) NULL,
+    po_box                                  national character varying(128) NULL,
+    address_line_1                          national character varying(128) NULL,   
+    address_line_2                          national character varying(128) NULL,
+    street                                  national character varying(50) NULL,
+    city                                    national character varying(50) NULL,
+    state                                   national character varying(50) NULL,
+    country                                 national character varying(50) NULL,
+    phone                                   national character varying(50) NULL,
+    fax                                     national character varying(50) NULL,
+    cell                                    national character varying(50) NULL,
+    email                                   national character varying(128) NULL,
+    url                                     national character varying(50) NULL,
+    contact_person                          national character varying(50) NULL,
+    contact_po_box                          national character varying(128) NULL,
+    contact_address_line_1                  national character varying(128) NULL,   
+    contact_address_line_2                  national character varying(128) NULL,
+    contact_street                          national character varying(50) NULL,
+    contact_city                            national character varying(50) NULL,
+    contact_state                           national character varying(50) NULL,
+    contact_country                         national character varying(50) NULL,
+    contact_email                           national character varying(128) NULL,
+    contact_phone                           national character varying(50) NULL,
+    contact_cell                            national character varying(50) NULL,
+    factory_address                         national character varying(250) NULL,
+    pan_number                              national character varying(50) NULL,
+    sst_number                              national character varying(50) NULL,
+    cst_number                              national character varying(50) NULL,
+    account_id                              bigint NOT NULL REFERENCES finance.accounts(account_id),
+    audit_user_id                           integer REFERENCES account.users,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+	deleted									boolean DEFAULT(false)
+);
+
+
 CREATE TABLE inventory.checkouts
 (
     checkout_id                             BIGSERIAL PRIMARY KEY,
@@ -360,45 +400,6 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
     base_quantity                           public.integer_strict2 NOT NULL
 );
 
-
-CREATE TABLE inventory.shippers
-(
-    shipper_id                              SERIAL PRIMARY KEY,
-    shipper_code                            national character varying(24) NULL,
-    company_name                            national character varying(128) NOT NULL,
-    shipper_name                            national character varying(150) NULL,
-    po_box                                  national character varying(128) NULL,
-    address_line_1                          national character varying(128) NULL,   
-    address_line_2                          national character varying(128) NULL,
-    street                                  national character varying(50) NULL,
-    city                                    national character varying(50) NULL,
-    state                                   national character varying(50) NULL,
-    country                                 national character varying(50) NULL,
-    phone                                   national character varying(50) NULL,
-    fax                                     national character varying(50) NULL,
-    cell                                    national character varying(50) NULL,
-    email                                   national character varying(128) NULL,
-    url                                     national character varying(50) NULL,
-    contact_person                          national character varying(50) NULL,
-    contact_po_box                          national character varying(128) NULL,
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
-    contact_street                          national character varying(50) NULL,
-    contact_city                            national character varying(50) NULL,
-    contact_state                           national character varying(50) NULL,
-    contact_country                         national character varying(50) NULL,
-    contact_email                           national character varying(128) NULL,
-    contact_phone                           national character varying(50) NULL,
-    contact_cell                            national character varying(50) NULL,
-    factory_address                         national character varying(250) NULL,
-    pan_number                              national character varying(50) NULL,
-    sst_number                              national character varying(50) NULL,
-    cst_number                              national character varying(50) NULL,
-    account_id                              bigint NOT NULL REFERENCES finance.accounts(account_id),
-    audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
-	deleted									boolean DEFAULT(false)
-);
 
 CREATE TABLE inventory.attributes
 (
