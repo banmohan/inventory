@@ -1,0 +1,35 @@
+﻿@model long
+
+@{
+    ViewBag.Title = "Checklist";
+    Layout = ViewBag.InventoryLayoutPath;
+}
+<style>
+    iframe {
+        display: block;
+        margin-top: 1em;
+        width: 800px;
+        height: 800px;
+        border: 1px solid #ccc;
+    }
+</style>
+<script src="/Scripts/frapid/utilities/form.js"></script>
+<div class="ui attached page segment" style="min-height: 100%; padding: 3em;">
+    <div class="ui huge header">Inventory Adjustments</div>
+    <div class="ui divider"></div>
+
+    <div class="ui positive message">The transaction was posted successfully.</div>
+
+    <a href="/dashboard/inventory/tasks/inventory-adjustments" class="ui green button">
+        View Adjustments
+    </a>
+    <a href="/dashboard/inventory/tasks/inventory-adjustments/new" class="ui red button">
+        Add a New Adjustment
+    </a>
+    <iframe src="/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Adjustment.xml?transaction_master_id=@Model"></iframe>
+</div>
+
+
+<script>
+    window.overridePath = "/dashboard/inventory/tasks/inventory-transfers";
+</script>

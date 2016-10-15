@@ -2,11 +2,11 @@
 
 namespace MixERP.Inventory.Controllers
 {
-    public class InventoryBackendController:DashboardController
+    public class InventoryBackendController : DashboardController
     {
         public InventoryBackendController()
         {
-            ViewBag.InventoryLayoutPath = this.GetLayoutPath();
+            this.ViewBag.InventoryLayoutPath = this.GetLayoutPath();
         }
 
         private string GetLayoutPath()

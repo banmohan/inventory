@@ -294,11 +294,8 @@ CREATE TABLE inventory.checkouts
 	book_date								date NOT NULL,
 	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
-    transaction_type                        national character varying(2) NOT NULL
-                                            CHECK(transaction_type IN('IN', 'OUT')),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
     posted_by                               integer NOT NULL REFERENCES account.users,
-    store_id                                integer NOT NULL REFERENCES inventory.stores,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
     /*LOOKUP FIELDS */    
@@ -315,8 +312,11 @@ CREATE TABLE inventory.checkout_details
 (
     checkout_detail_id                      BIGSERIAL PRIMARY KEY,
     checkout_id                             bigint NOT NULL REFERENCES inventory.checkouts,
+    store_id                                integer NOT NULL REFERENCES inventory.stores,
 	value_date								date NOT NULL,
 	book_date								date NOT NULL,
+    transaction_type                        national character varying(2) NOT NULL
+                                            CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
@@ -325,7 +325,8 @@ CREATE TABLE inventory.checkout_details
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.integer_strict2 NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           numeric NOT NULL
+    base_quantity                           numeric NOT NULL,
+    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW())
 );
 
 CREATE TABLE inventory.inventory_transfer_requests
@@ -440,4 +441,23 @@ CREATE TABLE inventory.inventory_setup
 											CHECK(inventory_system IN('Periodic', 'Perpetual')),
 	cogs_calculation_method					national character varying(50) NOT NULL
 											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO'))
+);
+
+CREATE TYPE inventory.transfer_type
+AS
+(
+    tran_type       national character varying(2),
+    store_name      national character varying(50),
+    item_code       national character varying(12),
+    unit_name       national character varying(50),
+    quantity        integer_strict
+);
+
+CREATE TYPE inventory.adjustment_type 
+AS
+(
+    tran_type       national character varying(2),
+    item_code       national character varying(12),
+    unit_name       national character varying(50),
+    quantity        integer_strict
 );

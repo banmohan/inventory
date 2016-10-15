@@ -16,6 +16,10 @@
                 <input id="ValueDateTextBox" class="date" type="date">
             </div>
             <div class="small field">
+                <label for="BookDateTextBox">Book Date</label>
+                <input id="BookDateTextBox" class="date" type="date">
+            </div>
+            <div class="small field">
                 <label for="ReferenceNumberInputText">Ref#</label>
                 <input id="ReferenceNumberInputText" maxlength="24" type="text">
             </div>
@@ -82,39 +86,16 @@
             <label for="StatementReferenceTextArea">Statement Reference</label>
             <textarea id="StatementReferenceTextArea" rows="4"></textarea>
         </div>
-        <button id="SaveButton" class="ui small green button" type="button">
-            Save
-        </button>
-        <a href="/dashboard/inventory/tasks/inventory-transfer" class="ui small red button">Back</a>
+        <div class="ui buttons">
+            <button id="SaveButton" class="ui green button" type="button">
+                Save
+            </button>
+            <a href="/dashboard/inventory/tasks/inventory-transfers" class="ui blue button">Back</a>            
+        </div>
     </div>
 
     <input id="ItemIdHidden" value="" type="hidden">
 </div>
-
-<script>
-    function displayFieldBinder(el, url) {
-        function request() {
-            return window.getAjaxRequest(url);
-        };
-
-        var ajax = request();
-
-        ajax.success(function (response) {
-            var options = "<option>Select</option>";
-
-            $.each(response, function () {
-                var option = "<option value='{key}'>{value}</option>";
-                option = option.replace("{key}", this.Key);
-                option = option.replace("{value}", this.Value);
-
-                options += option;
-            });
-
-            el.html(options);
-        });
-    };
-
-</script>
 
 <script>
     var addButton = $("#AddButton");
@@ -124,14 +105,11 @@
     var itemCodeInputText = $("#ItemCodeInputText");
     var itemSelect = $("#ItemSelect");
     var quantityInputText = $("#QuantityInputText");
-    var referenceNumberInputText = $("#ReferenceNumberInputText");
     var saveButton = $("#SaveButton");
-    var statementReferenceTextArea = $("#StatementReferenceTextArea");
     var storeSelect = $("#StoreSelect");
     var transactionTypeSelect = $("#TransactionTypeSelect");
     var transferGridView = $("#TransferGridView");
     var unitSelect = $("#UnitSelect");
-    var valueDateTextBox = $("#ValueDateTextBox");
     var storeServiceUrl = "/api/forms/inventory/stores/display-fields";
 
     var url = "";
@@ -157,43 +135,43 @@
         var quantity = parseInt(quantityInputText.val() || 0);
 
         if (transactionTypeSelect.length) {
-            if (isNullOrWhiteSpace(tranType) || tranType === "Select") {
-                makeDirty(transactionTypeSelect);
+            if (window.isNullOrWhiteSpace(tranType) || tranType === "Select") {
+                window.makeDirty(transactionTypeSelect);
                 return;
             };
         };
 
-        if (isNullOrWhiteSpace(storeName) || storeName === "Select") {
-            makeDirty(storeSelect);
+        if (window.isNullOrWhiteSpace(storeName) || storeName === "Select") {
+            window.makeDirty(storeSelect);
             return;
         };
 
-        if (isNullOrWhiteSpace(itemCode)) {
-            makeDirty(itemCodeInputText);
+        if (window.isNullOrWhiteSpace(itemCode)) {
+            window.makeDirty(itemCodeInputText);
             return;
         };
 
-        if (isNullOrWhiteSpace(itemName) || itemName === "Select") {
-            makeDirty(itemSelect);
+        if (window.isNullOrWhiteSpace(itemName) || itemName === "Select") {
+            window.makeDirty(itemSelect);
             return;
         };
 
-        if (isNullOrWhiteSpace(unitName) || unitName === "Select") {
-            makeDirty(unitSelect);
+        if (window.isNullOrWhiteSpace(unitName) || unitName === "Select") {
+            window.makeDirty(unitSelect);
             return;
         };
 
         if (quantity <= 0) {
-            makeDirty(quantityInputText);
+            window.makeDirty(quantityInputText);
             return;
         };
 
-        removeDirty(transactionTypeSelect);
-        removeDirty(storeSelect);
-        removeDirty(itemCodeInputText);
-        removeDirty(itemSelect);
-        removeDirty(unitSelect);
-        removeDirty(quantityInputText);
+        window.removeDirty(transactionTypeSelect);
+        window.removeDirty(storeSelect);
+        window.removeDirty(itemCodeInputText);
+        window.removeDirty(itemSelect);
+        window.removeDirty(unitSelect);
+        window.removeDirty(quantityInputText);
 
         appendToTable(tranType, storeName, itemCode, itemName, unitName, quantity);
         itemCodeInputText.val("");
@@ -216,22 +194,22 @@
         if (transactionTypeSelect.length) {
             rows.each(function () {
                 var row = $(this);
-                if (getColumnText(row, 0) !== tranType &&
-                    getColumnText(row, 1) === storeName &&
-                    getColumnText(row, 2) === itemCode) {
+                if (window.getColumnText(row, 0) !== tranType &&
+                    window.getColumnText(row, 1) === storeName &&
+                    window.getColumnText(row, 2) === itemCode) {
                     $.notify("Duplicate entry");
 
-                    makeDirty(itemSelect);
+                    window.makeDirty(itemSelect);
                     match = true;
                 };
 
-                if (getColumnText(row, 0) === tranType &&
-                    getColumnText(row, 1) === storeName &&
-                    getColumnText(row, 2) === itemCode &&
-                    getColumnText(row, 4) === unitName) {
-                    setColumnText(row, 5, getFormattedNumber(parseFloat2(getColumnText(row, 5)) + quantity));
+                if (window.getColumnText(row, 0) === tranType &&
+                    window.getColumnText(row, 1) === storeName &&
+                    window.getColumnText(row, 2) === itemCode &&
+                    window.getColumnText(row, 4) === unitName) {
+                    window.setColumnText(row, 5, window.getFormattedNumber(window.parseFloat2(window.getColumnText(row, 5)) + quantity));
 
-                    addDanger(row);
+                    window.addDanger(row);
                     match = true;
                     return;
                 }
@@ -248,20 +226,20 @@
 
         rows.each(function () {
             var row = $(this);
-            if (getColumnText(row, 0) === storeName &&
-                getColumnText(row, 1) === itemCode) {
+            if (window.getColumnText(row, 0) === storeName &&
+                window.getColumnText(row, 1) === itemCode) {
                 $.notify("Duplicate Entry");
 
-                makeDirty(itemSelect);
+                window.makeDirty(itemSelect);
                 match = true;
             };
 
-            if (getColumnText(row, 0) === storeName &&
-                getColumnText(row, 1) === itemCode &&
-                getColumnText(row, 3) === unitName) {
-                setColumnText(row, 4, getFormattedNumber(parseFloat2(getColumnText(row, 4)) + quantity));
+            if (window.getColumnText(row, 0) === storeName &&
+                window.getColumnText(row, 1) === itemCode &&
+                window.getColumnText(row, 3) === unitName) {
+                window.setColumnText(row, 4, window.getFormattedNumber(window.parseFloat2(window.getColumnText(row, 4)) + quantity));
 
-                addDanger(row);
+                window.addDanger(row);
                 match = true;
                 return;
             }
@@ -275,6 +253,73 @@
     };
 
     saveButton.click(function () {
+        function request(model) {
+            var url = "/dashboard/inventory/tasks/inventory-transfers";
+            var data = JSON.stringify(model);
+            return window.getAjaxRequest(url, "POST", data);
+        };
+
+        function getModel() {
+            function getDetails() {
+                var model = [];
+                var rows = $("#TransferGridView tbody tr:not(:last-child)");
+
+                $.each(rows, function() {
+                    var row = $(this);
+                    var transferType = row.find("td:nth-child(1)").html();
+                    var storeName = row.find("td:nth-child(2)").html();
+                    var itemCode = row.find("td:nth-child(3)").html();
+                    var itemName = row.find("td:nth-child(4)").html();
+                    var unitName = row.find("td:nth-child(5)").html();
+                    var quantity = window.parseFloat2(row.find("td:nth-child(6)").html());
+
+                    model.push({
+                        ItemCode: itemCode,
+                        ItemName: itemName,
+                        Quantity: quantity,
+                        StoreName: storeName,
+                        TransferTypeEnum: transferType,
+                        UnitName: unitName
+                    });
+                });
+
+                return model;
+            };
+
+            var valueDate = window.parseLocalizedDate($("#ValueDateTextBox").val());
+            var bookDate = window.parseLocalizedDate($("#BookDateTextBox").val());
+            var referenceNumber = $("#ReferenceNumberInputText").val();
+            var statementReference = $("#StatementReferenceTextArea").val();
+            var details = getDetails();
+
+            if (!window.isDate(valueDate)) {
+                window.makeDirty($("#ValueDateTextBox"));
+                errorLabel.html("Invalid date!");
+                return false;
+            };
+
+            if (!window.isDate(bookDate)) {
+                window.makeDirty($("#BookDateTextBox"));
+                errorLabel.html("Invalid date!");
+                return false;
+            };
+
+            if (!details || details.length === 0) {
+                errorLabel.html("Nothing to transfer!");
+                return false;
+            };
+
+            return {
+                ValueDate: valueDate,
+                BookDate: bookDate,
+                ReferenceNumber: referenceNumber,
+                StatementReference: statementReference,
+                Details: details
+            };
+        };
+
+        
+
         errorLabel.html("");
 
         if (transferGridView.find("tr").length === 2) {
@@ -282,79 +327,18 @@
             return false;
         };
 
-        var tableData = tableToJSON(transferGridView);
+        var model = getModel();
+        var ajax = request(model);
 
-        if (Validate(tableData)) {
-            Callback();
-            return true;
-        };
+        ajax.success(function(response) {
+            var url = "/dashboard/inventory/tasks/transfers/checklist/" + response;
+            document.location = url;
+        });
 
-        return false;
+        ajax.fail(function (xhr) {
+            window.logAjaxErrorMessage(xhr);
+        });
     });
-
-    function Callback() {
-        if (typeof StockAdjustmentFactory_FormvView_SaveButton_Callback === "function") {
-            StockAdjustmentFactory_FormvView_SaveButton_Callback();
-        };
-    };
-
-    function Validate(tableData) {
-        var table = JSON.parse(tableData);
-
-        var model = function (itemName, unitName, dr, cr) {
-            this.item = itemName;
-            this.unit = unitName;
-            this.debit = dr;
-            this.credit = cr;
-        };
-
-        var models = [];
-        var debit;
-        var credit;
-        var i;
-
-        for (i = 0; i < table.length; i++) {
-            debit = parseInt2(GetDebit(table, i));
-            credit = parseInt2(GetCredit(table, i));
-
-            var item = new model(table[i][2], table[i][4], debit, credit);
-            var index = ItemIndex(models, item);
-
-            if (index === -1) {
-                models.push(item);
-            }
-            else {
-                models[index].debit += debit;
-                models[index].credit += credit;
-            };
-        };
-
-        for (i = 0; i < models.length; i++) {
-            if (models[i]["debit"] !== models[i]["credit"]) {
-                $.notify("Referencing sides are not equal");
-                return false;
-            };
-        };
-
-        return true;
-    };
-
-    function ItemIndex(models, item) {
-        for (j = 0; j < models.length; j++) {
-            if ((models[j]["item"] === item["item"])) {
-                return j;
-            };
-        };
-        return -1;
-    };
-
-    function GetDebit(table, index) {
-        return table[index][0] === "Dr" ? table[index][5] : 0;
-    };
-
-    function GetCredit(table, index) {
-        return table[index][0] === "Cr" ? table[index][5] : 0;
-    };
 
     itemSelect.change(function () {
         itemCodeInputText.val(itemSelect.getSelectedValue());
@@ -367,13 +351,13 @@
     });
 
     itemCodeInputText.blur(function () {
-        if (!isNullOrWhiteSpace(itemCodeInputText.val())) {
+        if (!window.isNullOrWhiteSpace(itemCodeInputText.val())) {
             itemSelect.val(itemCodeInputText.val());
         };
     });
 
     function loadStores() {
-        displayFieldBinder(storeSelect, "/api/forms/inventory/stores/display-fields");
+        window.displayFieldBinder(storeSelect, "/api/forms/inventory/stores/display-fields");
     };
 
 
@@ -459,7 +443,7 @@
     });
 
     //$("select").dropdown();
-    window.overridePath = "/dashboard/inventory/tasks/inventory-transfer";
+    window.overridePath = "/dashboard/inventory/tasks/inventory-transfers";
 
     var visible = false;
 

@@ -43,6 +43,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Frapid.ApplicationState, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Frapid.ApplicationState.dll</HintPath>
+    </Reference>
     <Reference Include="Frapid.Areas, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\Frapid.Areas.dll</HintPath>
@@ -84,6 +88,17 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MixERP.Finance">
+      <HintPath>..\..\bin\MixERP.Finance.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\Npgsql.2.2.6\lib\net45\Mono.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Npgsql, Version=2.2.6.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>packages\Npgsql.2.2.6\lib\net45\Npgsql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
       <Private>True</Private>
@@ -154,15 +169,26 @@
     <Compile Include="Controllers\Backend\Setup\SupplierTypeController.cs" />
     <Compile Include="Controllers\Backend\Setup\UnitsOfMeasureController.cs" />
     <Compile Include="Controllers\Backend\Setup\VariantController.cs" />
-    <Compile Include="Controllers\Backend\Tasks\InventoryAdjustmentController.cs" />
-    <Compile Include="Controllers\Backend\Tasks\InventoryTransferController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\AdjustmentVerificationController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\AdjustmentController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\TransferController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\TransferVerificationController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
     <Compile Include="Controllers\Services\InventoryBackendController.cs" />
     <Compile Include="DAL\Backend\Service\Items.cs" />
     <Compile Include="DAL\Backend\Service\Units.cs" />
+    <Compile Include="DAL\Backend\Tasks\InventoryAdjustments.cs" />
+    <Compile Include="DAL\Backend\Tasks\InventoryTransfers.cs" />
+    <Compile Include="DAL\Backend\Tasks\Stores.cs" />
     <Compile Include="DTO\AssociatedUnit.cs" />
+    <Compile Include="DTO\ClosingInventory.cs" />
     <Compile Include="DTO\Item.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AdjustmentType.cs" />
+    <Compile Include="ViewModels\InventoryAdjustment.cs" />
+    <Compile Include="ViewModels\InventoryTransfer.cs" />
+    <Compile Include="ViewModels\TransferType.cs" />
+    <Compile Include="ViewModels\TransferTypeEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -190,10 +216,15 @@
     <Content Include="Views\Setup\Counters.cshtml" />
     <Content Include="Views\Setup\SupplierTypes.cshtml" />
     <Content Include="Views\Setup\Customers.cshtml" />
-    <Content Include="Views\Tasks\InventoryTrasnfer\Index.cshtml" />
-    <Content Include="Views\Tasks\InventoryTrasnfer\New.cshtml" />
-    <Content Include="Views\Tasks\InventoryAdjustment\Index.cshtml" />
+    <Content Include="Views\Tasks\Transfer\Index.cshtml" />
+    <Content Include="Views\Tasks\Transfer\New.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\Index.cshtml" />
     <Content Include="Views\Layout.cshtml" />
+    <Content Include="Views\Tasks\Transfer\Checklist.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\New.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\Checklist.cshtml" />
+    <Content Include="Views\Tasks\Transfer\Verification.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\Verification.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -203,7 +234,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

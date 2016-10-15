@@ -295,11 +295,8 @@ CREATE TABLE inventory.checkouts
 	book_date								date NOT NULL,
 	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
-    transaction_type                        national character varying(2) NOT NULL
-                                            CHECK(transaction_type IN('IN', 'OUT')),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
     posted_by                               integer NOT NULL REFERENCES account.users,
-    store_id                                integer NOT NULL REFERENCES inventory.stores,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
     /*LOOKUP FIELDS */    
@@ -316,8 +313,11 @@ CREATE TABLE inventory.checkout_details
 (
     checkout_detail_id                      BIGSERIAL PRIMARY KEY,
     checkout_id                             bigint NOT NULL REFERENCES inventory.checkouts,
+    store_id                                integer NOT NULL REFERENCES inventory.stores,
 	value_date								date NOT NULL,
 	book_date								date NOT NULL,
+    transaction_type                        national character varying(2) NOT NULL
+                                            CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
@@ -502,6 +502,110 @@ END
 $$
 LANGUAGE plpgsql;
 
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.count_item_in_stock.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.count_item_in_stock(_item_id integer, _unit_id integer, _store_id integer);
+
+CREATE FUNCTION inventory.count_item_in_stock(_item_id integer, _unit_id integer, _store_id integer)
+RETURNS decimal
+STABLE
+AS
+$$
+    DECLARE _debit decimal;
+    DECLARE _credit decimal;
+    DECLARE _balance decimal;
+BEGIN
+
+    _debit := inventory.count_purchases($1, $2, $3);
+    _credit := inventory.count_sales($1, $2, $3);
+
+    _balance:= _debit - _credit;    
+    return _balance;  
+END
+$$
+LANGUAGE plpgsql;
+
+
+SELECT * FROM inventory.count_item_in_stock(1, 1, 1);
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.count_purchases.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer);
+
+CREATE FUNCTION inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer)
+RETURNS decimal
+STABLE
+AS
+$$
+    DECLARE _base_unit_id integer;
+    DECLARE _debit decimal;
+    DECLARE _factor decimal;
+BEGIN
+    --Get the base item unit
+    SELECT 
+        inventory.get_root_unit_id(inventory.items.unit_id) 
+    INTO _base_unit_id
+    FROM inventory.items
+    WHERE inventory.items.item_id=$1;
+
+    SELECT
+        COALESCE(SUM(base_quantity), 0)
+    INTO _debit
+    FROM inventory.checkout_details
+    INNER JOIN inventory.checkouts
+    ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
+    INNER JOIN finance.transaction_master
+    ON inventory.checkouts.transaction_master_id = finance.transaction_master.transaction_master_id
+    WHERE finance.transaction_master.verification_status_id > 0
+    AND inventory.checkout_details.item_id=$1
+    AND inventory.checkout_details.store_id=$3
+    AND inventory.checkout_details.tran_type='Dr';
+
+    _factor = inventory.convert_unit(_base_unit_id, $2);    
+    RETURN _debit * _factor;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.count_sales.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer);
+CREATE FUNCTION inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer)
+RETURNS decimal
+STABLE
+AS
+$$
+        DECLARE _base_unit_id integer;
+        DECLARE _credit decimal;
+        DECLARE _factor decimal;
+BEGIN
+    --Get the base item unit
+    SELECT 
+        inventory.get_root_unit_id(inventory.items.unit_id) 
+    INTO _base_unit_id
+    FROM inventory.items
+    WHERE inventory.items.item_id=$1;
+
+    SELECT 
+        COALESCE(SUM(base_quantity), 0)
+    INTO _credit
+    FROM inventory.checkout_details
+    INNER JOIN inventory.checkouts
+    ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
+    INNER JOIN finance.transaction_master
+    ON inventory.checkouts.transaction_master_id = finance.transaction_master.transaction_master_id
+    WHERE finance.transaction_master.verification_status_id > 0
+    AND inventory.checkout_details.item_id=$1
+    AND inventory.checkout_details.store_id=$3
+    AND inventory.checkout_details.tran_type='Cr';
+
+    _factor = inventory.convert_unit(_base_unit_id, $2);
+    RETURN _credit * _factor;
+END
+$$
+LANGUAGE plpgsql;
 
 
 

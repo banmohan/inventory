@@ -5,10 +5,12 @@
     ViewBag.Title = "Inventory";
     Layout = ViewBag.Layout;
 }
+
 <div class="inventory layout container">
     @RenderBody()
 </div>
 
 <script>
     loadDatepicker();
+    setNumberFormat();
 </script>

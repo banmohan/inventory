@@ -1,0 +1,274 @@
+﻿@using Frapid.ApplicationState.Cache
+@model dynamic
+
+@{
+    ViewBag.Title = "Inventory";
+    Layout = ViewBag.InventoryLayoutPath;
+}
+<div class="ui attached segment" style="min-height: 100%;padding:3em;">
+    <div class="">
+        <div class="ui huge header">Inventory Adjustments</div>
+
+        <div class="ui form segment">
+            <div class="fields">
+                <div class="field">
+                    <label for="ValueDateInputText">Value Date</label>
+                    <input id="ValueDateInputText" class="date" type="text" />
+                </div>
+                <div class="field">
+                    <label for="BookDateInputText">Book Date</label>
+                    <input id="BookDateInputText" class="date" type="text" />
+                </div>
+                <div class="field">
+                    <label for="ReferenceNumberInputText">Reference Number</label>
+                    <input id="ReferenceNumberInputText" type="text">
+                </div>
+                <div class="three wide field">
+                    <label for="StoreSelect">Select Store</label>
+                    <select id="StoreSelect" class="ui search dropdown"></select>
+                    <input id="StoreHidden" type="hidden">
+                </div>
+                <div class="field">
+                    <label for="ShowButton">Show Items</label>
+                    <input value="Show" id="ShowButton" class="ui small positive button" type="submit">
+                </div>
+            </div>
+        </div>
+        <table id="ClosingInventoryGrid" class="ui collapsing table form segment">
+            <thead>
+                <tr>
+                    <th>Item Id</th>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Unit Id</th>
+                    <th>Unit Name</th>
+                    <th>Quantity</th>
+                    <th>Actual</th>
+                    <th>Difference</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="ErrorDiv" class="big error vpad16"></div>
+        <div class="ui form" style="width: 300px;">
+            <div class="field">
+                <label for="StatementReferenceTextArea">Statement Reference</label>
+                <textarea id="StatementReferenceTextArea" rows="4"></textarea>
+            </div>
+            <div id="ErrorLabel" class="big error vpad16"></div>
+            <div class="ui buttons">
+                <button id="SaveButton" class="ui green button" type="button">
+                    Save
+                </button>
+                <a href="/dashboard/inventory/tasks/inventory-adjustments" class="ui blue button">Back</a>
+            </div>
+
+        </div>
+        <script>
+            var showButotn = $("#ShowButton");
+            var storeHidden = $("#StoreHidden");
+            var storeSelect = $("#StoreSelect");
+            var closingInventoryGrid = $("#ClosingInventoryGrid");
+            var actualInputText = $(".actual");
+            var differenceInputText = $(".difference");
+            var saveButton = $("#SaveButton");
+            var referenceNumberInputText = $("#ReferenceNumberInputText");
+            var statementReferenceTextArea = $("#StatementReferenceTextArea");
+            var valueDateInputText = $("#ValueDateInputText");
+            var bookDateInputText = $("#BookDateInputText");
+            var errorLabel = $("#ErrorLabel");
+
+            $(".dropdown").dropdown();
+
+            function loadStores() {
+                window.displayFieldBinder($("#StoreSelect"), "/api/forms/inventory/stores/display-fields", true);
+            };
+
+            loadStores();
+
+            function displayClosingInventory(model) {
+                function getCell(text) {
+                    var cell = $("<td />");
+                    cell.html(text);
+
+                    return cell;
+                };
+
+                var tabIndex = 0;
+                var totalRows = model.length;
+
+                $.each(model, function () {
+                    var row = $("<tr />");
+                    tabIndex++;
+
+                    row.append(getCell(this.ItemId));
+                    row.append(getCell(this.ItemCode));
+                    row.append(getCell(this.ItemName));
+                    row.append(getCell(this.UnitId));
+                    row.append(getCell(this.UnitName));
+                    row.append(getCell(this.Quantity));
+
+                    row.append(getCell("<input type='text' tabindex='" + tabIndex + "' class='integer actual' />"));
+                    row.append(getCell("<input type='text' tabindex='" + (tabIndex + totalRows) + "' class='integer difference' />"));
+
+
+                    closingInventoryGrid.append(row);
+                });
+            };
+
+            function initializeCalculator() {
+                $("input.actual").blur(function () {
+                    var quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
+                    var actual = ($(this).val());
+
+                    if (window.isNullOrWhiteSpace(actual)) {
+                        $(this).val(quantity);
+                        actual = quantity;
+                    }
+
+                    if (window.parseInt2(actual) > quantity) {
+                        window.makeDirty($(this).parent());
+                        return;
+                    };
+
+                    window.removeDirty($(this).parent());
+
+                    $(this).parent().parent().find("td:nth-last-child(1) input").val(quantity - actual);
+                });
+
+                $("input.difference").blur(function () {
+                    var quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
+                    var difference = window.parseInt2($(this).val());
+
+                    if (difference > quantity) {
+                        window.makeDirty($(this).parent());
+                        return;
+                    };
+
+                    window.removeDirty($(this).parent());
+
+                    $(this).parent().parent().find("td:nth-last-child(2) input").val(quantity - difference);
+                });
+            };
+
+            $("#ShowButton").unbind("click").bind("click", function () {
+                function request(storeId) {
+                    var url = "/dashboard/inventory/tasks/inventory-adjustments/closing/{storeId}";
+                    url = url.replace("{storeId}", storeId);
+                    return window.getAjaxRequest(url);
+                };
+
+                var storeId = parseInt(storeSelect.val());
+
+                if (!storeId) {
+                    window.displayMessage("Please select a store!");
+                    return;
+                };
+
+                var ajax = request(storeId);
+
+                ajax.success(function (response) {
+                    displayClosingInventory(response);
+                    initializeCalculator();
+                });
+
+                ajax.fail(function (xhr) {
+                    alert(JSON.stringify(xhr));
+                });
+            });
+        </script>
+        <script type="text/javascript">
+            saveButton.click(function () {
+                function request(model) {
+                    var url = "/dashboard/inventory/tasks/inventory-adjustments";
+                    var data = JSON.stringify(model);
+
+                    alert(data);
+
+                    return window.getAjaxRequest(url, "POST", data);
+                };
+
+                function getModel() {
+                    function getDetails() {
+                        var model = [];
+
+                        closingInventoryGrid.find("tbody tr").each(function () {
+                            var itemCode = $(this).find("td:nth-child(2)").html();
+                            var quantity = window.parseInt2($(this).find("td:nth-child(8)").find("input").val());
+                            var unitName = $(this).find("td:nth-child(5)").html();
+
+                            if (quantity) {
+                                model.push(
+                                    {
+                                        TransactionType: "Cr",
+                                        ItemCode: itemCode,
+                                        Quantity: quantity,
+                                        UnitName: unitName
+                                    }
+                                );
+                            };
+                        });
+
+                        return model;
+                    };
+
+                    var storeId = parseInt(storeSelect.val());
+                    var valueDate = window.parseLocalizedDate(valueDateInputText.val());
+                    var bookDate = window.parseLocalizedDate(bookDateInputText.val());
+                    var referenceNumber = referenceNumberInputText.val();
+                    var statementReference = statementReferenceTextArea.val();
+
+                    if (!storeId) {
+                        window.makeDirty(storeSelect);
+                        errorLabel.html("Invalid store!");
+                        return null;
+                    };
+
+                    if (!window.isDate(valueDate)) {
+                        window.makeDirty(valueDateInputText);
+                        errorLabel.html("Invalid date!");
+                        return null;
+                    };
+
+                    if (!window.isDate(bookDate)) {
+                        window.makeDirty(bookDateInputText);
+                        errorLabel.html("Invalid date!");
+                        return null;
+                    };
+
+
+                    return {
+                        StoreId: storeId,
+                        ValueDate: valueDate,
+                        BookDate: bookDate,
+                        ReferenceNumber: referenceNumber,
+                        StatementReference: statementReference,
+                        Details: getDetails()
+                    };
+                };
+
+                var model = getModel();
+                if (!model) {
+                    return;
+                };
+
+                var ajax = request(model);
+
+                ajax.success(function(response) {
+                    var tranId = response;
+
+                    if (tranId) {
+                        window.location = "/dashboard/inventory/tasks/adjustments/checklist/" + tranId;
+                    };
+                });
+
+                ajax.fail(function (xhr) {
+                    alert(JSON.stringify(xhr));
+                });
+            });
+
+            window.overridePath = "/dashboard/inventory/tasks/inventory-adjustments";
+        </script>
+
+    </div>
+</div>

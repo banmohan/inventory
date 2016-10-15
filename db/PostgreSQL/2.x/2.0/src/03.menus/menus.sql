@@ -1,14 +1,33 @@
-﻿SELECT * FROM core.create_app('Inventory', 'Inventory', '1.0', 'MixERP Inc.', 'December 1, 2015', 'cart teal', '/dashboard/inventory/home', NULL::text[]);
+﻿DELETE FROM auth.menu_access_policy
+WHERE menu_id IN
+(
+    SELECT menu_id FROM core.menus
+    WHERE app_name = 'Inventory'
+);
+
+DELETE FROM auth.group_menu_access_policy
+WHERE menu_id IN
+(
+    SELECT menu_id FROM core.menus
+    WHERE app_name = 'Inventory'
+);
+
+DELETE FROM core.menus
+WHERE app_name = 'Inventory';
+
+
+SELECT * FROM core.create_app('Inventory', 'Inventory', '1.0', 'MixERP Inc.', 'December 1, 2015', 'cart teal', '/dashboard/inventory/tasks/inventory-transfers', NULL::text[]);
 
 SELECT * FROM core.create_menu('Inventory', 'Tasks', '', 'lightning', '');
-SELECT * FROM core.create_menu('Inventory', 'Home', '/dashboard/inventory/home', 'user', 'Tasks');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer', '/dashboard/inventory/tasks/inventory-transfer', 'user', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfers', '/dashboard/inventory/tasks/inventory-transfers', 'user', 'Tasks');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Adjustments', '/dashboard/inventory/tasks/inventory-adjustments', 'ticket', 'Tasks');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Request', '/dashboard/inventory/tasks/inventory-transfer/request', 'food', 'Tasks');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Authorization', '/dashboard/inventory/tasks/inventory-transfer/authorization', 'keyboard', 'Tasks');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Delivery', '/dashboard/inventory/tasks/inventory-transfer/delivery', 'users', 'Tasks');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Verification', '/dashboard/inventory/tasks/inventory-transfers/verification', 'ticket', 'Tasks');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Adjustment Verification', '/dashboard/inventory/tasks/inventory-adjustments/verification', 'ticket', 'Tasks');
+-- SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Request', '/dashboard/inventory/tasks/inventory-transfer/request', 'food', 'Tasks');
+-- SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Authorization', '/dashboard/inventory/tasks/inventory-transfer/authorization', 'keyboard', 'Tasks');
+-- SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Delivery', '/dashboard/inventory/tasks/inventory-transfer/delivery', 'users', 'Tasks');
+-- SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
+-- SELECT * FROM core.create_menu('Inventory', 'Inventory Transfer Acknowledgement', '/dashboard/inventory/tasks/inventory-transfer/acknowledgement', 'users', 'Tasks');
 
 SELECT * FROM core.create_menu('Inventory', 'Setup', 'square outline', 'configure', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Items', '/dashboard/inventory/setup/inventory-items', 'users', 'Setup');
@@ -32,7 +51,7 @@ SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/se
 SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'money', 'Setup');
 
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
-SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/inventory/reports/inventory-account-statement', 'money', 'Reports');
+SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'money', 'Reports');
 
 
 SELECT * FROM auth.create_app_menu_policy

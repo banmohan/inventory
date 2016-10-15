@@ -1,0 +1,75 @@
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using Frapid.ApplicationState.Cache;
+using Frapid.Dashboard;
+using MixERP.Inventory.DAL.Backend.Tasks;
+using MixERP.Inventory.ViewModels;
+
+namespace MixERP.Inventory.Controllers.Backend.Tasks
+{
+    public class AdjustmentController : InventoryBackendController
+    {
+        [Route("dashboard/inventory/tasks/inventory-adjustments")]
+        [MenuPolicy]
+        public ActionResult Index()
+        {
+            return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Adjustment/Index.cshtml", this.Tenant));
+        }
+
+        [Route("dashboard/inventory/tasks/adjustments/checklist/{tranId}")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/tasks/inventory-adjustments")]
+        public ActionResult CheckList(long tranId)
+        {
+            return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Adjustment/Checklist.cshtml", this.Tenant), tranId);
+        }
+
+        [Route("dashboard/inventory/tasks/inventory-adjustments/new")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/tasks/inventory-adjustments")]
+        public ActionResult New()
+        {
+            return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Adjustment/New.cshtml", this.Tenant));
+        }
+
+        [Route("dashboard/inventory/tasks/inventory-adjustments/closing/{storeId}")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/tasks/inventory-adjustments")]
+        public async Task<ActionResult> GetClosingInventoryAsync(int storeId)
+        {
+            if (storeId <= 0)
+            {
+                return this.InvalidModelState();
+            }
+
+            var model = await Stores.GetClosingInventoryAsync(this.Tenant, storeId).ConfigureAwait(true);
+
+            return this.Ok(model);
+        }
+        [Route("dashboard/inventory/tasks/inventory-adjustments")]
+        [MenuPolicy]
+        [HttpPost]
+        public async Task<ActionResult> PostAsync(InventoryAdjustment model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.InvalidModelState();
+            }
+
+            var meta = await AppUsers.GetCurrentAsync().ConfigureAwait(true);
+            model.OfficeId = meta.OfficeId;
+            model.UserId = meta.UserId;
+            model.LoginId = meta.LoginId;
+
+            try
+            {
+                long id = await InventoryAdjustments.AddAsync(this.Tenant, model).ConfigureAwait(true);
+                return this.Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return this.Failed(ex.Message, HttpStatusCode.InternalServerError);
+            }
+        }
+
+    }
+}
