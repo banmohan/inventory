@@ -46,7 +46,7 @@ SELECT 'ACE', 'Acer', inventory.get_supplier_type_id_by_supplier_type_code('S'),
 SELECT 'DEL', 'Dell', inventory.get_supplier_type_id_by_supplier_type_code('S'),        'Dell',         finance.get_account_id_by_account_number('20100') UNION ALL
 SELECT 'IBM', 'IBM', inventory.get_supplier_type_id_by_supplier_type_code('S'),         'IBM',          finance.get_account_id_by_account_number('20100') UNION ALL
 SELECT 'MIX', 'MixERP', inventory.get_supplier_type_id_by_supplier_type_code('S'),      'MixERP',       finance.get_account_id_by_account_number('20100') UNION ALL
-SELECT 'ITX', 'Intex', inventory.get_supplier_type_id_by_supplier_type_code('S'),       'Intext',       finance.get_account_id_by_account_number('20100');
+SELECT 'ITX', 'Intex', inventory.get_supplier_type_id_by_supplier_type_code('S'),       'Intex',        finance.get_account_id_by_account_number('20100');
 
 
 INSERT INTO inventory.shippers(shipper_name, company_name, account_id)
@@ -115,6 +115,18 @@ SELECT 'SGT',   'Samsung Galaxy Tab 10.1',              inventory.get_item_group
 
 
 UPDATE inventory.items
-SET photo = '/dashboard/inventory/services/attachments/' || item_code || '.jpg';
+SET photo = '/dashboard/inventory/services/attachments/' || item_code || '.jpg'
+WHERE inventory.items.maintain_inventory;
+
 --ROLLBACK TRANSACTION;
+
+INSERT INTO inventory.customers(customer_code, customer_name, customer_type_id, company_name, account_id)
+SELECT 'APP', 'Apple', inventory.get_customer_type_id_by_customer_type_code('C'),       'Apple',        finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'MIC', 'Microsoft', inventory.get_customer_type_id_by_customer_type_code('C'),   'Microsoft',    finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'SAM', 'Samsung', inventory.get_customer_type_id_by_customer_type_code('C'),     'Samsung',      finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'ACE', 'Acer', inventory.get_customer_type_id_by_customer_type_code('C'),        'Acer',         finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'DEL', 'Dell', inventory.get_customer_type_id_by_customer_type_code('C'),        'Dell',         finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'IBM', 'IBM', inventory.get_customer_type_id_by_customer_type_code('C'),         'IBM',          finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'MIX', 'MixERP', inventory.get_customer_type_id_by_customer_type_code('C'),      'MixERP',       finance.get_account_id_by_account_number('20100') UNION ALL
+SELECT 'ITX', 'Intex', inventory.get_customer_type_id_by_customer_type_code('C'),       'Intex',        finance.get_account_id_by_account_number('20100');
 
