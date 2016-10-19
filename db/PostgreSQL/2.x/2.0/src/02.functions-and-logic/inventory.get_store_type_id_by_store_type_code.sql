@@ -8,7 +8,8 @@ $$
 BEGIN
     RETURN store_type_id
     FROM inventory.store_types
-    WHERE store_type_code=$1;
+    WHERE inventory.store_types.store_type_code=$1
+	AND NOT inventory.store_types.deleted;
 END
 $$
 LANGUAGE plpgsql;

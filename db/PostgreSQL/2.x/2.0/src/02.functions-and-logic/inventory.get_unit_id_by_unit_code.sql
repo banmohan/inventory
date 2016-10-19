@@ -7,7 +7,8 @@ $$
 BEGIN
         RETURN unit_id
         FROM inventory.units
-        WHERE unit_code=$1;
+        WHERE inventory.units.unit_code=$1
+		AND NOT inventory.units.deleted;
 END
 $$
 LANGUAGE plpgsql;

@@ -13,7 +13,8 @@ $$
 BEGIN
     SELECT inventory.items.unit_id INTO _unit_id
     FROM inventory.items
-    WHERE item_id = _item_id;
+    WHERE inventory.items.item_id = _item_id
+	AND NOT inventory.items.deleted;
 
     RETURN QUERY
     SELECT * FROM inventory.get_associated_units(_unit_id);
@@ -36,7 +37,8 @@ $$
 BEGIN
     SELECT inventory.items.unit_id INTO _unit_id
     FROM inventory.items
-    WHERE LOWER(item_code) = LOWER(_item_code);
+    WHERE LOWER(item_code) = LOWER(_item_code)
+	AND NOT inventory.items.deleted;
 
     RETURN QUERY
     SELECT * FROM inventory.get_associated_units(_unit_id);

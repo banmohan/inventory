@@ -7,7 +7,7 @@ $$
 BEGIN
     RETURN inventory.inventory_setup.cogs_calculation_method
     FROM inventory.inventory_setup
-    WHERE office_id=$1;
+    WHERE inventory.inventory_setup.office_id=$1;
 END
 $$
 LANGUAGE plpgsql;

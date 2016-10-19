@@ -7,7 +7,8 @@ $$
 BEGIN
     RETURN store_id
     FROM inventory.stores
-    WHERE store_name = _store_name;
+    WHERE inventory.stores.store_name = _store_name
+	AND NOT inventory.stores.deleted;
 END
 $$
 LANGUAGE plpgsql;

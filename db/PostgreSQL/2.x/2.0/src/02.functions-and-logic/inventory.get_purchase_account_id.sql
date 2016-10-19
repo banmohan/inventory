@@ -10,7 +10,8 @@ BEGIN
     FROM inventory.item_groups
     INNER JOIN inventory.items
     ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-    WHERE inventory.items.item_id = $1;    
+    WHERE inventory.items.item_id = $1
+	AND NOT inventory.item_groups.deleted;    
 END
 $$
 LANGUAGE plpgsql;
