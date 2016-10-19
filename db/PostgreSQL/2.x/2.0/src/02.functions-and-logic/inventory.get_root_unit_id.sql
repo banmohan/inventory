@@ -8,7 +8,8 @@ $$
 BEGIN
     SELECT base_unit_id INTO root_unit_id
     FROM inventory.compound_units
-    WHERE compare_unit_id=_any_unit_id;
+    WHERE inventory.compound_units.compare_unit_id=_any_unit_id
+	AND NOT inventory.compound_units.deleted;
 
     IF(root_unit_id IS NULL) THEN
         RETURN _any_unit_id;

@@ -17,7 +17,8 @@ BEGIN
         _price, 
         _costing_unit_id
     FROM inventory.items
-    WHERE inventory.items.item_id = _item_id;
+    WHERE inventory.items.item_id = _item_id
+	AND NOT inventory.items.deleted;
 
     --Get the unitary conversion factor if the requested unit does not match with the price defition.
     _factor := inventory.convert_unit(_unit_id, _costing_unit_id);

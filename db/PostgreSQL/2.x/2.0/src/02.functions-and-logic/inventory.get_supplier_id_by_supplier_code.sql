@@ -7,7 +7,8 @@ $$
 BEGIN
         RETURN supplier_id
         FROM inventory.suppliers
-        WHERE supplier_code=$1;
+        WHERE inventory.suppliers.supplier_code=$1
+		AND NOT inventory.suppliers.deleted;
 END
 $$
 LANGUAGE plpgsql;

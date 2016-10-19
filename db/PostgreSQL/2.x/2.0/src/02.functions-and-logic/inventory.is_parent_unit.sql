@@ -11,7 +11,9 @@ BEGIN
             WITH RECURSIVE unit_cte(unit_id) AS 
             (
              SELECT tn.compare_unit_id
-                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $1
+                FROM inventory.compound_units AS tn 
+				WHERE tn.base_unit_id = $1
+				AND NOT tn.deleted
             UNION ALL
              SELECT
                 c.compare_unit_id

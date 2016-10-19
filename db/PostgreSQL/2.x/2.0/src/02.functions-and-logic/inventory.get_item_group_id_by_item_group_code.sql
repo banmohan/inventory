@@ -7,7 +7,8 @@ $$
 BEGIN
         RETURN item_group_id
         FROM inventory.item_groups
-        WHERE item_group_code=$1;
+        WHERE inventory.item_groups.item_group_code=$1
+		AND NOT inventory.item_groups.deleted;
 END
 $$
 LANGUAGE plpgsql;

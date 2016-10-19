@@ -7,7 +7,8 @@ $$
 BEGIN
         RETURN brand_id
         FROM inventory.brands
-        WHERE brand_code=$1;
+        WHERE inventory.brands.brand_code=$1
+		AND NOT inventory.brands.deleted;
 END
 $$
 LANGUAGE plpgsql;

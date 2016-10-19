@@ -8,7 +8,8 @@ $$
 BEGIN
     RETURN customer_type_id
     FROM inventory.customer_types
-    WHERE customer_type_code=$1;
+    WHERE inventory.customer_types.customer_type_code=$1
+	AND NOT inventory.customer_types.deleted;
 END
 $$
 LANGUAGE plpgsql;

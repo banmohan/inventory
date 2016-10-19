@@ -9,8 +9,9 @@ BEGIN
     (
         SELECT 1
         FROM inventory.items
-        WHERE item_id = $2
+        WHERE inventory.items.item_id = $2
         AND inventory.get_root_unit_id($1) = inventory.get_root_unit_id(unit_id)
+		AND NOT inventory.items.deleted
     ) THEN
         RETURN true;
     END IF;

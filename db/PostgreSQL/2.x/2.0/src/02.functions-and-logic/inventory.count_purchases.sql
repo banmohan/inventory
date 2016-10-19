@@ -14,7 +14,8 @@ BEGIN
         inventory.get_root_unit_id(inventory.items.unit_id) 
     INTO _base_unit_id
     FROM inventory.items
-    WHERE inventory.items.item_id=$1;
+    WHERE inventory.items.item_id=$1
+	AND NOT inventory.items.deleted;
 
     SELECT
         COALESCE(SUM(base_quantity), 0)
