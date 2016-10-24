@@ -15,7 +15,7 @@ TABLE
     item_name               text,
     unit_id                 integer,
     unit_name               text,
-    quantity                integer
+    quantity                decimal
 )
 AS
 $$
@@ -29,8 +29,8 @@ BEGIN
         item_name           text,
         unit_id             integer,
         unit_name           text,
-        quantity            integer,
-        maintain_inventory      boolean
+        quantity            decimal,
+        maintain_inventory  boolean
     ) ON COMMIT DROP;
 
     INSERT INTO temp_closing_stock(item_id, unit_id, quantity)

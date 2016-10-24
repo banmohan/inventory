@@ -39,8 +39,8 @@ BEGIN
         unit_id         integer,
         base_unit_id    integer,
         unit_name       national character varying(50),
-        quantity        integer_strict,
-        base_quantity   integer,                
+        quantity        public.decimal_strict,
+        base_quantity   public.decimal_strict,                
         price           money_strict                             
     ) 
     ON COMMIT DROP; 

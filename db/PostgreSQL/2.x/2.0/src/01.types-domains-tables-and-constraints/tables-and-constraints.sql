@@ -10,7 +10,7 @@ CREATE TABLE inventory.units
     unit_code                               national character varying(24) NOT NULL,
     unit_name                               national character varying(500) NOT NULL,    
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE inventory.compound_units
     value                                   smallint NOT NULL DEFAULT(0) CHECk(value > 0),
     compare_unit_id                         integer NOT NULL REFERENCES inventory.units,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE inventory.supplier_types
     supplier_type_name                      national character varying(500) NOT NULL,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -44,9 +44,10 @@ CREATE TABLE inventory.suppliers
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
+	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
     company_name                            national character varying(1000),
-    company_address_line_1                  national character varying(128) NULL,   
-    company_address_line_2                  national character varying(128) NULL,
+    company_address_line_1                  national character varying(128),   
+    company_address_line_2                  national character varying(128),
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -59,8 +60,8 @@ CREATE TABLE inventory.suppliers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
+    contact_address_line_1                  national character varying(128),   
+    contact_address_line_2                  national character varying(128),
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -71,7 +72,7 @@ CREATE TABLE inventory.suppliers
     contact_fax                             national character varying(100),
     photo                                   public.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -83,7 +84,7 @@ CREATE TABLE inventory.customer_types
     customer_type_name                      national character varying(500) NOT NULL,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -95,9 +96,10 @@ CREATE TABLE inventory.customers
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
+	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
     company_name                            national character varying(1000),
-    company_address_line_1                  national character varying(128) NULL,   
-    company_address_line_2                  national character varying(128) NULL,
+    company_address_line_1                  national character varying(128),   
+    company_address_line_2                  national character varying(128),
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -110,8 +112,8 @@ CREATE TABLE inventory.customers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
+    contact_address_line_1                  national character varying(128),   
+    contact_address_line_2                  national character varying(128),
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -122,7 +124,7 @@ CREATE TABLE inventory.customers
     contact_fax                             national character varying(100),
     photo                                   public.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -140,9 +142,9 @@ CREATE TABLE inventory.item_groups
     purchase_discount_account_id            bigint NOT NULL REFERENCES finance.accounts,
     inventory_account_id                    bigint NOT NULL REFERENCES finance.accounts,
     cost_of_goods_sold_account_id           bigint NOT NULL REFERENCES finance.accounts,    
-    parent_item_group_id                    integer NULL REFERENCES inventory.item_groups(item_group_id),
+    parent_item_group_id                    integer REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -152,7 +154,7 @@ CREATE TABLE inventory.brands
     brand_code                              national character varying(24) NOT NULL,
     brand_name                              national character varying(500) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -163,7 +165,7 @@ CREATE TABLE inventory.item_types
     item_type_name                          national character varying(50) NOT NULL,
 	is_component							boolean NOT NULL DEFAULT(false),
     audit_user_id                           integer NULL REFERENCES account.users(user_id),
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -199,7 +201,7 @@ CREATE TABLE inventory.items
     allow_purchase                          boolean NOT NULL DEFAULT(true),
     is_variant_of                           integer REFERENCES inventory.items,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -210,7 +212,7 @@ CREATE TABLE inventory.store_types
     store_type_code                         national character varying(12) NOT NULL,
     store_type_name                         national character varying(50) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -221,18 +223,21 @@ CREATE TABLE inventory.stores
     store_name                              national character varying(100) NOT NULL,
     store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
 	office_id								integer NOT NULL REFERENCES core.offices,
-    address_line_1                          national character varying(128) NULL,   
-    address_line_2                          national character varying(128) NULL,
-    street                                  national character varying(50) NULL,
-    city                                    national character varying(50) NULL,
-    state                                   national character varying(50) NULL,
-    country                                 national character varying(50) NULL,
-    phone                                   national character varying(50) NULL,
-    fax                                     national character varying(50) NULL,
-    cell                                    national character varying(50) NULL,
+    default_account_id_for_checks           integer NOT NULL REFERENCES finance.accounts,
+    default_cash_account_id                 integer NOT NULL REFERENCES finance.accounts,
+    default_cash_repository_id              integer NOT NULL REFERENCES finance.cash_repositories,
+    address_line_1                          national character varying(128),   
+    address_line_2                          national character varying(128),
+    street                                  national character varying(50),
+    city                                    national character varying(50),
+    state                                   national character varying(50),
+    country                                 national character varying(50),
+    phone                                   national character varying(50),
+    fax                                     national character varying(50),
+    cell                                    national character varying(50),
     allow_sales                             boolean NOT NULL DEFAULT(true),	
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -243,46 +248,46 @@ CREATE TABLE inventory.counters
     counter_name                            national character varying(100) NOT NULL,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
 CREATE TABLE inventory.shippers
 (
     shipper_id                              SERIAL PRIMARY KEY,
-    shipper_code                            national character varying(24) NULL,
+    shipper_code                            national character varying(24),
     company_name                            national character varying(128) NOT NULL,
-    shipper_name                            national character varying(150) NULL,
-    po_box                                  national character varying(128) NULL,
-    address_line_1                          national character varying(128) NULL,   
-    address_line_2                          national character varying(128) NULL,
-    street                                  national character varying(50) NULL,
-    city                                    national character varying(50) NULL,
-    state                                   national character varying(50) NULL,
-    country                                 national character varying(50) NULL,
-    phone                                   national character varying(50) NULL,
-    fax                                     national character varying(50) NULL,
-    cell                                    national character varying(50) NULL,
-    email                                   national character varying(128) NULL,
-    url                                     national character varying(50) NULL,
-    contact_person                          national character varying(50) NULL,
-    contact_po_box                          national character varying(128) NULL,
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
-    contact_street                          national character varying(50) NULL,
-    contact_city                            national character varying(50) NULL,
-    contact_state                           national character varying(50) NULL,
-    contact_country                         national character varying(50) NULL,
-    contact_email                           national character varying(128) NULL,
-    contact_phone                           national character varying(50) NULL,
-    contact_cell                            national character varying(50) NULL,
-    factory_address                         national character varying(250) NULL,
-    pan_number                              national character varying(50) NULL,
-    sst_number                              national character varying(50) NULL,
-    cst_number                              national character varying(50) NULL,
+    shipper_name                            national character varying(150),
+    po_box                                  national character varying(128),
+    address_line_1                          national character varying(128),   
+    address_line_2                          national character varying(128),
+    street                                  national character varying(50),
+    city                                    national character varying(50),
+    state                                   national character varying(50),
+    country                                 national character varying(50),
+    phone                                   national character varying(50),
+    fax                                     national character varying(50),
+    cell                                    national character varying(50),
+    email                                   national character varying(128),
+    url                                     national character varying(50),
+    contact_person                          national character varying(50),
+    contact_po_box                          national character varying(128),
+    contact_address_line_1                  national character varying(128),   
+    contact_address_line_2                  national character varying(128),
+    contact_street                          national character varying(50),
+    contact_city                            national character varying(50),
+    contact_state                           national character varying(50),
+    contact_country                         national character varying(50),
+    contact_email                           national character varying(128),
+    contact_phone                           national character varying(50),
+    contact_cell                            national character varying(50),
+    factory_address                         national character varying(250),
+    pan_number                              national character varying(50),
+    sst_number                              national character varying(50),
+    cst_number                              national character varying(50),
     account_id                              bigint NOT NULL REFERENCES finance.accounts(account_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -295,6 +300,7 @@ CREATE TABLE inventory.checkouts
 	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
+	discount								public.decimal_strict2 DEFAULT(0),
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -303,7 +309,7 @@ CREATE TABLE inventory.checkouts
 	cancellation_reason						text,
 	shipper_id								integer REFERENCES inventory.shippers,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -323,10 +329,10 @@ CREATE TABLE inventory.checkout_details
     cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
     shipping_charge                         public.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
-    quantity                                public.integer_strict2 NOT NULL,
+    quantity                                public.decimal_strict NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric NOT NULL,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW())
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW())
 );
 
 CREATE TABLE inventory.inventory_transfer_requests
@@ -356,7 +362,7 @@ CREATE TABLE inventory.inventory_transfer_requests
     delivered_on                            TIMESTAMP WITH TIME ZONE,
     delivery_memo                           national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -366,10 +372,10 @@ CREATE TABLE inventory.inventory_transfer_request_details
     inventory_transfer_request_id           bigint NOT NULL REFERENCES inventory.inventory_transfer_requests,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                public.integer_strict2 NOT NULL,
+    quantity                                public.decimal_strict2 NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           public.integer_strict2 NOT NULL
+    base_quantity                           public.decimal_strict2 NOT NULL
 );
 
 CREATE TABLE inventory.inventory_transfer_deliveries
@@ -384,7 +390,7 @@ CREATE TABLE inventory.inventory_transfer_deliveries
     reference_number                        national character varying(24),
     statement_reference                     national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -395,10 +401,10 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
     inventory_transfer_delivery_id          bigint NOT NULL REFERENCES inventory.inventory_transfer_deliveries,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                public.integer_strict2 NOT NULL,
+    quantity                                public.decimal_strict2 NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           public.integer_strict2 NOT NULL
+    base_quantity                           public.decimal_strict2 NOT NULL
 );
 
 
@@ -408,7 +414,7 @@ CREATE TABLE inventory.attributes
 	attribute_code                          national character varying(12) NOT NULL UNIQUE,
 	attribute_name                          national character varying(100) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -420,7 +426,7 @@ CREATE TABLE inventory.variants
 	attribute_id                            integer NOT NULL REFERENCES inventory.attributes,
 	attribute_value                         national character varying(200) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -430,7 +436,7 @@ CREATE TABLE inventory.item_variants
 	item_id                                 integer NOT NULL REFERENCES inventory.items,
 	variant_id                              integer NOT NULL REFERENCES inventory.variants,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -450,7 +456,7 @@ AS
     store_name      national character varying(50),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        integer_strict
+    quantity        public.decimal_strict
 );
 
 CREATE TYPE inventory.adjustment_type 
@@ -459,5 +465,5 @@ AS
     tran_type       national character varying(2),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        integer_strict
+    quantity        public.decimal_strict
 );

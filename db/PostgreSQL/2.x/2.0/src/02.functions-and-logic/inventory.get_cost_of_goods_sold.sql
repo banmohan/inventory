@@ -1,6 +1,6 @@
-﻿DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity integer);
+﻿DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal);
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity integer)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal)
 RETURNS money_strict
 AS
 $$
@@ -13,13 +13,16 @@ $$
 BEGIN
     _base_quantity                  := inventory.get_base_quantity_by_unit_id($2, $4);
     _base_unit_id                   := inventory.get_root_unit_id($2);
-
-
+    
     IF(_method = 'MAVCO') THEN
         --RAISE NOTICE '% % % %',_item_id, _store_id, _base_quantity, 1.00;
         RETURN transactions.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
     END IF; 
 
+
+    SELECT COALESCE(SUM(base_quantity), 0) INTO _total_sold
+    FROM inventory.verified_checkout_details_view
+    WHERE transaction_type='Cr';
 
     DROP TABLE IF EXISTS temp_cost_of_goods_sold;
     CREATE TEMPORARY TABLE temp_cost_of_goods_sold
@@ -33,6 +36,21 @@ BEGIN
                     
     ) ON COMMIT DROP;
 
+
+    /*TODO:
+    ALTERNATIVE AND MUCH EFFICIENT APPROACH
+        SELECT
+            *,
+            (
+                SELECT SUM(base_quantity)
+                FROM inventory.verified_checkout_details_view AS i
+                WHERE i.checkout_detail_id <= v.checkout_detail_id
+                AND item_id = 1
+            ) AS total
+        FROM inventory.verified_checkout_details_view AS v
+        WHERE item_id = 1
+        ORDER BY value_date, checkout_id;
+    */
     WITH stock_cte AS
     (
         SELECT
@@ -50,10 +68,6 @@ BEGIN
     INSERT INTO temp_cost_of_goods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
     SELECT checkout_detail_id, audit_ts, value_date, price, transaction_type FROM stock_cte
     ORDER BY value_date, audit_ts, checkout_detail_id;
-
-    SELECT COUNT(*) INTO _total_sold 
-    FROM temp_cost_of_goods_sold
-    WHERE transaction_type='Cr';
 
     IF(_method = 'LIFO') THEN
         SELECT SUM(price) INTO _base_unit_cost
@@ -87,4 +101,3 @@ END
 $$
 LANGUAGE PLPGSQL;
 
---SELECT * FROM inventory.get_cost_of_goods_sold(1, 1, 1, 1);

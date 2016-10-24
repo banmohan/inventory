@@ -5,7 +5,7 @@ RETURNS integer
 AS
 $$
 BEGIN
-        RETURN unit_id
+        RETURN inventory.units.unit_id
         FROM inventory.units
         WHERE inventory.units.unit_code=$1
 		AND NOT inventory.units.deleted;

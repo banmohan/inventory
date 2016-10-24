@@ -11,7 +11,7 @@ CREATE TABLE inventory.units
     unit_code                               national character varying(24) NOT NULL,
     unit_name                               national character varying(500) NOT NULL,    
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -22,7 +22,7 @@ CREATE TABLE inventory.compound_units
     value                                   smallint NOT NULL DEFAULT(0) CHECk(value > 0),
     compare_unit_id                         integer NOT NULL REFERENCES inventory.units,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -34,7 +34,7 @@ CREATE TABLE inventory.supplier_types
     supplier_type_name                      national character varying(500) NOT NULL,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -45,9 +45,10 @@ CREATE TABLE inventory.suppliers
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
+	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
     company_name                            national character varying(1000),
-    company_address_line_1                  national character varying(128) NULL,   
-    company_address_line_2                  national character varying(128) NULL,
+    company_address_line_1                  national character varying(128),   
+    company_address_line_2                  national character varying(128),
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -60,8 +61,8 @@ CREATE TABLE inventory.suppliers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
+    contact_address_line_1                  national character varying(128),   
+    contact_address_line_2                  national character varying(128),
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -72,7 +73,7 @@ CREATE TABLE inventory.suppliers
     contact_fax                             national character varying(100),
     photo                                   public.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -84,7 +85,7 @@ CREATE TABLE inventory.customer_types
     customer_type_name                      national character varying(500) NOT NULL,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -96,9 +97,10 @@ CREATE TABLE inventory.customers
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
+	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
     company_name                            national character varying(1000),
-    company_address_line_1                  national character varying(128) NULL,   
-    company_address_line_2                  national character varying(128) NULL,
+    company_address_line_1                  national character varying(128),   
+    company_address_line_2                  national character varying(128),
     company_street                          national character varying(1000),
     company_city                            national character varying(1000),
     company_state                           national character varying(1000),
@@ -111,8 +113,8 @@ CREATE TABLE inventory.customers
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
+    contact_address_line_1                  national character varying(128),   
+    contact_address_line_2                  national character varying(128),
     contact_street                          national character varying(100),
     contact_city                            national character varying(100),
     contact_state                           national character varying(100),
@@ -123,7 +125,7 @@ CREATE TABLE inventory.customers
     contact_fax                             national character varying(100),
     photo                                   public.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -141,9 +143,9 @@ CREATE TABLE inventory.item_groups
     purchase_discount_account_id            bigint NOT NULL REFERENCES finance.accounts,
     inventory_account_id                    bigint NOT NULL REFERENCES finance.accounts,
     cost_of_goods_sold_account_id           bigint NOT NULL REFERENCES finance.accounts,    
-    parent_item_group_id                    integer NULL REFERENCES inventory.item_groups(item_group_id),
+    parent_item_group_id                    integer REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -153,7 +155,7 @@ CREATE TABLE inventory.brands
     brand_code                              national character varying(24) NOT NULL,
     brand_name                              national character varying(500) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -164,7 +166,7 @@ CREATE TABLE inventory.item_types
     item_type_name                          national character varying(50) NOT NULL,
 	is_component							boolean NOT NULL DEFAULT(false),
     audit_user_id                           integer NULL REFERENCES account.users(user_id),
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -200,7 +202,7 @@ CREATE TABLE inventory.items
     allow_purchase                          boolean NOT NULL DEFAULT(true),
     is_variant_of                           integer REFERENCES inventory.items,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -211,7 +213,7 @@ CREATE TABLE inventory.store_types
     store_type_code                         national character varying(12) NOT NULL,
     store_type_name                         national character varying(50) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -222,18 +224,21 @@ CREATE TABLE inventory.stores
     store_name                              national character varying(100) NOT NULL,
     store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
 	office_id								integer NOT NULL REFERENCES core.offices,
-    address_line_1                          national character varying(128) NULL,   
-    address_line_2                          national character varying(128) NULL,
-    street                                  national character varying(50) NULL,
-    city                                    national character varying(50) NULL,
-    state                                   national character varying(50) NULL,
-    country                                 national character varying(50) NULL,
-    phone                                   national character varying(50) NULL,
-    fax                                     national character varying(50) NULL,
-    cell                                    national character varying(50) NULL,
+    default_account_id_for_checks           integer NOT NULL REFERENCES finance.accounts,
+    default_cash_account_id                 integer NOT NULL REFERENCES finance.accounts,
+    default_cash_repository_id              integer NOT NULL REFERENCES finance.cash_repositories,
+    address_line_1                          national character varying(128),   
+    address_line_2                          national character varying(128),
+    street                                  national character varying(50),
+    city                                    national character varying(50),
+    state                                   national character varying(50),
+    country                                 national character varying(50),
+    phone                                   national character varying(50),
+    fax                                     national character varying(50),
+    cell                                    national character varying(50),
     allow_sales                             boolean NOT NULL DEFAULT(true),	
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -244,46 +249,46 @@ CREATE TABLE inventory.counters
     counter_name                            national character varying(100) NOT NULL,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
 CREATE TABLE inventory.shippers
 (
     shipper_id                              SERIAL PRIMARY KEY,
-    shipper_code                            national character varying(24) NULL,
+    shipper_code                            national character varying(24),
     company_name                            national character varying(128) NOT NULL,
-    shipper_name                            national character varying(150) NULL,
-    po_box                                  national character varying(128) NULL,
-    address_line_1                          national character varying(128) NULL,   
-    address_line_2                          national character varying(128) NULL,
-    street                                  national character varying(50) NULL,
-    city                                    national character varying(50) NULL,
-    state                                   national character varying(50) NULL,
-    country                                 national character varying(50) NULL,
-    phone                                   national character varying(50) NULL,
-    fax                                     national character varying(50) NULL,
-    cell                                    national character varying(50) NULL,
-    email                                   national character varying(128) NULL,
-    url                                     national character varying(50) NULL,
-    contact_person                          national character varying(50) NULL,
-    contact_po_box                          national character varying(128) NULL,
-    contact_address_line_1                  national character varying(128) NULL,   
-    contact_address_line_2                  national character varying(128) NULL,
-    contact_street                          national character varying(50) NULL,
-    contact_city                            national character varying(50) NULL,
-    contact_state                           national character varying(50) NULL,
-    contact_country                         national character varying(50) NULL,
-    contact_email                           national character varying(128) NULL,
-    contact_phone                           national character varying(50) NULL,
-    contact_cell                            national character varying(50) NULL,
-    factory_address                         national character varying(250) NULL,
-    pan_number                              national character varying(50) NULL,
-    sst_number                              national character varying(50) NULL,
-    cst_number                              national character varying(50) NULL,
+    shipper_name                            national character varying(150),
+    po_box                                  national character varying(128),
+    address_line_1                          national character varying(128),   
+    address_line_2                          national character varying(128),
+    street                                  national character varying(50),
+    city                                    national character varying(50),
+    state                                   national character varying(50),
+    country                                 national character varying(50),
+    phone                                   national character varying(50),
+    fax                                     national character varying(50),
+    cell                                    national character varying(50),
+    email                                   national character varying(128),
+    url                                     national character varying(50),
+    contact_person                          national character varying(50),
+    contact_po_box                          national character varying(128),
+    contact_address_line_1                  national character varying(128),   
+    contact_address_line_2                  national character varying(128),
+    contact_street                          national character varying(50),
+    contact_city                            national character varying(50),
+    contact_state                           national character varying(50),
+    contact_country                         national character varying(50),
+    contact_email                           national character varying(128),
+    contact_phone                           national character varying(50),
+    contact_cell                            national character varying(50),
+    factory_address                         national character varying(250),
+    pan_number                              national character varying(50),
+    sst_number                              national character varying(50),
+    cst_number                              national character varying(50),
     account_id                              bigint NOT NULL REFERENCES finance.accounts(account_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -296,6 +301,7 @@ CREATE TABLE inventory.checkouts
 	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
+	discount								public.decimal_strict2 DEFAULT(0),
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -304,7 +310,7 @@ CREATE TABLE inventory.checkouts
 	cancellation_reason						text,
 	shipper_id								integer REFERENCES inventory.shippers,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -324,10 +330,10 @@ CREATE TABLE inventory.checkout_details
     cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
     shipping_charge                         public.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
-    quantity                                public.integer_strict2 NOT NULL,
+    quantity                                public.decimal_strict NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric NOT NULL,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW())
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW())
 );
 
 CREATE TABLE inventory.inventory_transfer_requests
@@ -357,7 +363,7 @@ CREATE TABLE inventory.inventory_transfer_requests
     delivered_on                            TIMESTAMP WITH TIME ZONE,
     delivery_memo                           national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
 
@@ -367,10 +373,10 @@ CREATE TABLE inventory.inventory_transfer_request_details
     inventory_transfer_request_id           bigint NOT NULL REFERENCES inventory.inventory_transfer_requests,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                public.integer_strict2 NOT NULL,
+    quantity                                public.decimal_strict2 NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           public.integer_strict2 NOT NULL
+    base_quantity                           public.decimal_strict2 NOT NULL
 );
 
 CREATE TABLE inventory.inventory_transfer_deliveries
@@ -385,7 +391,7 @@ CREATE TABLE inventory.inventory_transfer_deliveries
     reference_number                        national character varying(24),
     statement_reference                     national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -396,10 +402,10 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
     inventory_transfer_delivery_id          bigint NOT NULL REFERENCES inventory.inventory_transfer_deliveries,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                public.integer_strict2 NOT NULL,
+    quantity                                public.decimal_strict2 NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           public.integer_strict2 NOT NULL
+    base_quantity                           public.decimal_strict2 NOT NULL
 );
 
 
@@ -409,7 +415,7 @@ CREATE TABLE inventory.attributes
 	attribute_code                          national character varying(12) NOT NULL UNIQUE,
 	attribute_name                          national character varying(100) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -421,7 +427,7 @@ CREATE TABLE inventory.variants
 	attribute_id                            integer NOT NULL REFERENCES inventory.attributes,
 	attribute_value                         national character varying(200) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -431,7 +437,7 @@ CREATE TABLE inventory.item_variants
 	item_id                                 integer NOT NULL REFERENCES inventory.items,
 	variant_id                              integer NOT NULL REFERENCES inventory.variants,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                TIMESTAMP WITH TIME ZONE NULL DEFAULT(NOW()),
+    audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
 
@@ -451,7 +457,7 @@ AS
     store_name      national character varying(50),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        integer_strict
+    quantity        public.decimal_strict
 );
 
 CREATE TYPE inventory.adjustment_type 
@@ -460,7 +466,7 @@ AS
     tran_type       national character varying(2),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        integer_strict
+    quantity        public.decimal_strict
 );
 
 
@@ -486,7 +492,9 @@ BEGIN
             WITH RECURSIVE unit_cte(unit_id, value) AS 
             (
                 SELECT tn.compare_unit_id, tn.value
-                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $1
+                FROM inventory.compound_units AS tn 
+				WHERE tn.base_unit_id = $1
+				AND NOT tn.deleted
 
                 UNION ALL
 
@@ -503,7 +511,9 @@ BEGIN
             WITH RECURSIVE unit_cte(unit_id, value) AS 
             (
              SELECT tn.compare_unit_id, tn.value
-                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $2
+                FROM inventory.compound_units AS tn 
+				WHERE tn.base_unit_id = $2
+				AND NOT tn.deleted
             UNION ALL
              SELECT 
                 c.compare_unit_id, c.value * p.value
@@ -567,7 +577,8 @@ BEGIN
         inventory.get_root_unit_id(inventory.items.unit_id) 
     INTO _base_unit_id
     FROM inventory.items
-    WHERE inventory.items.item_id=$1;
+    WHERE inventory.items.item_id=$1
+	AND NOT inventory.items.deleted;
 
     SELECT
         COALESCE(SUM(base_quantity), 0)
@@ -597,16 +608,17 @@ RETURNS decimal
 STABLE
 AS
 $$
-        DECLARE _base_unit_id integer;
-        DECLARE _credit decimal;
-        DECLARE _factor decimal;
+    DECLARE _base_unit_id integer;
+    DECLARE _credit decimal;
+    DECLARE _factor decimal;
 BEGIN
     --Get the base item unit
     SELECT 
         inventory.get_root_unit_id(inventory.items.unit_id) 
     INTO _base_unit_id
     FROM inventory.items
-    WHERE inventory.items.item_id=$1;
+    WHERE inventory.items.item_id=$1
+	AND NOT inventory.items.deleted;
 
     SELECT 
         COALESCE(SUM(base_quantity), 0)
@@ -623,6 +635,44 @@ BEGIN
 
     _factor = inventory.convert_unit(_base_unit_id, $2);
     RETURN _credit * _factor;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_customer_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_account_id_by_customer_id(_customer_id bigint);
+
+CREATE FUNCTION inventory.get_account_id_by_customer_id(_customer_id bigint)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN inventory.customers.account_id
+    FROM inventory.customers
+    WHERE inventory.customers.customer_id=_customer_id
+    AND NOT inventory.customers.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_shipper_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_account_id_by_shipper_id(integer);
+
+CREATE FUNCTION inventory.get_account_id_by_shipper_id(_shipper_id integer)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN inventory.shippers.account_id
+    FROM inventory.shippers
+    WHERE inventory.shippers.shipper_id=_shipper_id
+    AND NOT inventory.shippers.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -952,7 +1002,8 @@ $$
 BEGIN
     SELECT inventory.items.unit_id INTO _unit_id
     FROM inventory.items
-    WHERE item_id = _item_id;
+    WHERE inventory.items.item_id = _item_id
+	AND NOT inventory.items.deleted;
 
     RETURN QUERY
     SELECT * FROM inventory.get_associated_units(_unit_id);
@@ -975,7 +1026,8 @@ $$
 BEGIN
     SELECT inventory.items.unit_id INTO _unit_id
     FROM inventory.items
-    WHERE LOWER(item_code) = LOWER(_item_code);
+    WHERE LOWER(item_code) = LOWER(_item_code)
+	AND NOT inventory.items.deleted;
 
     RETURN QUERY
     SELECT * FROM inventory.get_associated_units(_unit_id);
@@ -1053,10 +1105,50 @@ $$
 BEGIN
         RETURN brand_id
         FROM inventory.brands
-        WHERE brand_code=$1;
+        WHERE inventory.brands.brand_code=$1
+		AND NOT inventory.brands.deleted;
 END
 $$
 LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cash_account_id_by_store_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_cash_account_id_by_store_id(_store_id integer);
+
+CREATE FUNCTION inventory.get_cash_account_id_by_store_id(_store_id integer)
+RETURNS bigint
+STABLE
+AS
+$$
+BEGIN
+    RETURN inventory.stores.default_cash_account_id
+    FROM inventory.stores
+    WHERE inventory.stores.store_id=_store_id
+    AND NOT inventory.stores.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cash_repository_id_by_store_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_cash_repository_id_by_store_id(_store_id integer);
+
+CREATE FUNCTION inventory.get_cash_repository_id_by_store_id(_store_id integer)
+RETURNS bigint
+STABLE
+AS
+$$
+BEGIN
+    RETURN inventory.stores.default_cash_repository_id
+    FROM inventory.stores
+    WHERE inventory.stores.store_id=_store_id
+    AND NOT inventory.stores.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_good_method.sql --<--<--
@@ -1069,7 +1161,7 @@ $$
 BEGIN
     RETURN inventory.inventory_setup.cogs_calculation_method
     FROM inventory.inventory_setup
-    WHERE office_id=$1;
+    WHERE inventory.inventory_setup.office_id=$1;
 END
 $$
 LANGUAGE plpgsql;
@@ -1077,9 +1169,9 @@ LANGUAGE plpgsql;
 --SELECT * FROM inventory.get_cost_of_good_method(1);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity integer);
+DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal);
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity integer)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal)
 RETURNS money_strict
 AS
 $$
@@ -1092,13 +1184,16 @@ $$
 BEGIN
     _base_quantity                  := inventory.get_base_quantity_by_unit_id($2, $4);
     _base_unit_id                   := inventory.get_root_unit_id($2);
-
-
+    
     IF(_method = 'MAVCO') THEN
         --RAISE NOTICE '% % % %',_item_id, _store_id, _base_quantity, 1.00;
         RETURN transactions.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
     END IF; 
 
+
+    SELECT COALESCE(SUM(base_quantity), 0) INTO _total_sold
+    FROM inventory.verified_checkout_details_view
+    WHERE transaction_type='Cr';
 
     DROP TABLE IF EXISTS temp_cost_of_goods_sold;
     CREATE TEMPORARY TABLE temp_cost_of_goods_sold
@@ -1112,6 +1207,21 @@ BEGIN
                     
     ) ON COMMIT DROP;
 
+
+    /*TODO:
+    ALTERNATIVE AND MUCH EFFICIENT APPROACH
+        SELECT
+            *,
+            (
+                SELECT SUM(base_quantity)
+                FROM inventory.verified_checkout_details_view AS i
+                WHERE i.checkout_detail_id <= v.checkout_detail_id
+                AND item_id = 1
+            ) AS total
+        FROM inventory.verified_checkout_details_view AS v
+        WHERE item_id = 1
+        ORDER BY value_date, checkout_id;
+    */
     WITH stock_cte AS
     (
         SELECT
@@ -1129,10 +1239,6 @@ BEGIN
     INSERT INTO temp_cost_of_goods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
     SELECT checkout_detail_id, audit_ts, value_date, price, transaction_type FROM stock_cte
     ORDER BY value_date, audit_ts, checkout_detail_id;
-
-    SELECT COUNT(*) INTO _total_sold 
-    FROM temp_cost_of_goods_sold
-    WHERE transaction_type='Cr';
 
     IF(_method = 'LIFO') THEN
         SELECT SUM(price) INTO _base_unit_cost
@@ -1166,7 +1272,6 @@ END
 $$
 LANGUAGE PLPGSQL;
 
---SELECT * FROM inventory.get_cost_of_goods_sold(1, 1, 1, 1);
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold_account_id.sql --<--<--
@@ -1183,12 +1288,45 @@ BEGIN
     FROM inventory.item_groups
     INNER JOIN inventory.items
     ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-    WHERE inventory.items.item_id = $1;    
+    WHERE inventory.items.item_id = $1
+	AND NOT inventory.item_groups.deleted;    
 END
 $$
 LANGUAGE plpgsql;
 
 --SELECT inventory.get_cost_of_goods_sold_account_id(1);
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_currency_code_by_customer_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_currency_code_by_customer_id(_customer_id integer);
+
+CREATE FUNCTION inventory.get_currency_code_by_customer_id(_customer_id integer)
+RETURNS national character varying(12)
+AS
+$$
+BEGIN
+    RETURN inventory.customers.currency_code
+    FROM inventory.customers
+    WHERE inventory.customers.customer_id = _customer_id
+    AND NOT inventory.customers.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_currency_code_by_supplier_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_currency_code_by_supplier_id(_supplier_id integer);
+
+CREATE FUNCTION inventory.get_currency_code_by_supplier_id(_supplier_id integer)
+RETURNS national character varying(12)
+AS
+$$
+BEGIN
+    RETURN inventory.suppliers.currency_code
+    FROM inventory.suppliers
+    WHERE inventory.suppliers.supplier_id = _supplier_id
+    AND NOT inventory.suppliers.deleted;
+END
+$$
+LANGUAGE plpgsql;
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_id_by_customer_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_customer_id_by_customer_code(text);
@@ -1200,7 +1338,8 @@ $$
 BEGIN
         RETURN customer_id
         FROM inventory.customers
-        WHERE customer_code=$1;
+        WHERE inventory.customers.customer_code=$1
+		AND NOT inventory.customers.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1234,7 +1373,8 @@ $$
 BEGIN
     RETURN customer_type_id
     FROM inventory.customer_types
-    WHERE customer_type_code=$1;
+    WHERE inventory.customer_types.customer_type_code=$1
+	AND NOT inventory.customer_types.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1253,7 +1393,8 @@ BEGIN
     FROM inventory.item_groups
     INNER JOIN inventory.items
     ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-    WHERE inventory.items.item_id = $1;    
+    WHERE inventory.items.item_id = $1
+	AND NOT inventory.item_groups.deleted;    
 END
 $$
 LANGUAGE plpgsql;
@@ -1279,7 +1420,8 @@ BEGIN
         _price, 
         _costing_unit_id
     FROM inventory.items
-    WHERE inventory.items.item_id = _item_id;
+    WHERE inventory.items.item_id = _item_id
+	AND NOT inventory.items.deleted;
 
     --Get the unitary conversion factor if the requested unit does not match with the price defition.
     _factor := inventory.convert_unit(_unit_id, _costing_unit_id);
@@ -1301,7 +1443,8 @@ $$
 BEGIN
         RETURN item_group_id
         FROM inventory.item_groups
-        WHERE item_group_code=$1;
+        WHERE inventory.item_groups.item_group_code=$1
+		AND NOT inventory.item_groups.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1317,7 +1460,8 @@ $$
 BEGIN
     RETURN item_id
     FROM inventory.items
-    WHERE item_code = _item_code;
+    WHERE inventory.items.item_code = _item_code
+	AND NOT inventory.items.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1332,7 +1476,8 @@ $$
 BEGIN
         RETURN item_type_id
         FROM inventory.item_types
-        WHERE item_type_code=$1;
+        WHERE inventory.item_types.item_type_code=$1
+		AND NOT inventory.item_types.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1417,7 +1562,8 @@ $$
 BEGIN
     RETURN inventory.stores.office_id
     FROM inventory.stores
-    WHERE inventory.stores.store_id=$1;
+    WHERE inventory.stores.store_id=$1
+	AND NOT inventory.stores.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1436,7 +1582,8 @@ BEGIN
     FROM inventory.item_groups
     INNER JOIN inventory.items
     ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-    WHERE inventory.items.item_id = $1;    
+    WHERE inventory.items.item_id = $1
+	AND NOT inventory.item_groups.deleted;    
 END
 $$
 LANGUAGE plpgsql;
@@ -1456,7 +1603,8 @@ BEGIN
     FROM inventory.item_groups
     INNER JOIN inventory.items
     ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-    WHERE inventory.items.item_id = $1;    
+    WHERE inventory.items.item_id = $1
+	AND NOT inventory.item_groups.deleted;    
 END
 $$
 LANGUAGE plpgsql;
@@ -1474,13 +1622,75 @@ $$
 BEGIN
     SELECT base_unit_id INTO root_unit_id
     FROM inventory.compound_units
-    WHERE compare_unit_id=_any_unit_id;
+    WHERE inventory.compound_units.compare_unit_id=_any_unit_id
+	AND NOT inventory.compound_units.deleted;
 
     IF(root_unit_id IS NULL) THEN
         RETURN _any_unit_id;
     ELSE
         RETURN inventory.get_root_unit_id(root_unit_id);
     END IF; 
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_sales_account_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_sales_account_id(_item_id integer);
+
+CREATE FUNCTION inventory.get_sales_account_id(_item_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN inventory.item_groups.sales_account_id
+    FROM inventory.item_groups
+    INNER JOIN inventory.items
+    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+    WHERE inventory.items.item_id = _item_id
+    AND NOT inventory.item_groups.deleted;    
+END
+$$
+LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_sales_discount_account_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_sales_discount_account_id(_item_id integer);
+
+CREATE FUNCTION inventory.get_sales_discount_account_id(_item_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN inventory.item_groups.sales_discount_account_id
+    FROM inventory.item_groups
+    INNER JOIN inventory.items
+    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+    WHERE inventory.items.item_id = _item_id
+    AND NOT inventory.item_groups.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_store_id_by_store_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_store_id_by_store_code(_store_code text);
+
+CREATE FUNCTION inventory.get_store_id_by_store_code(_store_code text)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN
+    (
+        SELECT inventory.stores.store_id
+        FROM inventory.stores
+        WHERE inventory.stores.store_code=_store_code 
+        AND NOT inventory.stores.deleted
+    );
 END
 $$
 LANGUAGE plpgsql;
@@ -1497,7 +1707,8 @@ $$
 BEGIN
     RETURN store_id
     FROM inventory.stores
-    WHERE store_name = _store_name;
+    WHERE inventory.stores.store_name = _store_name
+	AND NOT inventory.stores.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1513,7 +1724,8 @@ $$
 BEGIN
     RETURN store_type_id
     FROM inventory.store_types
-    WHERE store_type_code=$1;
+    WHERE inventory.store_types.store_type_code=$1
+	AND NOT inventory.store_types.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1529,7 +1741,8 @@ $$
 BEGIN
         RETURN supplier_id
         FROM inventory.suppliers
-        WHERE supplier_code=$1;
+        WHERE inventory.suppliers.supplier_code=$1
+		AND NOT inventory.suppliers.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1546,7 +1759,8 @@ $$
 BEGIN
     RETURN supplier_type_id
     FROM inventory.supplier_types
-    WHERE supplier_type_code=$1;
+    WHERE inventory.supplier_types.supplier_type_code=$1
+	AND NOT inventory.supplier_types.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1560,9 +1774,10 @@ RETURNS integer
 AS
 $$
 BEGIN
-        RETURN unit_id
+        RETURN inventory.units.unit_id
         FROM inventory.units
-        WHERE unit_code=$1;
+        WHERE inventory.units.unit_code=$1
+		AND NOT inventory.units.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1578,7 +1793,8 @@ $$
 BEGIN
     RETURN unit_id
     FROM inventory.units
-    WHERE unit_name = _unit_name;
+    WHERE inventory.units.unit_name = _unit_name
+	AND NOT inventory.units.deleted;
 END
 $$
 LANGUAGE plpgsql;
@@ -1597,7 +1813,9 @@ BEGIN
             WITH RECURSIVE unit_cte(unit_id) AS 
             (
              SELECT tn.compare_unit_id
-                FROM inventory.compound_units AS tn WHERE tn.base_unit_id = $1
+                FROM inventory.compound_units AS tn 
+				WHERE tn.base_unit_id = $1
+				AND NOT tn.deleted
             UNION ALL
              SELECT
                 c.compare_unit_id
@@ -1650,8 +1868,9 @@ BEGIN
     (
         SELECT 1
         FROM inventory.items
-        WHERE item_id = $2
+        WHERE inventory.items.item_id = $2
         AND inventory.get_root_unit_id($1) = inventory.get_root_unit_id(unit_id)
+		AND NOT inventory.items.deleted
     ) THEN
         RETURN true;
     END IF;
@@ -1681,7 +1900,7 @@ TABLE
     item_name               text,
     unit_id                 integer,
     unit_name               text,
-    quantity                integer
+    quantity                decimal
 )
 AS
 $$
@@ -1695,8 +1914,8 @@ BEGIN
         item_name           text,
         unit_id             integer,
         unit_name           text,
-        quantity            integer,
-        maintain_inventory      boolean
+        quantity            decimal,
+        maintain_inventory  boolean
     ) ON COMMIT DROP;
 
     INSERT INTO temp_closing_stock(item_id, unit_id, quantity)
@@ -1784,8 +2003,8 @@ BEGIN
         unit_id                         integer,
         base_unit_id                    integer,
         unit_name                       national character varying(50),
-        quantity                        integer_strict,
-        base_quantity                   integer,                
+        quantity                        public.decimal_strict,
+        base_quantity                   public.decimal_strict,                
         price                           money_strict,
         cost_of_goods_sold              money_strict2 DEFAULT(0),
         inventory_account_id            integer,
@@ -2004,8 +2223,8 @@ BEGIN
         unit_id         integer,
         base_unit_id    integer,
         unit_name       national character varying(50),
-        quantity        integer_strict,
-        base_quantity   integer,                
+        quantity        public.decimal_strict,
+        base_quantity   public.decimal_strict,                
         price           money_strict                             
     ) 
     ON COMMIT DROP; 
@@ -2203,6 +2422,29 @@ FROM core.offices;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.scrud-views/inventory.customer_scrud_view.sql --<--<--
+DROP VIEW IF EXISTS inventory.customer_scrud_view;
+
+CREATE VIEW inventory.customer_scrud_view
+AS
+SELECT
+    inventory.customers.customer_id,
+    inventory.customers.customer_code,
+    inventory.customers.customer_name,
+    inventory.customer_types.customer_type_code || ' (' || inventory.customer_types.customer_type_name || ')' AS customer_type,
+    inventory.customers.currency_code,
+    inventory.customers.company_name,
+    inventory.customers.company_phone_numbers,
+    inventory.customers.contact_first_name,
+    inventory.customers.contact_middle_name,
+    inventory.customers.contact_last_name,
+    inventory.customers.contact_phone_numbers,
+    inventory.customers.photo
+FROM inventory.customers
+INNER JOIN inventory.customer_types
+ON inventory.customer_types.customer_type_id = inventory.customers.customer_type_id;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.scrud-views/inventory.item_scrud_view.sql --<--<--
