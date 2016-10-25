@@ -38,7 +38,7 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
         {
             if (storeId <= 0)
             {
-                return this.InvalidModelState();
+                return this.InvalidModelState(this.ModelState);
             }
 
             var model = await Stores.GetClosingInventoryAsync(this.Tenant, storeId).ConfigureAwait(true);
@@ -52,7 +52,7 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
         {
             if (!this.ModelState.IsValid)
             {
-                return this.InvalidModelState();
+                return this.InvalidModelState(this.ModelState);
             }
 
             var meta = await AppUsers.GetCurrentAsync().ConfigureAwait(true);

@@ -1038,9 +1038,9 @@ LANGUAGE plpgsql;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_base_quantity_by_unit_name.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, integer);
+DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, numeric);
 
-CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, integer)
+CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, numeric)
 RETURNS decimal
 STABLE
 AS
@@ -1058,9 +1058,9 @@ END
 $$
 LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_id(integer, integer);
+DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_id(integer, numeric);
 
-CREATE FUNCTION inventory.get_base_quantity_by_unit_id(integer, integer)
+CREATE FUNCTION inventory.get_base_quantity_by_unit_id(integer, numeric)
 RETURNS decimal
 STABLE
 AS

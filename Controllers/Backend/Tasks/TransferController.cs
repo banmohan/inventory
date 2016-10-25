@@ -32,7 +32,7 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
         {
             if (!this.ModelState.IsValid)
             {
-                return this.InvalidModelState();
+                return this.InvalidModelState(this.ModelState);
             }
 
             var meta = await AppUsers.GetCurrentAsync().ConfigureAwait(true);
