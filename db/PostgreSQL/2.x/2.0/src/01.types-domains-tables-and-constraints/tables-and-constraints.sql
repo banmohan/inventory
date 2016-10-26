@@ -467,3 +467,15 @@ AS
     unit_name       national character varying(50),
     quantity        public.decimal_strict
 );
+
+
+CREATE TYPE inventory.checkout_detail_type AS
+(
+    store_id            integer,
+    item_code           national character varying(12),
+    quantity            public.decimal_strict,
+    unit_name           national character varying(50),
+    price               public.money_strict,
+    discount            public.money_strict2,
+    shipping_charge     public.money_strict2
+);
