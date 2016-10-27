@@ -470,6 +470,18 @@ AS
 );
 
 
+CREATE TYPE inventory.checkout_detail_type AS
+(
+    store_id            integer,
+    item_code           national character varying(12),
+    quantity            public.decimal_strict,
+    unit_name           national character varying(50),
+    price               public.money_strict,
+    discount            public.money_strict2,
+    shipping_charge     public.money_strict2
+);
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.convert_unit.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.convert_unit(from_unit integer, to_unit integer);
 
@@ -1151,6 +1163,25 @@ LANGUAGE plpgsql;
 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_checkout_id_by_transaction_master_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_checkout_id_by_transaction_master_id(_checkout_id bigint);
+
+CREATE FUNCTION inventory.get_checkout_id_by_transaction_master_id(_checkout_id bigint)
+RETURNS bigint
+AS
+$$
+BEGIN
+        RETURN
+        (
+            SELECT inventory.checkouts.checkout_id
+            FROM inventory.checkouts
+            WHERE inventory.checkouts.transaction_master_id=$1
+        );
+END
+$$
+LANGUAGE plpgsql;
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_good_method.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_cost_of_good_method(_office_id integer);
 
@@ -1675,6 +1706,26 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_sales_return_account_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_sales_return_account_id(_item_id integer);
+
+CREATE FUNCTION inventory.get_sales_return_account_id(_item_id integer)
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN inventory.item_groups.sales_return_account_id
+    FROM inventory.item_groups
+    INNER JOIN inventory.items
+    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+    WHERE inventory.items.item_id = _item_id
+    AND NOT inventory.item_groups.deleted;    
+END
+$$
+LANGUAGE plpgsql;
+
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_store_id_by_store_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_store_id_by_store_code(_store_code text);
 
@@ -1799,6 +1850,33 @@ END
 $$
 LANGUAGE plpgsql;
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_write_off_cost_of_goods_sold.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_write_off_cost_of_goods_sold(_checkout_id bigint, _item_id integer, _unit_id integer, _quantity integer);
+
+CREATE FUNCTION inventory.get_write_off_cost_of_goods_sold(_checkout_id bigint, _item_id integer, _unit_id integer, _quantity integer)
+RETURNS money_strict2
+AS
+$$
+    DECLARE _base_unit_id integer;
+    DECLARE _factor decimal;
+BEGIN
+    _base_unit_id    = inventory.get_root_unit_id(_unit_id);
+    _factor          = inventory.convert_unit(_unit_id, _base_unit_id);
+
+
+    RETURN
+        SUM((cost_of_goods_sold / base_quantity) * _factor * _quantity)     
+         FROM inventory.checkout_details
+    WHERE checkout_id = _checkout_id
+    AND item_id = _item_id;    
+END
+$$
+LANGUAGE plpgsql;
+
+
+--SELECT * FROM inventory.get_write_off_cost_of_goods_sold(7, 3, 1, 1);
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.is_parent_unit.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.is_parent_unit(parent integer, child integer);
 
@@ -1854,6 +1932,29 @@ END
 $$
 LANGUAGE plpgsql;
 
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.is_purchase.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.is_purchase(_transaction_master_id bigint);
+
+CREATE FUNCTION inventory.is_purchase(_transaction_master_id bigint)
+RETURNS boolean
+AS
+$$
+BEGIN
+    IF EXISTS
+    (
+        SELECT * FROM finance.transaction_master
+        WHERE finance.transaction_master.transaction_master_id = $1
+        AND book IN ('Purchase')
+    ) THEN
+            RETURN true;
+    END IF;
+
+    RETURN false;
+END
+$$
+LANGUAGE plpgsql;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.is_valid_unit_id.sql --<--<--
