@@ -9,6 +9,14 @@ namespace MixERP.Inventory.DAL.Backend.Service
 {
     public static class Items
     {
+        public static async Task<List<ItemView>> GetStockableItemViewAsync(string tenant)
+        {
+            using (var db = DbProvider.Get(FrapidDbServer.GetConnectionString(tenant), tenant).GetDatabase())
+            {
+                return await db.Query<ItemView>().Where(x => x.MaintainInventory).ToListAsync().ConfigureAwait(false);
+            }
+        }
+
         public static async Task<List<Item>> GetStockableItemsAsync(string tenant)
         {
             using (var db = DbProvider.Get(FrapidDbServer.GetConnectionString(tenant), tenant).GetDatabase())
@@ -20,6 +28,12 @@ namespace MixERP.Inventory.DAL.Backend.Service
                             .ToListAsync()
                             .ConfigureAwait(false);
             }
+        }
+
+        public static async Task<decimal> GetCostPriceAsync(string tenant, int itemId, int unitId)
+        {
+            const string sql = "SELECT inventory.get_item_cost_price(@0, @1);";
+            return await Factory.ScalarAsync<decimal>(tenant, sql, itemId, unitId).ConfigureAwait(false);
         }
 
         public static async Task<decimal> CountItemsByItemCodeAsync(string tenant, string itemCode, string unitName, string storeName)

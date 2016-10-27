@@ -33,7 +33,6 @@ SELECT * FROM core.create_menu('Inventory', 'Setup', 'square outline', 'configur
 SELECT * FROM core.create_menu('Inventory', 'Inventory Items', '/dashboard/inventory/setup/inventory-items', 'users', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Groups', '/dashboard/inventory/setup/item-groups', 'users', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Types', '/dashboard/inventory/setup/item-types', 'users', 'Setup');
---SELECT * FROM core.create_menu('Inventory', 'Selling Prices', '/dashboard/inventory/setup/selling-prices', 'money', 'Setup');
 --SELECT * FROM core.create_menu('Inventory', 'Cost Prices', '/dashboard/inventory/setup/cost-prices', 'money', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Store Types', '/dashboard/inventory/setup/store-types', 'desktop', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Stores', '/dashboard/inventory/setup/stores', 'film', 'Setup');
@@ -49,6 +48,8 @@ SELECT * FROM core.create_menu('Inventory', 'Shippers', '/dashboard/inventory/se
 SELECT * FROM core.create_menu('Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'money', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'money', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventory', '/dashboard/inventory/setup/opening-inventory', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventory/verification', 'money', 'Setup');
 
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'money', 'Reports');

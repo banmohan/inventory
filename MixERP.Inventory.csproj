@@ -162,6 +162,8 @@
     <Compile Include="Controllers\Backend\Setup\ItemGroupController.cs" />
     <Compile Include="Controllers\Backend\Setup\ItemTypeController.cs" />
     <Compile Include="Controllers\Backend\Setup\ItemVariantController.cs" />
+    <Compile Include="Controllers\Backend\Setup\OpeningInventoryController.cs" />
+    <Compile Include="Controllers\Backend\Setup\OpeningInventoryVerificationController.cs" />
     <Compile Include="Controllers\Backend\Setup\ShipperController.cs" />
     <Compile Include="Controllers\Backend\Setup\StoreController.cs" />
     <Compile Include="Controllers\Backend\Setup\StoreTypeController.cs" />
@@ -175,18 +177,26 @@
     <Compile Include="Controllers\Backend\Tasks\TransferVerificationController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
     <Compile Include="Controllers\Services\InventoryBackendController.cs" />
+    <Compile Include="DAL\Backend\Setup\Inventory.cs" />
     <Compile Include="DAL\Backend\Service\Items.cs" />
     <Compile Include="DAL\Backend\Service\Units.cs" />
+    <Compile Include="DAL\Backend\Setup\OpeningInventories.cs" />
     <Compile Include="DAL\Backend\Tasks\InventoryAdjustments.cs" />
     <Compile Include="DAL\Backend\Tasks\InventoryTransfers.cs" />
     <Compile Include="DAL\Backend\Tasks\Stores.cs" />
     <Compile Include="DTO\AssociatedUnit.cs" />
     <Compile Include="DTO\ClosingInventory.cs" />
     <Compile Include="DTO\Item.cs" />
+    <Compile Include="DTO\ItemView.cs" />
+    <Compile Include="DTO\OpeningInventoryStatus.cs" />
+    <Compile Include="Models\OpeningInventories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AdjustmentType.cs" />
     <Compile Include="ViewModels\InventoryAdjustment.cs" />
     <Compile Include="ViewModels\InventoryTransfer.cs" />
+    <Compile Include="ViewModels\OpeningInventory.cs" />
+    <Compile Include="ViewModels\OpeningInventoryViewModel.cs" />
+    <Compile Include="ViewModels\OpeningStockType.cs" />
     <Compile Include="ViewModels\TransferType.cs" />
     <Compile Include="ViewModels\TransferTypeEnum.cs" />
   </ItemGroup>
@@ -225,6 +235,10 @@
     <Content Include="Views\Tasks\Adjustment\Checklist.cshtml" />
     <Content Include="Views\Tasks\Transfer\Verification.cshtml" />
     <Content Include="Views\Tasks\Adjustment\Verification.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\New.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\Index.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\Verification.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\Checklist.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -232,9 +246,7 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

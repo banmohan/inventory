@@ -446,7 +446,8 @@ CREATE TABLE inventory.inventory_setup
 	inventory_system						national character varying(50) NOT NULL
 											CHECK(inventory_system IN('Periodic', 'Perpetual')),
 	cogs_calculation_method					national character varying(50) NOT NULL
-											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO'))
+											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO')),
+	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false)
 );
 
 CREATE TYPE inventory.transfer_type
@@ -469,13 +470,26 @@ AS
 );
 
 
-CREATE TYPE inventory.checkout_detail_type AS
+CREATE TYPE inventory.checkout_detail_type 
+AS
 (
     store_id            integer,
-    item_code           national character varying(12),
+    item_id           	integer,
     quantity            public.decimal_strict,
-    unit_name           national character varying(50),
+    unit_id           	national character varying(50),
     price               public.money_strict,
     discount            public.money_strict2,
     shipping_charge     public.money_strict2
 );
+
+
+CREATE TYPE inventory.opening_stock_type
+AS
+(
+    store_id            integer,
+    item_id           	integer,
+    quantity            public.decimal_strict,
+    unit_id           	integer,
+    price          		public.money_strict
+);
+

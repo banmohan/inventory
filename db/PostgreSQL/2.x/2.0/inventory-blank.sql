@@ -447,7 +447,8 @@ CREATE TABLE inventory.inventory_setup
 	inventory_system						national character varying(50) NOT NULL
 											CHECK(inventory_system IN('Periodic', 'Perpetual')),
 	cogs_calculation_method					national character varying(50) NOT NULL
-											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO'))
+											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO')),
+	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false)
 );
 
 CREATE TYPE inventory.transfer_type
@@ -470,16 +471,29 @@ AS
 );
 
 
-CREATE TYPE inventory.checkout_detail_type AS
+CREATE TYPE inventory.checkout_detail_type 
+AS
 (
     store_id            integer,
-    item_code           national character varying(12),
+    item_id           	integer,
     quantity            public.decimal_strict,
-    unit_name           national character varying(50),
+    unit_id           	national character varying(50),
     price               public.money_strict,
     discount            public.money_strict2,
     shipping_charge     public.money_strict2
 );
+
+
+CREATE TYPE inventory.opening_stock_type
+AS
+(
+    store_id            integer,
+    item_id           	integer,
+    quantity            public.decimal_strict,
+    unit_id           	integer,
+    price          		public.money_strict
+);
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.convert_unit.sql --<--<--
@@ -1600,6 +1614,52 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_opening_inventory_status.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_opening_inventory_status
+(
+    _office_id                                      integer
+);
+
+CREATE FUNCTION inventory.get_opening_inventory_status
+(
+    _office_id                                      integer
+)
+RETURNS TABLE
+(
+    office_id                                       integer,
+    multiple_inventory_allowed                      boolean,
+    has_opening_inventory                           boolean
+)
+STABLE
+AS
+$$
+    DECLARE _multiple_inventory_allowed             boolean;
+    DECLARE _has_opening_inventory                  boolean = false;
+
+BEGIN
+    SELECT inventory.inventory_setup.allow_multiple_opening_inventory 
+    INTO _multiple_inventory_allowed    
+    FROM inventory.inventory_setup
+    WHERE inventory.inventory_setup.office_id = _office_id;
+
+    IF EXISTS
+    (
+        SELECT 1
+        FROM finance.transaction_master
+        WHERE finance.transaction_master.book = 'Opening Inventory'
+        AND finance.transaction_master.office_id = _office_id
+    ) THEN
+        _has_opening_inventory                      := true;
+    END IF;
+    
+    RETURN QUERY
+    SELECT _office_id, _multiple_inventory_allowed, _has_opening_inventory;
+END
+$$
+LANGUAGE plpgsql;
+
+--SELECT * FROM inventory.get_opening_inventory_status(1);
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_purchase_account_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_purchase_account_id(_item_id integer);
 
@@ -2282,6 +2342,125 @@ LANGUAGE plpgsql;
 -- 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.post_opening_inventory.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.post_opening_inventory
+(
+    _office_id                              integer,
+    _user_id                                integer,
+    _login_id                               bigint,
+    _value_date                             date,
+    _book_date                              date,
+    _reference_number                       national character varying(24),
+    _statement_reference                    text,
+    _details                                inventory.opening_stock_type[]    
+);
+
+CREATE FUNCTION inventory.post_opening_inventory
+(
+    _office_id                              integer,
+    _user_id                                integer,
+    _login_id                               bigint,
+    _value_date                             date,
+    _book_date                              date,
+    _reference_number                       national character varying(24),
+    _statement_reference                    text,
+    _details                                inventory.opening_stock_type[]    
+)
+RETURNS bigint
+VOLATILE
+AS
+$$
+    DECLARE _book_name                      text = 'Opening Inventory';
+    DECLARE _transaction_master_id          bigint;
+    DECLARE _checkout_id                bigint;
+    DECLARE _tran_counter                   integer;
+    DECLARE _transaction_code               text;
+BEGIN
+    DROP TABLE IF EXISTS temp_stock_details;
+    
+    CREATE TEMPORARY TABLE temp_stock_details
+    (
+        id                              SERIAL PRIMARY KEY,
+        tran_type                       national character varying(2),
+        store_id                        integer,
+        item_id                         integer, 
+        quantity                        integer_strict,
+        unit_id                         integer,
+        base_quantity                   decimal,
+        base_unit_id                    integer,                
+        price                           money_strict
+    ) ON COMMIT DROP;
+
+    INSERT INTO temp_stock_details(store_id, item_id, quantity, unit_id, price)
+    SELECT store_id, item_id, quantity, unit_id, price
+    FROM explode_array(_details);
+
+    UPDATE temp_stock_details 
+    SET
+        tran_type                       = 'Dr',
+        base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
+        base_unit_id                    = inventory.get_root_unit_id(unit_id);
+
+    IF EXISTS
+    (
+        SELECT * FROM temp_stock_details
+        WHERE store_id IS NULL
+        OR item_id IS NULL
+        OR unit_id IS NULL
+    ) THEN
+        RAISE EXCEPTION 'Access is denied. Invalid values supplied.'
+        USING ERRCODE='P9011';
+    END IF;
+
+    IF EXISTS
+    (
+            SELECT 1 FROM temp_stock_details AS details
+            WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = false
+            LIMIT 1
+    ) THEN
+        RAISE EXCEPTION 'Item/unit mismatch.'
+        USING ERRCODE='P3201';
+    END IF;
+
+    
+    _transaction_master_id  := nextval(pg_get_serial_sequence('finance.transaction_master', 'transaction_master_id'));
+    _checkout_id            := nextval(pg_get_serial_sequence('inventory.checkouts', 'checkout_id'));
+    _tran_counter           := finance.get_new_transaction_counter(_value_date);
+    _transaction_code       := finance.get_transaction_code(_value_date, _office_id, _user_id, _login_id);
+
+    INSERT INTO finance.transaction_master(transaction_master_id, transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
+    SELECT _transaction_master_id, _tran_counter, _transaction_code, _book_name, _value_date, _book_date, _user_id, _login_id, _office_id, _reference_number, _statement_reference;
+
+    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, checkout_id, transaction_master_id, posted_by, office_id)
+    SELECT _book_name, _value_date, _book_date, _checkout_id, _transaction_master_id, _user_id, _office_id;
+
+    INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
+    SELECT _value_date, _book_date, _checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
+    FROM temp_stock_details;
+    
+    PERFORM finance.auto_verify(_transaction_master_id, _office_id);    
+    RETURN _transaction_master_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- 
+-- SELECT * FROM inventory.post_opening_inventory
+-- (
+--     2,
+--     2,
+--     5,
+--     '1-1-2020',
+--     '1-1-2020',
+--     '3424',
+--     'ASDF',
+--     ARRAY[
+--          ROW(1, 1, 1, 1,180000)::inventory.opening_stock_type,
+--          ROW(1, 2, 1, 1,130000)::inventory.opening_stock_type,
+--          ROW(1, 3, 1, 1,110000)::inventory.opening_stock_type]);
+-- 
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.post_transfer.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.post_transfer
 (
@@ -2485,7 +2664,6 @@ SELECT * FROM core.create_menu('Inventory', 'Setup', 'square outline', 'configur
 SELECT * FROM core.create_menu('Inventory', 'Inventory Items', '/dashboard/inventory/setup/inventory-items', 'users', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Groups', '/dashboard/inventory/setup/item-groups', 'users', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Types', '/dashboard/inventory/setup/item-types', 'users', 'Setup');
---SELECT * FROM core.create_menu('Inventory', 'Selling Prices', '/dashboard/inventory/setup/selling-prices', 'money', 'Setup');
 --SELECT * FROM core.create_menu('Inventory', 'Cost Prices', '/dashboard/inventory/setup/cost-prices', 'money', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Store Types', '/dashboard/inventory/setup/store-types', 'desktop', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Stores', '/dashboard/inventory/setup/stores', 'film', 'Setup');
@@ -2501,6 +2679,8 @@ SELECT * FROM core.create_menu('Inventory', 'Shippers', '/dashboard/inventory/se
 SELECT * FROM core.create_menu('Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'money', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'money', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventory', '/dashboard/inventory/setup/opening-inventory', 'money', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventory/verification', 'money', 'Setup');
 
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'configure', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'money', 'Reports');
@@ -2595,39 +2775,36 @@ DROP VIEW IF EXISTS inventory.item_view;
 
 CREATE VIEW inventory.item_view
 AS
-SELECT 
-        item_id,
-        item_code,
-        item_name,
-        item_group_code || ' (' || item_group_name || ')' AS item_group,
-        item_type_code || ' (' || item_type_name || ')' AS item_type,
-        maintain_inventory,
-        brand_code || ' (' || brand_name || ')' AS brand,
-        supplier_code || ' (' || supplier_name || ')' AS preferred_supplier,
-        lead_time_in_days,
-        inventory.units.unit_code || ' (' || inventory.units.unit_name || ')' AS unit,
-        base_unit.unit_code || ' (' || base_unit.unit_name || ')' AS base_unit,
-        hot_item,
-        cost_price,
-        selling_price,
-        reorder_unit.unit_code || ' (' || reorder_unit.unit_name || ')' AS reorder_unit,
-        reorder_level,
-        reorder_quantity
+SELECT
+    inventory.items.item_id,
+    inventory.items.item_code,
+    inventory.items.item_name,
+    inventory.items.barcode,
+    inventory.items.item_group_id,
+    inventory.item_groups.item_group_name,
+    inventory.item_types.item_type_id,
+    inventory.item_types.item_type_name,
+    inventory.items.brand_id,
+    inventory.brands.brand_name,
+    inventory.items.preferred_supplier_id,
+    inventory.items.unit_id,
+    array_to_string(inventory.get_associated_unit_list(inventory.items.unit_id), ',') AS valid_units,
+    inventory.units.unit_code,
+    inventory.units.unit_name,
+    inventory.items.hot_item,
+    inventory.items.cost_price,
+    inventory.items.photo,
+	inventory.items.maintain_inventory
 FROM inventory.items
 INNER JOIN inventory.item_groups
-ON inventory.items.item_group_id = inventory.item_groups.item_group_id
+ON inventory.item_groups.item_group_id = inventory.items.item_group_id
 INNER JOIN inventory.item_types
-ON inventory.items.item_type_id = inventory.item_types.item_type_id
+ON inventory.item_types.item_type_id = inventory.items.item_type_id
 INNER JOIN inventory.brands
-ON inventory.items.brand_id = inventory.brands.brand_id
-INNER JOIN inventory.suppliers
-ON inventory.items.preferred_supplier_id = inventory.suppliers.supplier_id
+ON inventory.brands.brand_id = inventory.items.brand_id
 INNER JOIN inventory.units
-ON inventory.items.unit_id = inventory.units.unit_id
-INNER JOIN inventory.units AS base_unit
-ON inventory.get_root_unit_id(inventory.items.unit_id) = inventory.units.unit_id
-INNER JOIN inventory.units AS reorder_unit
-ON inventory.items.reorder_unit_id = reorder_unit.unit_id;
+ON inventory.units.unit_id = inventory.items.unit_id
+WHERE NOT inventory.items.deleted;
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.views/inventory.verified_checkout_details_view.sql --<--<--
 DROP VIEW IF EXISTS inventory.verified_checkout_details_view;
