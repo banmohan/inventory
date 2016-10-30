@@ -33,6 +33,10 @@ $$
     DECLARE _is_periodic                    boolean = inventory.is_periodic_inventory(_office_id);
     DECLARE _default_currency_code          national character varying(12);
 BEGIN
+    IF NOT finance.can_post_transaction(_login_id, _user_id, _office_id, _book_name, _value_date) THEN
+        return 0;
+    END IF;
+    
     CREATE TEMPORARY TABLE IF NOT EXISTS temp_stock_details
     (
         tran_type                       national character varying(2),
@@ -217,4 +221,4 @@ LANGUAGE plpgsql;
 -- ROW('Cr', '11MBA', 'Piece', 1)::inventory.adjustment_type
 -- ]
 -- );
--- 
+

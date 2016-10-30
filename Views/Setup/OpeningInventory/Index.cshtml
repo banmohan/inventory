@@ -224,7 +224,6 @@
     });
 
     loadDatepicker();
-    processQuery();
 
     
     function showOpeningAdvice(tranId) {
@@ -240,4 +239,7 @@
 
         }, 300);
     };
+    setTimeout(function () {
+        processQuery();
+    }, 1000);
 </script>

@@ -31,6 +31,10 @@ $$
     DECLARE _tran_counter                   integer;
     DECLARE _transaction_code               text;
 BEGIN
+    IF NOT finance.can_post_transaction(_login_id, _user_id, _office_id, _book_name, _value_date) THEN
+        return 0;
+    END IF;
+
     DROP TABLE IF EXISTS temp_stock_details;
     
     CREATE TEMPORARY TABLE temp_stock_details

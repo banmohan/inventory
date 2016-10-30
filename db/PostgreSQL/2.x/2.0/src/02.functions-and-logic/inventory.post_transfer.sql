@@ -29,6 +29,10 @@ $$
     DECLARE _checkout_id                    bigint;
     DECLARE _book_name                      text='Inventory Transfer';
 BEGIN
+    IF NOT finance.can_post_transaction(_login_id, _user_id, _office_id, _book_name, _value_date) THEN
+        RETURN 0;
+    END IF;
+
     CREATE TEMPORARY TABLE IF NOT EXISTS temp_stock_details
     (
         tran_type       national character varying(2),

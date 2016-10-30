@@ -200,7 +200,9 @@
     });
 
     loadDatepicker();
-    processQuery();
+    setTimeout(function () {
+        processQuery();
+    }, 1000);
 
 
     function showAdjustment(tranId) {
