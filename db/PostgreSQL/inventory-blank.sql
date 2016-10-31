@@ -2885,7 +2885,7 @@ SELECT * FROM inventory.checkout_view
 WHERE verification_status_id > 0;
 
 ALTER MATERIALIZED VIEW inventory.verified_checkout_view
-OWNER TO mix_erp;
+OWNER TO frapid_db_user;
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.ownership.sql --<--<--
 DO
