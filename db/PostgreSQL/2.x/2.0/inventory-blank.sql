@@ -1795,6 +1795,36 @@ LANGUAGE plpgsql;
 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_shipper_id_by_shipper_code.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_shipper_id_by_shipper_code(_shipper_code national character varying(24));
+
+CREATE FUNCTION inventory.get_shipper_id_by_shipper_code(_shipper_code national character varying(24))
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN inventory.shippers.shipper_id
+    FROM inventory.shippers
+    WHERE inventory.shippers.shipper_code = _shipper_code;
+END
+$$
+LANGUAGE plpgsql;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_shipper_id_by_shipper_name.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_shipper_id_by_shipper_name(_shipper_name national character varying(24));
+
+CREATE FUNCTION inventory.get_shipper_id_by_shipper_name(_shipper_name national character varying(24))
+RETURNS integer
+AS
+$$
+BEGIN
+    RETURN inventory.shippers.shipper_id
+    FROM inventory.shippers
+    WHERE inventory.shippers.shipper_name = _shipper_name;
+END
+$$
+LANGUAGE plpgsql;
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_store_id_by_store_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_store_id_by_store_code(_store_code text);
 
