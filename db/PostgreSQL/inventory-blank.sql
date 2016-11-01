@@ -45,7 +45,7 @@ CREATE TABLE inventory.suppliers
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
-	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
+	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -97,7 +97,7 @@ CREATE TABLE inventory.customers
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
-	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
+	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -448,7 +448,8 @@ CREATE TABLE inventory.inventory_setup
 											CHECK(inventory_system IN('Periodic', 'Perpetual')),
 	cogs_calculation_method					national character varying(50) NOT NULL
 											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO')),
-	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false)
+	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false),
+	default_discount_account_id				integer NOT NULL REFERENCES finance.accounts
 );
 
 CREATE TYPE inventory.transfer_type
@@ -1220,16 +1221,20 @@ CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id inte
 RETURNS money_strict
 AS
 $$
-    DECLARE _base_quantity decimal;
-    DECLARE _base_unit_id integer;
-    DECLARE _base_unit_cost money_strict;
-    DECLARE _total_sold integer;
-    DECLARE _office_id integer      = inventory.get_office_id_by_store_id($3);
-    DECLARE _method text            = inventory.get_cost_of_good_method(_office_id);
+    DECLARE _backup_quantity            decimal;
+    DECLARE _base_quantity              decimal;
+    DECLARE _base_unit_id               integer;
+    DECLARE _base_unit_cost             money_strict;
+    DECLARE _total_sold                 integer;
+    DECLARE _office_id                  integer = inventory.get_office_id_by_store_id($3);
+    DECLARE _method                     text = inventory.get_cost_of_good_method(_office_id);
 BEGIN
-    _base_quantity                  := inventory.get_base_quantity_by_unit_id($2, $4);
+    --backup base quantity in decimal
+    _backup_quantity                := inventory.get_base_quantity_by_unit_id($2, $4);
+    --convert base quantity to whole number
+    _base_quantity                  := CEILING(_backup_quantity);
     _base_unit_id                   := inventory.get_root_unit_id($2);
-    
+        
     IF(_method = 'MAVCO') THEN
         --RAISE NOTICE '% % % %',_item_id, _store_id, _base_quantity, 1.00;
         RETURN transactions.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
@@ -1280,10 +1285,11 @@ BEGIN
         WHERE item_id = $1
         AND store_id = $3
     )
-    
+        
     INSERT INTO temp_cost_of_goods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
     SELECT checkout_detail_id, audit_ts, value_date, price, transaction_type FROM stock_cte
     ORDER BY value_date, audit_ts, checkout_detail_id;
+
 
     IF(_method = 'LIFO') THEN
         SELECT SUM(price) INTO _base_unit_cost
@@ -1312,12 +1318,15 @@ BEGIN
         USING ERRCODE='P6010';
     END IF;
 
+    --APPLY DECIMAL QUANTITY PROVISON
+    _base_unit_cost := _base_unit_cost * (_backup_quantity / _base_quantity);
+
     RETURN _base_unit_cost;
 END
 $$
 LANGUAGE PLPGSQL;
 
-
+--SELECT * FROM inventory.get_cost_of_goods_sold(1,1, 1, 3.5);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold_account_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold_account_id(_item_id integer);
@@ -2709,8 +2718,8 @@ SELECT * FROM auth.create_app_menu_policy
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/04.default-values/01.default-values.sql --<--<--
-INSERT INTO inventory.inventory_setup(office_id, inventory_system, cogs_calculation_method)
-SELECT office_id, 'Perpetual', 'FIFO'
+INSERT INTO inventory.inventory_setup(office_id, inventory_system, cogs_calculation_method, default_discount_account_id)
+SELECT office_id, 'Perpetual', 'FIFO', finance.get_account_id_by_account_number('40270')
 FROM core.offices;
 
 
@@ -2782,41 +2791,82 @@ AND inventory.items.maintain_inventory;
 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.views/inventory.checkout_detail_view.sql --<--<--
+DROP VIEW IF EXISTS inventory.checkout_detail_view;
+
+CREATE VIEW inventory.checkout_detail_view
+AS
+SELECT
+	inventory.checkouts.transaction_master_id,
+	inventory.checkouts.checkout_id,
+	inventory.checkout_details.checkout_detail_id,
+	inventory.checkout_details.transaction_type,
+	inventory.checkout_details.store_id,
+	inventory.stores.store_code,
+	inventory.stores.store_name,
+	inventory.checkout_details.item_id,
+	inventory.items.item_code,
+	inventory.items.item_name,
+	inventory.checkout_details.quantity,
+	inventory.checkout_details.unit_id,
+	inventory.units.unit_code,
+	inventory.units.unit_name,
+	inventory.checkout_details.base_quantity,
+	inventory.checkout_details.base_unit_id,
+	base_unit.unit_code AS base_unit_code,
+	base_unit.unit_name AS base_unit_name,
+	inventory.checkout_details.price,
+	inventory.checkout_details.discount,
+	inventory.checkout_details.shipping_charge,
+	(inventory.checkout_details.price * inventory.checkout_details.quantity) + inventory.checkout_details.shipping_charge - inventory.checkout_details.discount AS amount
+FROM inventory.checkout_details
+INNER JOIN inventory.checkouts
+ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
+INNER JOIN inventory.stores
+ON inventory.stores.store_id = inventory.checkout_details.store_id
+INNER JOIN inventory.items
+ON inventory.items.item_id = inventory.checkout_details.item_id
+INNER JOIN inventory.units
+ON inventory.units.unit_id = inventory.checkout_details.unit_id
+INNER JOIN inventory.units AS base_unit
+ON base_unit.unit_id = inventory.checkout_details.base_unit_id;
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.views/inventory.checkout_view.sql --<--<--
 DROP VIEW IF EXISTS inventory.checkout_view CASCADE;
 
 CREATE VIEW inventory.checkout_view
 AS
 SELECT
-        finance.transaction_master.transaction_master_id,
-        inventory.checkouts.checkout_id,
-        inventory.checkout_details.checkout_detail_id,
-        finance.transaction_master.book,
-        finance.transaction_master.transaction_counter,
-        finance.transaction_master.transaction_code,
-        finance.transaction_master.value_date,
-        finance.transaction_master.transaction_ts,
-        finance.transaction_master.login_id,
-        finance.transaction_master.user_id,
-        finance.transaction_master.office_id,
-        finance.transaction_master.cost_center_id,
-        finance.transaction_master.reference_number,
-        finance.transaction_master.statement_reference,
-        finance.transaction_master.last_verified_on,
-        finance.transaction_master.verified_by_user_id,
-        finance.transaction_master.verification_status_id,
-        finance.transaction_master.verification_reason,
-        inventory.checkout_details.transaction_type,
-        inventory.checkout_details.store_id,
-        inventory.checkout_details.item_id,
-        inventory.checkout_details.quantity,
-        inventory.checkout_details.unit_id,
-        inventory.checkout_details.base_quantity,
-        inventory.checkout_details.base_unit_id,
-        inventory.checkout_details.price,
-        inventory.checkout_details.discount,
-        inventory.checkout_details.shipping_charge,
-        inventory.checkout_details.price * inventory.checkout_details.quantity + inventory.checkout_details.discount AS amount
+	finance.transaction_master.transaction_master_id,
+	inventory.checkouts.checkout_id,
+	inventory.checkout_details.checkout_detail_id,
+	finance.transaction_master.book,
+	finance.transaction_master.transaction_counter,
+	finance.transaction_master.transaction_code,
+	finance.transaction_master.value_date,
+	finance.transaction_master.transaction_ts,
+	finance.transaction_master.login_id,
+	finance.transaction_master.user_id,
+	finance.transaction_master.office_id,
+	finance.transaction_master.cost_center_id,
+	finance.transaction_master.reference_number,
+	finance.transaction_master.statement_reference,
+	finance.transaction_master.last_verified_on,
+	finance.transaction_master.verified_by_user_id,
+	finance.transaction_master.verification_status_id,
+	finance.transaction_master.verification_reason,
+	inventory.checkout_details.transaction_type,
+	inventory.checkout_details.store_id,
+	inventory.checkout_details.item_id,
+	inventory.checkout_details.quantity,
+	inventory.checkout_details.unit_id,
+	inventory.checkout_details.base_quantity,
+	inventory.checkout_details.base_unit_id,
+	inventory.checkout_details.price,
+	inventory.checkout_details.discount,
+	inventory.checkout_details.shipping_charge,
+	inventory.checkout_details.price * inventory.checkout_details.quantity + inventory.checkout_details.discount AS amount
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id

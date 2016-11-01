@@ -44,7 +44,7 @@ CREATE TABLE inventory.suppliers
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
-	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
+	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -96,7 +96,7 @@ CREATE TABLE inventory.customers
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
 	account_id								integer NOT NULL REFERENCES finance.accounts,
-	currency_code							national character varying(12) NOT NULL REFERENCES finance.currencies,
+	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -447,7 +447,8 @@ CREATE TABLE inventory.inventory_setup
 											CHECK(inventory_system IN('Periodic', 'Perpetual')),
 	cogs_calculation_method					national character varying(50) NOT NULL
 											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO')),
-	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false)
+	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false),
+	default_discount_account_id				integer NOT NULL REFERENCES finance.accounts
 );
 
 CREATE TYPE inventory.transfer_type

@@ -233,4 +233,8 @@ SELECT 'AML', 'Amul', inventory.get_customer_type_id_by_customer_type_code('C'),
 
 --ROLLBACK TRANSACTION;
 
+UPDATE inventory.items
+SET cost_price = ROUND(cost_price / 100, 2),
+selling_price = ROUND(cost_price / 70, 2);
+
 
