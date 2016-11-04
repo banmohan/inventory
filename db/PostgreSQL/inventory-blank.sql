@@ -192,7 +192,9 @@ CREATE TABLE inventory.items
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     hot_item                                boolean NOT NULL DEFAULT(false),
     cost_price                              public.decimal_strict2,
+	cost_price_includes_tax					boolean NOT NULL DEFAULT(false),
     selling_price                           public.decimal_strict2,
+	selling_price_includes_tax				boolean NOT NULL DEFAULT(false),
     reorder_level                           public.integer_strict2 NOT NULL DEFAULT(0),
     reorder_quantity                        public.integer_strict2 NOT NULL DEFAULT(0),
 	reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
@@ -2753,9 +2755,6 @@ SELECT office_id, 'Perpetual', 'FIFO', finance.get_account_id_by_account_number(
 FROM core.offices;
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.reports/cinesys.sales_by_cashier_view.sql --<--<--
-
-
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.scrud-views/inventory.customer_scrud_view.sql --<--<--
 DROP VIEW IF EXISTS inventory.customer_scrud_view;
 
@@ -2929,6 +2928,9 @@ SELECT
     inventory.units.unit_name,
     inventory.items.hot_item,
     inventory.items.cost_price,
+    inventory.items.cost_price_includes_tax,
+    inventory.items.selling_price,
+    inventory.items.selling_price_includes_tax,
     inventory.items.photo,
 	inventory.items.maintain_inventory
 FROM inventory.items

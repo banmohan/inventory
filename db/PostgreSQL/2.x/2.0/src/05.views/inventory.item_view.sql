@@ -20,6 +20,9 @@ SELECT
     inventory.units.unit_name,
     inventory.items.hot_item,
     inventory.items.cost_price,
+    inventory.items.cost_price_includes_tax,
+    inventory.items.selling_price,
+    inventory.items.selling_price_includes_tax,
     inventory.items.photo,
 	inventory.items.maintain_inventory
 FROM inventory.items
