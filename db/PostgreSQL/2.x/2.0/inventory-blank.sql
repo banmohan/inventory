@@ -1951,6 +1951,22 @@ END
 $$
 LANGUAGE plpgsql;
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_name_by_unit_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_unit_name_by_unit_id(_unit_id integer);
+
+CREATE FUNCTION inventory.get_unit_name_by_unit_id(_unit_id integer)
+RETURNS national character varying(1000)
+AS
+$$
+BEGIN
+    RETURN unit_name
+    FROM inventory.units
+    WHERE inventory.units.unit_id = _unit_id
+	AND NOT inventory.units.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_write_off_cost_of_goods_sold.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_write_off_cost_of_goods_sold(_checkout_id bigint, _item_id integer, _unit_id integer, _quantity integer);
 
