@@ -460,7 +460,8 @@ AS
     store_name      national character varying(50),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        public.decimal_strict
+    quantity        public.decimal_strict,
+    rate            public.money_strict2
 );
 
 CREATE TYPE inventory.adjustment_type 
