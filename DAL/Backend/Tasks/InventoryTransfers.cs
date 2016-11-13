@@ -23,7 +23,7 @@ namespace MixERP.Inventory.DAL.Backend.Tasks
             for (int i = 0; i < details.Count; i++)
             {
                 items.Add(string.Format(CultureInfo.InvariantCulture,
-                    "ROW(@TransactionType{0}, @StoreName{0}, @ItemCode{0}, @UnitName{0}, @Quantity{0})::inventory.transfer_type",
+                    "ROW(@TransactionType{0}, @StoreName{0}, @ItemCode{0}, @UnitName{0}, @Quantity{0}, null::public.money_strict2)::inventory.transfer_type",
                     i.ToString(CultureInfo.InvariantCulture)));
             }
 

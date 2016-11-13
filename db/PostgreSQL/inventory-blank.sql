@@ -461,7 +461,8 @@ AS
     store_name      national character varying(50),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        public.decimal_strict
+    quantity        public.decimal_strict,
+    rate            public.money_strict2
 );
 
 CREATE TYPE inventory.adjustment_type 
@@ -2589,12 +2590,13 @@ BEGIN
         unit_name       national character varying(50),
         quantity        public.decimal_strict,
         base_quantity   public.decimal_strict,                
-        price           money_strict                             
+        price           money_strict
     ) 
     ON COMMIT DROP; 
 
-    INSERT INTO temp_stock_details(tran_type, store_name, item_code, unit_name, quantity)
-    SELECT tran_type, store_name, item_code, unit_name, quantity FROM explode_array(_details);
+    INSERT INTO temp_stock_details(tran_type, store_name, item_code, unit_name, quantity, price)
+    SELECT tran_type, store_name, item_code, unit_name, quantity, rate * quantity
+    FROM explode_array(_details);
 
     IF EXISTS
     (
@@ -2623,8 +2625,12 @@ BEGIN
     UPDATE temp_stock_details 
     SET
         base_unit_id    = inventory.get_root_unit_id(unit_id),
-        base_quantity   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
-        price           = inventory.get_item_cost_price(item_id, unit_id);
+        base_quantity   = inventory.get_base_quantity_by_unit_id(unit_id, quantity);
+
+    UPDATE temp_stock_details 
+    SET
+        price           = inventory.get_item_cost_price(item_id, unit_id)
+    WHERE temp_stock_details.price IS NULL;
 
     IF EXISTS
     (
