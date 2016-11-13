@@ -1523,6 +1523,21 @@ END
 $$
 LANGUAGE plpgsql;
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_name_by_item_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_item_name_by_item_id(item_id_ int);
+
+CREATE OR REPLACE FUNCTION inventory.get_item_name_by_item_id(item_id_ int)
+  RETURNS character varying(50) AS
+$$
+BEGIN
+    RETURN item_name
+    FROM inventory.items
+    WHERE inventory.items.item_id = item_id_
+	AND NOT inventory.items.deleted;
+END
+$$
+  LANGUAGE plpgsql;
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_type_id_by_item_type_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_item_type_id_by_item_type_code(text);
 
@@ -1947,6 +1962,22 @@ BEGIN
     RETURN unit_id
     FROM inventory.units
     WHERE inventory.units.unit_name = _unit_name
+	AND NOT inventory.units.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_name_by_unit_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_unit_name_by_unit_id(_unit_id integer);
+
+CREATE FUNCTION inventory.get_unit_name_by_unit_id(_unit_id integer)
+RETURNS national character varying(1000)
+AS
+$$
+BEGIN
+    RETURN unit_name
+    FROM inventory.units
+    WHERE inventory.units.unit_id = _unit_id
 	AND NOT inventory.units.deleted;
 END
 $$
