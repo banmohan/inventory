@@ -238,3 +238,5 @@ SET cost_price = ROUND(cost_price / 100, 2),
 selling_price = ROUND(cost_price / 70, 2);
 
 
+UPDATE inventory.customers
+SET contact_phone_numbers = floor(random() * (9000000000 + 901933933));

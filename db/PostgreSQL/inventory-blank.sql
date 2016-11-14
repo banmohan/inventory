@@ -1457,6 +1457,20 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_code_by_item_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_item_code_by_item_id(integer);
+CREATE OR REPLACE FUNCTION inventory.get_item_code_by_item_id(item_id_ integer)
+RETURNS character varying AS
+$$
+BEGIN
+    RETURN item_code
+    FROM inventory.items
+    WHERE inventory.items.item_id = item_id_
+    AND NOT inventory.items.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_item_cost_price.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_item_cost_price(_item_id integer, _unit_id integer);
 
@@ -1880,6 +1894,20 @@ BEGIN
 END
 $$
 LANGUAGE plpgsql;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_store_name_by_store_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_store_name_by_store_id(integer);
+CREATE OR REPLACE FUNCTION inventory.get_store_name_by_store_id(integer)
+  RETURNS text AS
+$$
+BEGIN
+    RETURN store_name
+    FROM inventory.stores
+    WHERE inventory.stores.store_id = $1
+	AND NOT inventory.stores.deleted;
+END
+$$
+  LANGUAGE plpgsql;
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_store_type_id_by_store_type_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_store_type_id_by_store_type_code(text);
