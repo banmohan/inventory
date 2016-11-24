@@ -18,6 +18,13 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Adjustment/Index.cshtml", this.Tenant));
         }
 
+        [Route("dashboard/inventory/tasks/inventory-adjustments/verification")]
+        [MenuPolicy]
+        public ActionResult Verification()
+        {
+            return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Adjustment/Verification.cshtml", this.Tenant));
+        }
+
         [Route("dashboard/inventory/tasks/adjustments/checklist/{tranId}")]
         [MenuPolicy(OverridePath = "/dashboard/inventory/tasks/inventory-adjustments")]
         public ActionResult CheckList(long tranId)

@@ -26,12 +26,6 @@ namespace ASP
     using System.Web.Security;
     using System.Web.UI;
     using System.Web.WebPages;
-    
-    #line 1 "..\..\Views\Tasks\Transfer\Index.cshtml"
-    using Frapid.ApplicationState.Cache;
-    
-    #line default
-    #line hidden
     using Frapid.Configuration;
     using Frapid.Dashboard;
     using Frapid.DataAccess;
@@ -42,6 +36,12 @@ namespace ASP
     using Frapid.NPoco;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
+    
+    #line 1 "..\..\Views\Tasks\Transfer\Index.cshtml"
+    using MixERP.Inventory.Extensions;
+    
+    #line default
+    #line hidden
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
     [System.Web.WebPages.PageVirtualPathAttribute("~/Views/Tasks/Transfer/Index.cshtml")]
@@ -55,348 +55,51 @@ namespace ASP
             
             #line 4 "..\..\Views\Tasks\Transfer\Index.cshtml"
   
-    ViewBag.Title = "Inventory";
+    ViewBag.Title = "Inventory Transfers";
     Layout = ViewBag.InventoryLayoutPath;
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n<style>\r\n    .modal iframe {\r\n        width: 100%;\r\n        border: none;\r\n    " +
-"    height: 700px;\r\n    }\r\n</style>\r\n<script");
-
-WriteLiteral(" src=\"/Scripts/frapid/utilities/form.js\"");
-
-WriteLiteral("></script>\r\n<div");
-
-WriteLiteral(" class=\"ui attached segment\"");
-
-WriteLiteral(" style=\"min-height: 100%; padding: 3em;\"");
-
-WriteLiteral(">\r\n    <div");
-
-WriteLiteral(" class=\"\"");
-
-WriteLiteral(">\r\n        <div");
-
-WriteLiteral(" class=\"ui huge header\"");
-
-WriteLiteral(">Inventory Transfer</div>\r\n        <div");
-
-WriteLiteral(" class=\"ui divider\"");
-
-WriteLiteral("></div>\r\n        <div");
-
-WriteLiteral(" class=\"ui stackable grid\"");
-
-WriteLiteral(">\r\n            <div");
-
-WriteLiteral(" class=\"twelve wide column\"");
-
-WriteLiteral(">\r\n                <div");
-
-WriteLiteral(" class=\"ui basic buttons\"");
-
-WriteLiteral(">\r\n                    <a");
-
-WriteLiteral(" id=\"AddNewButton\"");
-
-WriteLiteral(" class=\"ui basic button\"");
-
-WriteLiteral(" style=\"\"");
-
-WriteLiteral(" href=\"/dashboard/inventory/tasks/inventory-transfers/new\"");
-
-WriteLiteral(">\r\n                        Add New\r\n                    </a>\r\n                   " +
-" <div");
-
-WriteLiteral(" class=\"ui icon top left pointing dropdown basic button\"");
-
-WriteLiteral(" id=\"ExportDropDown\"");
-
-WriteLiteral(" tabindex=\"0\"");
-
-WriteLiteral(">\r\n                        <span>\r\n                            Export\r\n          " +
-"              </span>\r\n                        <div");
-
-WriteLiteral(" class=\"menu\"");
-
-WriteLiteral(">\r\n                            <div");
-
-WriteLiteral(" class=\"header\"");
-
-WriteLiteral(">\r\n                                Export This Document\r\n                        " +
-"    </div>\r\n                            <a");
-
-WriteLiteral(" class=\"item\"");
-
-WriteLiteral(" href=\"javascript:void(0);\"");
-
-WriteLiteral(" onclick=\"createDoc();\"");
-
-WriteLiteral(">\r\n                                <i");
-
-WriteLiteral(" class=\"file word outline blue icon\"");
-
-WriteLiteral("></i> Export to Doc\r\n                            </a>\r\n                          " +
-"  <a");
-
-WriteLiteral(" class=\"item\"");
-
-WriteLiteral(" href=\"javascript:void(0);\"");
-
-WriteLiteral(" onclick=\"createXls();\"");
-
-WriteLiteral(">\r\n                                <i");
-
-WriteLiteral(" class=\"file excel outline green icon\"");
-
-WriteLiteral("></i> Export to Excel\r\n                            </a>\r\n                        " +
-"    <a");
-
-WriteLiteral(" class=\"item\"");
-
-WriteLiteral(" href=\"javascript:void(0);\"");
-
-WriteLiteral(" onclick=\"createPDF();\"");
-
-WriteLiteral(">\r\n                                <i");
-
-WriteLiteral(" class=\"file pdf outline red icon\"");
-
-WriteLiteral("></i> Export to PDF\r\n                            </a>\r\n                        </" +
-"div>\r\n                    </div>\r\n                    <a");
-
-WriteLiteral(" id=\"PrintButton\"");
-
-WriteLiteral(" href=\"javascript:void(0);\"");
-
-WriteLiteral(" onclick=\"print()\"");
-
-WriteLiteral(" class=\"ui basic button\"");
-
-WriteLiteral(">\r\n                        Print\r\n                    </a>\r\n                </div" +
-">\r\n            </div>\r\n        </div>\r\n        <div");
-
-WriteLiteral(" class=\"ui stackable form query segment\"");
-
-WriteLiteral(" id=\"Annotation\"");
-
-WriteLiteral(">\r\n            <div");
-
-WriteLiteral(" class=\"twelve fields\"");
-
-WriteLiteral(">\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" class=\"date\"");
-
-WriteLiteral(" data-persist");
-
-WriteLiteral(" placeholder=\"DateFrom\"");
-
-WriteLiteral(" id=\"FromInputDate\"");
-
-WriteLiteral(" title=\"DateFrom\"");
-
-WriteLiteral(" type=\"date\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" class=\"date\"");
-
-WriteLiteral(" data-persist");
-
-WriteLiteral(" placeholder=\"DateTo\"");
-
-WriteLiteral(" id=\"ToInputDate\"");
-
-WriteLiteral(" title=\"DateTo\"");
-
-WriteLiteral(" type=\"date\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" placeholder=\"TranId\"");
-
-WriteLiteral(" id=\"TranIdInputText\"");
-
-WriteLiteral(" title=\"TranId\"");
-
-WriteLiteral(" type=\"text\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" placeholder=\"TranCode\"");
-
-WriteLiteral(" id=\"TranCodeInputText\"");
-
-WriteLiteral(" title=\"TranCode\"");
-
-WriteLiteral(" type=\"text\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" placeholder=\"Office\"");
-
-WriteLiteral(" id=\"OfficeInputText\"");
-
-WriteLiteral(" title=\"Office\"");
-
-WriteLiteral(" type=\"text\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" placeholder=\"ReferenceNumber\"");
-
-WriteLiteral(" id=\"ReferenceNumberInputText\"");
-
-WriteLiteral(" title=\"ReferenceNumber\"");
-
-WriteLiteral(" type=\"text\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" placeholder=\"StatementReference\"");
-
-WriteLiteral(" id=\"StatementReferenceInputText\"");
-
-WriteLiteral(" title=\"StatementReference\"");
-
-WriteLiteral(" type=\"text\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <input");
-
-WriteLiteral(" placeholder=\"PostedBy\"");
-
-WriteLiteral(" id=\"PostedByInputText\"");
-
-WriteLiteral(" title=\"PostedBy\"");
-
-WriteLiteral(" type=\"text\"");
-
-WriteLiteral(">\r\n                </div>\r\n                <div");
-
-WriteLiteral(" class=\"field\"");
-
-WriteLiteral(">\r\n                    <div");
-
-WriteLiteral(" class=\"ui green button\"");
-
-WriteLiteral(" id=\"ShowButton\"");
-
-WriteLiteral(">Show</div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        " +
-"<table");
-
-WriteLiteral(" id=\"TransferView\"");
-
-WriteLiteral(" class=\"ui table segment\"");
-
-WriteLiteral(@">
-            <thead>
-                <tr>
-                    <th>Actions</th>
-                    <th>TranId</th>
-                    <th>TranCode</th>
-                    <th>Value Date</th>
-                    <th>Book Date</th>
-                    <th>Ref#</th>
-                    <th>Statement Reference</th>
-                    <th>Posted By</th>
-                    <th>Office</th>
-                    <th>Status</th>
-                    <th>Verified By</th>
-                    <th>Verified On</th>
-                    <th>Reason</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-    </div>
-</div>
-<div");
-
-WriteLiteral(" class=\"ui large advice modal\"");
-
-WriteLiteral(">\r\n    <i");
-
-WriteLiteral(" class=\"close icon\"");
-
-WriteLiteral("></i>\r\n    <iframe></iframe>\r\n</div>\r\n\r\n<script>\r\n    function displayTable(targe" +
-"t, model) {\r\n        target.find(\"tbody\").html(\"\");\r\n        function getCell(te" +
-"xt) {\r\n            var cell = $(\"<td />\");\r\n\r\n            cell.text(text || \"\");" +
-"\r\n\r\n            return cell;\r\n        };\r\n\r\n        function getActionCell(tranI" +
-"d) {\r\n            var cell = $(\"<td />\");\r\n\r\n            var checklistAnchor = $" +
-"(\"<a title=\'Checklist Window\'><i class=\'list icon\'></i></a>\");\r\n            chec" +
-"klistAnchor.attr(\"href\", \"/dashboard/inventory/tasks/transfers/checklist/\" + tra" +
-"nId);\r\n\r\n            var inventoryAdviceAnchor = $(\"<a title=\'View Purchase Invo" +
-"ice\'><i class=\'zoom icon\'></i></a>\");\r\n            inventoryAdviceAnchor.attr(\"h" +
-"ref\", \"javascript:void(0);\");\r\n            inventoryAdviceAnchor.attr(\"onclick\"," +
-" \"showTransfer(\" + tranId + \");\");\r\n\r\n\r\n            cell.append(checklistAnchor)" +
-";\r\n            cell.append(inventoryAdviceAnchor);\r\n            return cell;\r\n  " +
-"      };\r\n\r\n        $.each(model, function () {\r\n            var item = this;\r\n\r" +
-"\n            var row = $(\"<tr />\");\r\n\r\n            row.append(getActionCell(item" +
-".TransactionMasterId));\r\n            row.append(getCell(item.TransactionMasterId" +
-"));\r\n            row.append(getCell(item.TransactionCode));\r\n            row.app" +
-"end(getCell(item.ValueDate));\r\n            row.append(getCell(item.BookDate));\r\n" +
-"            row.append(getCell(item.ReferenceNumber));\r\n            row.append(g" +
-"etCell(item.StatementReference));\r\n            row.append(getCell(item.PostedBy)" +
-");\r\n            row.append(getCell(item.Office));\r\n            row.append(getCel" +
-"l(item.Status));\r\n            row.append(getCell(item.VerifiedBy));\r\n           " +
-" row.append(getCell(item.VerifiedOn));\r\n            row.append(getCell(item.Reas" +
-"on));\r\n\r\n            target.find(\"tbody\").append(row);\r\n        });\r\n    };\r\n   " +
-" function processQuery() {\r\n        function getModel() {\r\n            var model" +
-" = window.serializeForm($(\"#Annotation\"));\r\n            model.Book = \"Inventory " +
-"Transfer\";\r\n            return model;\r\n        };\r\n\r\n        function displayGri" +
-"d(target) {\r\n            function request(model) {\r\n                var url = \"/" +
-"dashboard/finance/tasks/journal/view\";\r\n                var data = JSON.stringif" +
-"y(model);\r\n                return window.getAjaxRequest(url, \"POST\", data);\r\n   " +
-"         };\r\n\r\n            var model = getModel();\r\n\r\n\r\n            var ajax = r" +
-"equest(model);\r\n\r\n            ajax.success(function (response) {\r\n              " +
-"  displayTable(target, response);\r\n                target.removeClass(\"loading\")" +
-";\r\n            });\r\n\r\n            ajax.fail(function (xhr) {\r\n                al" +
-"ert(JSON.stringify(xhr));\r\n            });\r\n        };\r\n\r\n        var view = $(\"" +
-"#TransferView\").addClass(\"loading\");\r\n\r\n        displayGrid(view);\r\n    };\r\n\r\n  " +
-"  $(\"#ShowButton\").unbind(\"click\").bind(\"click\", function () {\r\n        processQ" +
-"uery();\r\n    });\r\n\r\n    loadDatepicker();\r\n    setTimeout(function () {\r\n       " +
-" processQuery();\r\n    }, 1000);\r\n\r\n\r\n\r\n    function showTransfer(tranId) {\r\n    " +
-"    $(\".advice.modal iframe\").attr(\"src\", \"/dashboard/reports/source/Areas/MixER" +
-"P.Inventory/Reports/Transfer.xml?transaction_master_id=\" + tranId);\r\n\r\n        s" +
-"etTimeout(function () {\r\n            $(\".advice.modal\")\r\n                .modal(" +
-"\'setting\', \'transition\', \'horizontal flip\')\r\n                .modal({\r\n         " +
-"           blurring: true\r\n                })\r\n                .modal(\"show\");\r\n" +
-"\r\n        }, 300);\r\n    };\r\n</script>");
+WriteLiteral("\r\n");
+
+            
+            #line 8 "..\..\Views\Tasks\Transfer\Index.cshtml"
+Write(Html.FinancePartialView("Shared/JournalView.cshtml", TenantConvention.GetTenant()));
+
+            
+            #line default
+            #line hidden
+WriteLiteral(@"
+
+<script>
+    window.prepareView({
+        Title: ""Inventory Transfers"",
+        AddNewText: ""Add New"",
+        AddNewUrl: ""/dashboard/inventory/tasks/inventory-transfers/new"",
+        Book: ""Inventory Adjustment"",
+        ChecklistUrl: ""/dashboard/inventory/tasks/transfers/checklist/{tranId}"",
+        AdviceButtons: [
+            {
+                Title: ""View Transfer"",
+                Href: ""javascript:void(0);"",
+                OnClick: ""showTransfer({tranId});""
+            }
+        ]
+    });
+
+    function showAdjustment(tranId) {
+        $("".advice.modal iframe"").attr(""src"",
+            `/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Transfer.xml?transaction_master_id=${tranId}`);
+
+        setTimeout(function() {
+            $("".advice.modal"")
+                .modal('setting', 'transition', 'horizontal flip')
+                .modal(""show"");
+
+        }, 300);
+    };
+</script>");
 
         }
     }

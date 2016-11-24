@@ -174,10 +174,8 @@
     <Compile Include="Controllers\Backend\Setup\SupplierTypeController.cs" />
     <Compile Include="Controllers\Backend\Setup\UnitsOfMeasureController.cs" />
     <Compile Include="Controllers\Backend\Setup\VariantController.cs" />
-    <Compile Include="Controllers\Backend\Tasks\AdjustmentVerificationController.cs" />
     <Compile Include="Controllers\Backend\Tasks\AdjustmentController.cs" />
     <Compile Include="Controllers\Backend\Tasks\TransferController.cs" />
-    <Compile Include="Controllers\Backend\Tasks\TransferVerificationController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
     <Compile Include="Controllers\Services\InventoryBackendController.cs" />
     <Compile Include="DAL\Backend\Setup\Inventory.cs" />
@@ -192,6 +190,7 @@
     <Compile Include="DTO\Item.cs" />
     <Compile Include="DTO\ItemView.cs" />
     <Compile Include="DTO\OpeningInventoryStatus.cs" />
+    <Compile Include="Extensions\PartialViewExtensions.cs" />
     <Compile Include="Models\OpeningInventories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AdjustmentType.cs" />

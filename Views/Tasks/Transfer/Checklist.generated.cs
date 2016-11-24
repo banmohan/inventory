@@ -37,6 +37,12 @@ namespace ASP
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
+    #line 1 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
+    using MixERP.Inventory.Extensions;
+    
+    #line default
+    #line hidden
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
     [System.Web.WebPages.PageVirtualPathAttribute("~/Views/Tasks/Transfer/Checklist.cshtml")]
     public partial class _Views_Tasks_Transfer_Checklist_cshtml : System.Web.Mvc.WebViewPage<long>
@@ -47,7 +53,7 @@ namespace ASP
         public override void Execute()
         {
             
-            #line 3 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
+            #line 4 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
   
     ViewBag.Title = "Checklist";
     Layout = ViewBag.InventoryLayoutPath;
@@ -55,58 +61,41 @@ namespace ASP
             
             #line default
             #line hidden
-WriteLiteral("\r\n<style>\r\n    iframe {\r\n        display: block;\r\n        margin-top: 1em;\r\n     " +
-"   width: 800px;\r\n        height: 800px;\r\n        border: 1px solid #ccc;\r\n    }" +
-"\r\n</style>\r\n<script");
+WriteLiteral("\r\n\r\n");
 
-WriteLiteral(" src=\"/Scripts/frapid/utilities/form.js\"");
-
-WriteLiteral("></script>\r\n<div");
-
-WriteLiteral(" class=\"ui attached page segment\"");
-
-WriteLiteral(" style=\"min-height: 100%; padding: 3em;\"");
-
-WriteLiteral(">\r\n    <div");
-
-WriteLiteral(" class=\"ui huge header\"");
-
-WriteLiteral(">Inventory Transfer</div>\r\n    <div");
-
-WriteLiteral(" class=\"ui divider\"");
-
-WriteLiteral("></div>\r\n\r\n    <div");
-
-WriteLiteral(" class=\"ui positive message\"");
-
-WriteLiteral(">The transaction was posted successfully.</div>\r\n\r\n    <a");
-
-WriteLiteral(" href=\"/dashboard/inventory/tasks/inventory-transfers\"");
-
-WriteLiteral(" class=\"ui green button\"");
-
-WriteLiteral(">\r\n        View Transfers\r\n    </a>\r\n    <a");
-
-WriteLiteral(" href=\"/dashboard/inventory/tasks/inventory-transfers/new\"");
-
-WriteLiteral(" class=\"ui red button\"");
-
-WriteLiteral(">\r\n        Add a New Transfer\r\n    </a>\r\n    <iframe");
-
-WriteAttribute("src", Tuple.Create(" src=\"", 851), Tuple.Create("\"", 955)
-, Tuple.Create(Tuple.Create("", 857), Tuple.Create("/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Transfer.xml?transaction" +
-"_master_id=", 857), true)
             
-            #line 29 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
-                              , Tuple.Create(Tuple.Create("", 949), Tuple.Create<System.Object, System.Int32>(Model
+            #line 9 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
+Write(Html.FinancePartialView("Shared/Checklist.cshtml", TenantConvention.GetTenant()));
+
             
             #line default
             #line hidden
-, 949), false)
-);
+WriteLiteral("\r\n\r\n<script>\r\n    window.overridePath = \"/dashboard/inventory/tasks/inventory-tra" +
+"nsfers\";\r\n\r\n    window.prepareChecklist({\r\n        Title: \"Inventory Transfer Ch" +
+"ecklist #");
 
-WriteLiteral("></iframe>\r\n</div>\r\n\r\n\r\n<script>\r\n    window.overridePath = \"/dashboard/inventory" +
-"/tasks/inventory-transfers\";\r\n</script>");
+            
+            #line 15 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
+                                         Write(Model);
+
+            
+            #line default
+            #line hidden
+WriteLiteral(@""",
+        ViewText: ""View Transfers"",
+        ViewUrl: ""/dashboard/inventory/tasks/inventory-transfers"",
+        AddNewText: ""Add New Transfer"",
+        AddNewUrl: ""/dashboard/inventory/tasks/inventory-transfers/new"",
+        ReportPath: ""/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Transfer.xml?transaction_master_id=");
+
+            
+            #line 20 "..\..\Views\Tasks\Transfer\Checklist.cshtml"
+                                                                                                            Write(Model);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\"\r\n    });\r\n</script>");
 
         }
     }

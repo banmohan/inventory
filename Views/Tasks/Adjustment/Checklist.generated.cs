@@ -37,6 +37,12 @@ namespace ASP
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
+    #line 1 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
+    using MixERP.Inventory.Extensions;
+    
+    #line default
+    #line hidden
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "2.0.0.0")]
     [System.Web.WebPages.PageVirtualPathAttribute("~/Views/Tasks/Adjustment/Checklist.cshtml")]
     public partial class _Views_Tasks_Adjustment_Checklist_cshtml : System.Web.Mvc.WebViewPage<long>
@@ -47,7 +53,7 @@ namespace ASP
         public override void Execute()
         {
             
-            #line 3 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
+            #line 4 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
   
     ViewBag.Title = "Checklist";
     Layout = ViewBag.InventoryLayoutPath;
@@ -55,58 +61,41 @@ namespace ASP
             
             #line default
             #line hidden
-WriteLiteral("\r\n<style>\r\n    iframe {\r\n        display: block;\r\n        margin-top: 1em;\r\n     " +
-"   width: 800px;\r\n        height: 800px;\r\n        border: 1px solid #ccc;\r\n    }" +
-"\r\n</style>\r\n<script");
+WriteLiteral("\r\n");
 
-WriteLiteral(" src=\"/Scripts/frapid/utilities/form.js\"");
-
-WriteLiteral("></script>\r\n<div");
-
-WriteLiteral(" class=\"ui attached page segment\"");
-
-WriteLiteral(" style=\"min-height: 100%; padding: 3em;\"");
-
-WriteLiteral(">\r\n    <div");
-
-WriteLiteral(" class=\"ui huge header\"");
-
-WriteLiteral(">Inventory Adjustments</div>\r\n    <div");
-
-WriteLiteral(" class=\"ui divider\"");
-
-WriteLiteral("></div>\r\n\r\n    <div");
-
-WriteLiteral(" class=\"ui positive message\"");
-
-WriteLiteral(">The transaction was posted successfully.</div>\r\n\r\n    <a");
-
-WriteLiteral(" href=\"/dashboard/inventory/tasks/inventory-adjustments\"");
-
-WriteLiteral(" class=\"ui green button\"");
-
-WriteLiteral(">\r\n        View Adjustments\r\n    </a>\r\n    <a");
-
-WriteLiteral(" href=\"/dashboard/inventory/tasks/inventory-adjustments/new\"");
-
-WriteLiteral(" class=\"ui red button\"");
-
-WriteLiteral(">\r\n        Add a New Adjustment\r\n    </a>\r\n    <iframe");
-
-WriteAttribute("src", Tuple.Create(" src=\"", 862), Tuple.Create("\"", 968)
-, Tuple.Create(Tuple.Create("", 868), Tuple.Create("/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Adjustment.xml?transacti" +
-"on_master_id=", 868), true)
             
-            #line 29 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
-                                , Tuple.Create(Tuple.Create("", 962), Tuple.Create<System.Object, System.Int32>(Model
+            #line 8 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
+Write(Html.FinancePartialView("Shared/Checklist.cshtml", TenantConvention.GetTenant()));
+
             
             #line default
             #line hidden
-, 962), false)
-);
+WriteLiteral("\r\n\r\n<script>\r\n    window.overridePath = \"/dashboard/inventory/tasks/inventory-tra" +
+"nsfers\";\r\n\r\n    window.prepareChecklist({\r\n        Title: \"Inventory Adjustment " +
+"Checklist #");
 
-WriteLiteral("></iframe>\r\n</div>\r\n\r\n\r\n<script>\r\n    window.overridePath = \"/dashboard/inventory" +
-"/tasks/inventory-transfers\";\r\n</script>");
+            
+            #line 14 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
+                                           Write(Model);
+
+            
+            #line default
+            #line hidden
+WriteLiteral(@""",
+        ViewText: ""View Adjustments"",
+        ViewUrl: ""/dashboard/inventory/tasks/inventory-adjustments"",
+        AddNewText: ""Add New Adjustment"",
+        AddNewUrl: ""/dashboard/inventory/tasks/inventory-adjustments/new"",
+        ReportPath: ""/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Adjustment.xml?transaction_master_id=");
+
+            
+            #line 19 "..\..\Views\Tasks\Adjustment\Checklist.cshtml"
+                                                                                                              Write(Model);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\"\r\n    });\r\n</script>");
 
         }
     }
