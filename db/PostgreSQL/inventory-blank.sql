@@ -1402,6 +1402,22 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_name_by_customer_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_customer_name_by_customer_id(_customer_id integer);
+
+CREATE FUNCTION inventory.get_customer_name_by_customer_id(_customer_id integer)
+RETURNS national character varying(500)
+AS
+$$
+BEGIN
+    RETURN inventory.customers.customer_name
+    FROM inventory.customers
+    WHERE inventory.customers.customer_id = _customer_id;
+END
+$$
+LANGUAGE plpgsql;
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_type_id_by_customer_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_customer_type_id_by_customer_id(_customer_id integer);
 
@@ -1939,6 +1955,22 @@ BEGIN
         FROM inventory.suppliers
         WHERE inventory.suppliers.supplier_code=$1
 		AND NOT inventory.suppliers.deleted;
+END
+$$
+LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_name_by_supplier_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_supplier_name_by_supplier_id(_supplier_id integer);
+
+CREATE FUNCTION inventory.get_supplier_name_by_supplier_id(_supplier_id integer)
+RETURNS national character varying(500)
+AS
+$$
+BEGIN
+    RETURN inventory.suppliers.supplier_name
+    FROM inventory.suppliers
+    WHERE inventory.suppliers.supplier_id = _supplier_id;
 END
 $$
 LANGUAGE plpgsql;
