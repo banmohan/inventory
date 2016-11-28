@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Frapid.Configuration;
+using Frapid.DataAccess.Extensions;
 using Frapid.Framework.Extensions;
 using MixERP.Inventory.ViewModels;
 using Npgsql;
@@ -30,13 +31,13 @@ namespace MixERP.Inventory.DAL.Backend.Setup
             {
                 using (var command = new NpgsqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@OfficeId", model.OfficeId);
-                    command.Parameters.AddWithValue("@UserId", model.UserId);
-                    command.Parameters.AddWithValue("@LoginId", model.LoginId);
-                    command.Parameters.AddWithValue("@ValueDate", model.ValueDate);
-                    command.Parameters.AddWithValue("@BookDate", model.BookDate);
-                    command.Parameters.AddWithValue("@ReferenceNumber", model.ReferenceNumber);
-                    command.Parameters.AddWithValue("@StatementReference", model.StatementReference);
+                    command.Parameters.AddWithNullableValue("@OfficeId", model.OfficeId);
+                    command.Parameters.AddWithNullableValue("@UserId", model.UserId);
+                    command.Parameters.AddWithNullableValue("@LoginId", model.LoginId);
+                    command.Parameters.AddWithNullableValue("@ValueDate", model.ValueDate);
+                    command.Parameters.AddWithNullableValue("@BookDate", model.BookDate);
+                    command.Parameters.AddWithNullableValue("@ReferenceNumber", model.ReferenceNumber);
+                    command.Parameters.AddWithNullableValue("@StatementReference", model.StatementReference);
 
                     command.Parameters.AddRange(AddParametersForDetails(model.Details).ToArray());
 
