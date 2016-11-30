@@ -3,30 +3,34 @@ using System.Threading.Tasks;
 using Frapid.Configuration;
 using Frapid.Configuration.Db;
 using Frapid.DataAccess;
+using Frapid.Mapper;
+using Frapid.Mapper.Query.Select;
 using MixERP.Inventory.DTO;
 
 namespace MixERP.Inventory.DAL.Backend.Service
 {
     public static class Items
     {
-        public static async Task<List<ItemView>> GetStockableItemViewAsync(string tenant)
+        public static async Task<IEnumerable<ItemView>> GetStockableItemViewAsync(string tenant)
         {
             using (var db = DbProvider.Get(FrapidDbServer.GetConnectionString(tenant), tenant).GetDatabase())
             {
-                return await db.Query<ItemView>().Where(x => x.MaintainInventory).ToListAsync().ConfigureAwait(false);
+                var sql = new Sql("SELECT * FROM inventory.item_view");
+                sql.Where("maintain_inventory=@0", true);
+
+                return await db.SelectAsync<ItemView>(sql).ConfigureAwait(false);
             }
         }
 
-        public static async Task<List<Item>> GetStockableItemsAsync(string tenant)
+        public static async Task<IEnumerable<Item>> GetStockableItemsAsync(string tenant)
         {
             using (var db = DbProvider.Get(FrapidDbServer.GetConnectionString(tenant), tenant).GetDatabase())
             {
-                return
-                    await
-                        db.Query<Item>()
-                            .Where(x => !x.Deleted && x.MaintainInventory)
-                            .ToListAsync()
-                            .ConfigureAwait(false);
+                var sql = new Sql("SELECT * FROM inventory.items");
+                sql.Where("deleted=@0", false);
+                sql.And("maintain_inventory=@0", true);
+
+                return await db.SelectAsync<Item>(sql).ConfigureAwait(false);
             }
         }
 
@@ -48,16 +52,15 @@ namespace MixERP.Inventory.DAL.Backend.Service
             return await Factory.ScalarAsync<decimal>(tenant, sql, itemId, unitId, storeId).ConfigureAwait(false);
         }
 
-        public static async Task<List<Item>> GetNonStockableItemsAsync(string tenant)
+        public static async Task<IEnumerable<Item>> GetNonStockableItemsAsync(string tenant)
         {
             using (var db = DbProvider.Get(FrapidDbServer.GetConnectionString(tenant), tenant).GetDatabase())
             {
-                return
-                    await
-                        db.Query<Item>()
-                            .Where(x => !x.Deleted && !x.MaintainInventory)
-                            .ToListAsync()
-                            .ConfigureAwait(false);
+                var sql = new Sql("SELECT * FROM inventory.items");
+                sql.Where("deleted=@0", false);
+                sql.And("maintain_inventory=@0", false);
+
+                return await db.SelectAsync<Item>(sql).ConfigureAwait(false);
             }
         }
     }
