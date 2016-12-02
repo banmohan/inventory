@@ -33,7 +33,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -59,29 +58,30 @@ WriteLiteral("\r\n\r\n<script>\r\n    var scrudFactory = new Object();\r\n\r\n  
 "ustomers\";\r\n\r\n    scrudFactory.viewAPI = \"/api/forms/inventory/customers\";\r\n    " +
 "scrudFactory.viewTableName = \"inventory.customers\";\r\n\r\n    scrudFactory.formAPI " +
 "= \"/api/forms/inventory/customers\";\r\n    scrudFactory.formTableName = \"inventory" +
-".customers\";\r\n\r\n    scrudFactory.excludedColumns = [\"audit_user_id\", \"audit_ts\"]" +
-";\r\n\r\n    scrudFactory.allowDelete = true;\r\n    scrudFactory.allowEdit = true;\r\n\r" +
-"\n    scrudFactory.live = \"CustomerName\";\r\n\r\n    scrudFactory.card = {\r\n        i" +
-"mage: \"photo\",\r\n        header: \"customer_name\",\r\n        meta: \"customer_code\"," +
-"\r\n        description: \"contact_phone_numbers\"        \r\n    };\r\n\r\n    scrudFacto" +
-"ry.layout = [\r\n        {\r\n            tab: \"\",\r\n            fields: [\r\n         " +
-"       [\"CustomerId\", \"\"],\r\n                [\"Photo\", \"\"],\r\n                [\"Cu" +
-"stomerCode\", \"CustomerName\"],\r\n                [\"CustomerTypeId\", \"\"],\r\n        " +
-"        [\"Logo\", \"\"]\r\n            ]\r\n        }\r\n    ];\r\n\r\n    scrudFactory.keys " +
-"= [\r\n        {\r\n            property: \"CustomerTypeId\",\r\n            url: \'/api/" +
-"forms/inventory/customer-types/display-fields\',\r\n            data: null,\r\n      " +
-"      valueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r" +
-"\n            property: \"AccountId\",\r\n            url: \'/api/views/finance/accoun" +
-"ts/display-fields\',\r\n            data: null,\r\n            valueField: \"Key\",\r\n  " +
-"          textField: \"Value\"\r\n        },\r\n        {\r\n            property: \"Curr" +
-"encyCode\",\r\n            url: \'/api/views/core/currencies/display-fields\',\r\n     " +
-"       data: null,\r\n            valueField: \"Key\",\r\n            textField: \"Valu" +
-"e\"\r\n        }\r\n    ];\r\n\r\n\r\n\r\n    $.get(\'/ScrudFactory/View.html\', function (view" +
-") {\r\n        $.get(\'/ScrudFactory/Form.html\', function (form) {\r\n            $(\"" +
-"#ScrudFactoryView\").html(view);\r\n            $(\"#ScrudFactoryForm\").html(form);\r" +
-"\n            $.cachedScript(\"/assets/js/scrudfactory-view.js\");\r\n            $.c" +
-"achedScript(\"/assets/js/scrudfactory-form.js\");\r\n        });\r\n    });\r\n</script>" +
-"\r\n\r\n<div");
+".customers\";\r\n    scrudFactory.uploadHanlder = \"/dashboard/inventory/services/at" +
+"tachments\";\r\n\r\n    scrudFactory.excludedColumns = [\"audit_user_id\", \"audit_ts\"];" +
+"\r\n\r\n    scrudFactory.allowDelete = true;\r\n    scrudFactory.allowEdit = true;\r\n\r\n" +
+"    scrudFactory.live = \"CustomerName\";\r\n\r\n    scrudFactory.card = {\r\n        im" +
+"age: \"Photo\",\r\n        header: \"CustomerName\",\r\n        meta: \"CustomerCode\",\r\n " +
+"       description: \"ContactPhoneNumbers\"        \r\n    };\r\n\r\n    scrudFactory.la" +
+"yout = [\r\n        {\r\n            tab: \"\",\r\n            fields: [\r\n              " +
+"  [\"CustomerId\", \"\"],\r\n                [\"Photo\", \"\"],\r\n                [\"Custome" +
+"rCode\", \"CustomerName\"],\r\n                [\"CustomerTypeId\", \"\"],\r\n             " +
+"   [\"Logo\", \"\"]\r\n            ]\r\n        }\r\n    ];\r\n\r\n    scrudFactory.keys = [\r\n" +
+"        {\r\n            property: \"CustomerTypeId\",\r\n            url: \'/api/forms" +
+"/inventory/customer-types/display-fields\',\r\n            data: null,\r\n           " +
+" valueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r\n    " +
+"        property: \"AccountId\",\r\n            url: \'/api/views/finance/accounts/di" +
+"splay-fields\',\r\n            data: null,\r\n            valueField: \"Key\",\r\n       " +
+"     textField: \"Value\"\r\n        },\r\n        {\r\n            property: \"CurrencyC" +
+"ode\",\r\n            url: \'/api/views/core/currencies/display-fields\',\r\n          " +
+"  data: null,\r\n            valueField: \"Key\",\r\n            textField: \"Value\"\r\n " +
+"       }\r\n    ];\r\n\r\n\r\n\r\n    $.get(\'/ScrudFactory/View.html\', function (view) {\r\n" +
+"        $.get(\'/ScrudFactory/Form.html\', function (form) {\r\n            $(\"#Scru" +
+"dFactoryView\").html(view);\r\n            $(\"#ScrudFactoryForm\").html(form);\r\n    " +
+"        $.cachedScript(\"/assets/js/scrudfactory-view.js\");\r\n            $.cached" +
+"Script(\"/assets/js/scrudfactory-form.js\");\r\n        });\r\n    });\r\n</script>\r\n\r\n<" +
+"div");
 
 WriteLiteral(" id=\"ScrudFactoryForm\"");
 
