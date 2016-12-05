@@ -27,9 +27,12 @@ SELECT
 	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
 	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
+	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
+	- COALESCE(inventory.checkout_details.discount, 0) AS amount,
+	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
 	+ COALESCE(inventory.checkout_details.tax, 0) 
 	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
-	- COALESCE(inventory.checkout_details.discount, 0) AS amount
+	- COALESCE(inventory.checkout_details.discount, 0) AS total
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
