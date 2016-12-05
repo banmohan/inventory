@@ -11,6 +11,7 @@ SELECT
 	inventory.stores.store_code,
 	inventory.stores.store_name,
 	inventory.checkout_details.item_id,
+	inventory.items.is_taxable_item,
 	inventory.items.item_code,
 	inventory.items.item_name,
 	inventory.checkout_details.quantity,
@@ -23,8 +24,12 @@ SELECT
 	base_unit.unit_name AS base_unit_name,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
+	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
-	(inventory.checkout_details.price * inventory.checkout_details.quantity) + inventory.checkout_details.shipping_charge - inventory.checkout_details.discount AS amount
+	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
+	+ COALESCE(inventory.checkout_details.tax, 0) 
+	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
+	- COALESCE(inventory.checkout_details.discount, 0) AS amount
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id

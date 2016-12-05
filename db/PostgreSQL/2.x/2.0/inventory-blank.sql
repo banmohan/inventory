@@ -191,6 +191,7 @@ CREATE TABLE inventory.items
     lead_time_in_days                       integer,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     hot_item                                boolean NOT NULL DEFAULT(false),
+	is_taxable_item							boolean NOT NULL DEFAULT(true),
     cost_price                              public.decimal_strict2,
 	cost_price_includes_tax					boolean NOT NULL DEFAULT(false),
     selling_price                           public.decimal_strict2,
@@ -330,6 +331,7 @@ CREATE TABLE inventory.checkout_details
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
     cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
+	tax										public.money_strict2 NOT NULL DEFAULT(0),
     shipping_charge                         public.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.decimal_strict NOT NULL,
@@ -475,7 +477,7 @@ AS
 );
 
 
-CREATE TYPE inventory.checkout_detail_type 
+CREATE TYPE inventory.checkout_detail_type
 AS
 (
     store_id            integer,
@@ -484,6 +486,7 @@ AS
     unit_id           	national character varying(50),
     price               public.money_strict,
     discount            public.money_strict2,
+    tax                 public.money_strict2,
     shipping_charge     public.money_strict2
 );
 
@@ -2931,6 +2934,7 @@ SELECT
 	inventory.stores.store_code,
 	inventory.stores.store_name,
 	inventory.checkout_details.item_id,
+	inventory.items.is_taxable_item,
 	inventory.items.item_code,
 	inventory.items.item_name,
 	inventory.checkout_details.quantity,
@@ -2943,8 +2947,12 @@ SELECT
 	base_unit.unit_name AS base_unit_name,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
+	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
-	(inventory.checkout_details.price * inventory.checkout_details.quantity) + inventory.checkout_details.shipping_charge - inventory.checkout_details.discount AS amount
+	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
+	+ COALESCE(inventory.checkout_details.tax, 0) 
+	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
+	- COALESCE(inventory.checkout_details.discount, 0) AS amount
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
@@ -2991,8 +2999,14 @@ SELECT
 	inventory.checkout_details.base_unit_id,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
+	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
-	inventory.checkout_details.price * inventory.checkout_details.quantity + inventory.checkout_details.discount AS amount
+	(
+		inventory.checkout_details.price 
+		- inventory.checkout_details.discount 
+		+ COALESCE(inventory.checkout_details.tax, 0)
+		+ COALESCE(inventory.checkout_details.shipping_charge, 0)
+	) * inventory.checkout_details.quantity AS amount
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
@@ -3011,6 +3025,7 @@ SELECT
     inventory.items.item_id,
     inventory.items.item_code,
     inventory.items.item_name,
+    inventory.items.is_taxable_item,
     inventory.items.barcode,
     inventory.items.item_group_id,
     inventory.item_groups.item_group_name,

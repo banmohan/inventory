@@ -30,8 +30,14 @@ SELECT
 	inventory.checkout_details.base_unit_id,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
+	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
-	inventory.checkout_details.price * inventory.checkout_details.quantity + inventory.checkout_details.discount AS amount
+	(
+		inventory.checkout_details.price 
+		- inventory.checkout_details.discount 
+		+ COALESCE(inventory.checkout_details.tax, 0)
+		+ COALESCE(inventory.checkout_details.shipping_charge, 0)
+	) * inventory.checkout_details.quantity AS amount
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
