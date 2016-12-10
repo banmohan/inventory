@@ -197,7 +197,7 @@
                 if (window.getColumnText(row, 0) !== tranType &&
                     window.getColumnText(row, 1) === storeName &&
                     window.getColumnText(row, 2) === itemCode) {
-                    $.notify("Duplicate entry");
+                    window.displayMessage("Duplicate entry");
 
                     window.makeDirty(itemSelect);
                     match = true;
@@ -228,7 +228,7 @@
             var row = $(this);
             if (window.getColumnText(row, 0) === storeName &&
                 window.getColumnText(row, 1) === itemCode) {
-                $.notify("Duplicate Entry");
+                window.displayMessage("Duplicate Entry");
 
                 window.makeDirty(itemSelect);
                 match = true;
