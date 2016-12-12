@@ -22,6 +22,7 @@
     scrudFactory.allowEdit = true;
 
     scrudFactory.live = "SupplierName";
+    scrudFactory.uploadHanlder = "/dashboard/inventory/services/attachments";
 
     scrudFactory.card = {
         image: "Photo",
@@ -38,7 +39,7 @@
                 ["Photo", ""],
                 ["SupplierCode", "SupplierName"],
                 ["SupplierTypeId", ""],
-                ["Logo", ""],
+                ["Logo", ""]
             ]
         }
     ];
@@ -53,14 +54,14 @@
         },
         {
             property: "AccountId",
-            url: '/api/views/finance/accounts/display-fields',
+            url: '/api/views/finance/payable-account-selector-view/display-fields',
             data: null,
             valueField: "Key",
             textField: "Value"
         },
         {
             property: "CurrencyCode",
-            url: '/api/views/core/currencies/display-fields',
+            url: '/api/views/core/currencies/lookup-fields',
             data: null,
             valueField: "Key",
             textField: "Value"

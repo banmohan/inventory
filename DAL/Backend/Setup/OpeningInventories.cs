@@ -20,7 +20,7 @@ namespace MixERP.Inventory.DAL.Backend.Setup
             string sql = @"SELECT * FROM inventory.post_opening_inventory
                             (
                                 @OfficeId, @UserId, @LoginId, 
-                                @ValueDate, @BookDate, 
+                                @ValueDate::date, @BookDate::date, 
                                 @ReferenceNumber, @StatementReference, 
                                 ARRAY[{0}]
                             );";
@@ -36,8 +36,8 @@ namespace MixERP.Inventory.DAL.Backend.Setup
                     command.Parameters.AddWithNullableValue("@LoginId", model.LoginId);
                     command.Parameters.AddWithNullableValue("@ValueDate", model.ValueDate);
                     command.Parameters.AddWithNullableValue("@BookDate", model.BookDate);
-                    command.Parameters.AddWithNullableValue("@ReferenceNumber", model.ReferenceNumber);
-                    command.Parameters.AddWithNullableValue("@StatementReference", model.StatementReference);
+                    command.Parameters.AddWithNullableValue("@ReferenceNumber", model.ReferenceNumber.Or(""));
+                    command.Parameters.AddWithNullableValue("@StatementReference", model.StatementReference.Or(""));
 
                     command.Parameters.AddRange(AddParametersForDetails(model.Details).ToArray());
 
