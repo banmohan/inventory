@@ -1,4 +1,6 @@
-﻿IF OBJECT_ID('inventory.get_opening_inventory_status') IS NOT NULL
+﻿
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_opening_inventory_status.sql --<--<--
+IF OBJECT_ID('inventory.get_opening_inventory_status') IS NOT NULL
 DROP FUNCTION inventory.get_opening_inventory_status;
 
 GO
@@ -18,8 +20,7 @@ BEGIN
     DECLARE @multiple_inventory_allowed             bit;
     DECLARE @has_opening_inventory                  bit = 0;
 
-    SELECT inventory.inventory_setup.allow_multiple_opening_inventory 
-    INTO @multiple_inventory_allowed    
+    SELECT @multiple_inventory_allowed = inventory.inventory_setup.allow_multiple_opening_inventory 
     FROM inventory.inventory_setup
     WHERE inventory.inventory_setup.office_id = @office_id;
 
@@ -31,7 +32,7 @@ BEGIN
         AND finance.transaction_master.office_id = @office_id
     )
     BEGIN
-        @has_opening_inventory                      = 1;
+        SET @has_opening_inventory                      = 1;
     END;
     
     INSERT INTO @result

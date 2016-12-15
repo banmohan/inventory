@@ -11,7 +11,7 @@ BEGIN
     (
         SELECT inventory.stores.store_id
         FROM inventory.stores
-        WHERE inventory.stores.store_code=_store_code 
+        WHERE inventory.stores.store_code=@store_code 
         AND inventory.stores.deleted = 0
     );
 END;

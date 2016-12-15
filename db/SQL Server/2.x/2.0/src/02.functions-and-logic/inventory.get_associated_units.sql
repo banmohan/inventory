@@ -1,9 +1,9 @@
 ﻿IF OBJECT_ID('inventory.get_associated_unit_csv_list') IS NOT NULL
-DROP FUNCTION inventory.get_associated_unit_list;
+DROP FUNCTION inventory.get_associated_unit_csv_list;
 
 GO
 
-CREATE FUNCTION inventory.get_associated_unit_list(@any_unit_id integer)
+CREATE FUNCTION inventory.get_associated_unit_csv_list(@any_unit_id integer)
 RETURNS @result TABLE
 (
     unit_id             integer

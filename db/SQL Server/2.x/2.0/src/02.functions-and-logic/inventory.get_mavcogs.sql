@@ -3,28 +3,27 @@ DROP FUNCTION inventory.get_mavcogs;
 
 GO
 
-CREATE FUNCTION inventory.get_mavcogs(@item_id integer, @store_id integer, @base_quantity decimal, @factor decimal(24, 4))
-RETURNS decimal(24, 4)
+CREATE FUNCTION inventory.get_mavcogs(@item_id integer, @store_id integer, @base_quantity numeric(30, 6), @factor numeric(30, 6))
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_cost dbo.money_strict;
 
     DECLARE @temp_staging TABLE
     (
-            id              integer IDENTITY NOT NULL,
-            value_date      date,
-            audit_ts        DATETIMEOFFSET,
-            base_quantity   decimal,
-            price           decimal
-            
+        id              integer IDENTITY NOT NULL,
+        value_date      date,
+        audit_ts        DATETIMEOFFSET,
+        base_quantity   numeric(30, 6),
+        price           numeric(30, 6)
     ) ;
 
 
     INSERT INTO @temp_staging(value_date, audit_ts, base_quantity, price)
     SELECT value_date, audit_ts, 
-    CASE WHEN tran_type = 'Dr' THEN
+    CASE WHEN transaction_type = 'Dr' THEN
     base_quantity ELSE base_quantity  * -1 END, 
-    CASE WHEN tran_type = 'Dr' THEN
+    CASE WHEN transaction_type = 'Dr' THEN
     (price * quantity/base_quantity)
     ELSE
     0
@@ -32,7 +31,7 @@ BEGIN
     FROM inventory.verified_checkout_details_view
     WHERE item_id = @item_id
     AND store_id=@store_id
-    order by value_date, audit_ts, stock_detail_id;
+    order by value_date, audit_ts, checkout_detail_id;
 
 
 
@@ -43,9 +42,9 @@ BEGIN
       FROM @temp_staging WHERE id = 1
       UNION ALL
       SELECT child.id, child.base_quantity, 
-             CASE WHEN child.base_quantity < 0 then parent.sum_m / parent.sum_base_quantity ELSE child.price END, 
+             CAST(CASE WHEN child.base_quantity < 0 then parent.sum_m / parent.sum_base_quantity ELSE child.price END AS numeric(30, 6)), 
              parent.sum_m + CASE WHEN child.base_quantity < 0 then parent.sum_m / parent.sum_base_quantity ELSE child.price END * child.base_quantity,
-             parent.sum_base_quantity + child.base_quantity,
+             CAST(parent.sum_base_quantity + child.base_quantity AS numeric(30, 6)),
              child.id 
       FROM @temp_staging child JOIN stock_transaction parent on child.id = parent.last_id + 1
     )
@@ -57,7 +56,7 @@ BEGIN
             --base_quantity * price AS amount,                                      --left for debuging purpose
             --SUM(base_quantity * price) OVER(ORDER BY id) AS cv_amount,            --left for debuging purpose
             --SUM(base_quantity) OVER(ORDER BY id) AS cv_quantity,                  --left for debuging purpose
-            SUM(base_quantity * price) OVER(ORDER BY id)  / SUM(base_quantity) OVER(ORDER BY id) INTO @base_unit_cost
+            @base_unit_cost = SUM(base_quantity * price) OVER(ORDER BY id)  / SUM(base_quantity) OVER(ORDER BY id)
     FROM stock_transaction
     ORDER BY id DESC;
 
@@ -70,3 +69,5 @@ END;
 
 
 GO
+
+

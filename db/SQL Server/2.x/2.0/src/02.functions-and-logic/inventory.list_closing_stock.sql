@@ -14,7 +14,7 @@ RETURNS @result TABLE
     item_name               national character varying(1000),
     unit_id                 integer,
     unit_name               national character varying(1000),
-    quantity                decimal
+    quantity                decimal(30, 6)
 )
 AS
 
@@ -26,7 +26,7 @@ BEGIN
         item_name           national character varying(1000),
         unit_id             integer,
         unit_name           national character varying(1000),
-        quantity            decimal,
+        quantity            decimal(30, 6),
         maintain_inventory  bit
     ) ;
 
@@ -39,19 +39,23 @@ BEGIN
     WHERE inventory.verified_checkout_details_view.store_id = @store_id
     GROUP BY inventory.verified_checkout_details_view.item_id, inventory.verified_checkout_details_view.store_id, inventory.verified_checkout_details_view.base_unit_id;
 
-    UPDATE @temp_closing_stock SET 
+    UPDATE @temp_closing_stock 
+    SET 
         item_code = inventory.items.item_code,
         item_name = inventory.items.item_name,
         maintain_inventory = inventory.items.maintain_inventory
-    FROM inventory.items
-    WHERE item_id = inventory.items.item_id;
+    FROM @temp_closing_stock AS temp_closing_stock
+    INNER JOIN inventory.items
+    ON temp_closing_stock.item_id = inventory.items.item_id;
 
     DELETE FROM @temp_closing_stock WHERE maintain_inventory = 0;
 
-    UPDATE @temp_closing_stock SET 
+    UPDATE @temp_closing_stock 
+    SET 
         unit_name = inventory.units.unit_name
-    FROM inventory.units
-    WHERE unit_id = inventory.units.unit_id;
+    FROM @temp_closing_stock AS temp_closing_stock
+    INNER JOIN inventory.units
+    ON temp_closing_stock.unit_id = inventory.units.unit_id;
 
     INSERT INTO @result
     SELECT 
@@ -68,8 +72,7 @@ BEGIN
 END;
 
 
-
-
 --SELECT * FROM inventory.list_closing_stock(1);
 
 GO
+

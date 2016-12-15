@@ -1,18 +1,18 @@
-﻿DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal);
+﻿DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal(30, 6));
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal(30, 6))
 RETURNS money_strict
 AS
 $$
-    DECLARE _backup_quantity            decimal;
-    DECLARE _base_quantity              decimal;
+    DECLARE _backup_quantity            decimal(30, 6);
+    DECLARE _base_quantity              decimal(30, 6);
     DECLARE _base_unit_id               integer;
     DECLARE _base_unit_cost             money_strict;
     DECLARE _total_sold                 integer;
     DECLARE _office_id                  integer = inventory.get_office_id_by_store_id($3);
     DECLARE _method                     text = inventory.get_cost_of_good_method(_office_id);
 BEGIN
-    --backup base quantity in decimal
+    --backup base quantity in decimal(30, 6)
     _backup_quantity                := inventory.get_base_quantity_by_unit_id($2, $4);
     --convert base quantity to whole number
     _base_quantity                  := CEILING(_backup_quantity);
@@ -101,7 +101,7 @@ BEGIN
         USING ERRCODE='P6010';
     END IF;
 
-    --APPLY DECIMAL QUANTITY PROVISON
+    --APPLY decimal(30, 6) QUANTITY PROVISON
     _base_unit_cost := _base_unit_cost * (_backup_quantity / _base_quantity);
 
     RETURN _base_unit_cost;

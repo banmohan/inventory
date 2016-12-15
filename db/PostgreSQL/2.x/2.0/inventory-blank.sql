@@ -336,7 +336,7 @@ CREATE TABLE inventory.checkout_details
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.decimal_strict NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           numeric NOT NULL,
+    base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW())
 );
 
@@ -507,11 +507,11 @@ AS
 DROP FUNCTION IF EXISTS inventory.convert_unit(from_unit integer, to_unit integer);
 
 CREATE FUNCTION inventory.convert_unit(from_unit integer, to_unit integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
-    DECLARE _factor decimal;
+    DECLARE _factor decimal(30, 6);
 BEGIN
     IF(inventory.get_root_unit_id($1) != inventory.get_root_unit_id($2)) THEN
         RETURN 0;
@@ -572,13 +572,13 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS inventory.count_item_in_stock(_item_id integer, _unit_id integer, _store_id integer);
 
 CREATE FUNCTION inventory.count_item_in_stock(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
-    DECLARE _debit decimal;
-    DECLARE _credit decimal;
-    DECLARE _balance decimal;
+    DECLARE _debit decimal(30, 6);
+    DECLARE _credit decimal(30, 6);
+    DECLARE _balance decimal(30, 6);
 BEGIN
 
     _debit := inventory.count_purchases($1, $2, $3);
@@ -597,13 +597,13 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer);
 
 CREATE FUNCTION inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _debit decimal;
-    DECLARE _factor decimal;
+    DECLARE _debit decimal(30, 6);
+    DECLARE _factor decimal(30, 6);
 BEGIN
     --Get the base item unit
     SELECT 
@@ -637,13 +637,13 @@ LANGUAGE plpgsql;
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.count_sales.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer);
 CREATE FUNCTION inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _credit decimal;
-    DECLARE _factor decimal;
+    DECLARE _credit decimal(30, 6);
+    DECLARE _factor decimal(30, 6);
 BEGIN
     --Get the base item unit
     SELECT 
@@ -756,9 +756,9 @@ RETURNS TABLE
     book_date               date,
     tran_code               text,
     statement_reference     text,
-    debit                   decimal(24, 4),
-    credit                  decimal(24, 4),
-    balance                 decimal(24, 4),
+    debit                   numeric(30, 6),
+    credit                  numeric(30, 6),
+    balance                 numeric(30, 6),
     book                    text,
     item_id                 integer,
     item_code               text,
@@ -780,9 +780,9 @@ BEGIN
         book_date               date,
         tran_code               text,
         statement_reference     text,
-        debit                   decimal(24, 4),
-        credit                  decimal(24, 4),
-        balance                 decimal(24, 4),
+        debit                   numeric(30, 6),
+        credit                  numeric(30, 6),
+        balance                 numeric(30, 6),
         book                    text,
         item_id                 integer,
         item_code               text,
@@ -1071,16 +1071,16 @@ LANGUAGE plpgsql;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_base_quantity_by_unit_name.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, numeric);
+DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, numeric(30, 6));
 
-CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, numeric)
-RETURNS decimal
+CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, numeric(30, 6))
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
 	DECLARE _unit_id integer;
 	DECLARE _root_unit_id integer;
-	DECLARE _factor decimal;
+	DECLARE _factor decimal(30, 6);
 BEGIN
     _unit_id := inventory.get_unit_id_by_unit_name($1);
     _root_unit_id = inventory.get_root_unit_id(_unit_id);
@@ -1091,15 +1091,15 @@ END
 $$
 LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_id(integer, numeric);
+DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_id(integer, numeric(30, 6));
 
-CREATE FUNCTION inventory.get_base_quantity_by_unit_id(integer, numeric)
-RETURNS decimal
+CREATE FUNCTION inventory.get_base_quantity_by_unit_id(integer, numeric(30, 6))
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
 	DECLARE _root_unit_id integer;
-	DECLARE _factor decimal;
+	DECLARE _factor decimal(30, 6);
 BEGIN
     _root_unit_id = inventory.get_root_unit_id($1);
     _factor = inventory.convert_unit($1, _root_unit_id);
@@ -1221,21 +1221,21 @@ LANGUAGE plpgsql;
 --SELECT * FROM inventory.get_cost_of_good_method(1);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal);
+DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal(30, 6));
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal(30, 6))
 RETURNS money_strict
 AS
 $$
-    DECLARE _backup_quantity            decimal;
-    DECLARE _base_quantity              decimal;
+    DECLARE _backup_quantity            decimal(30, 6);
+    DECLARE _base_quantity              decimal(30, 6);
     DECLARE _base_unit_id               integer;
     DECLARE _base_unit_cost             money_strict;
     DECLARE _total_sold                 integer;
     DECLARE _office_id                  integer = inventory.get_office_id_by_store_id($3);
     DECLARE _method                     text = inventory.get_cost_of_good_method(_office_id);
 BEGIN
-    --backup base quantity in decimal
+    --backup base quantity in decimal(30, 6)
     _backup_quantity                := inventory.get_base_quantity_by_unit_id($2, $4);
     --convert base quantity to whole number
     _base_quantity                  := CEILING(_backup_quantity);
@@ -1324,7 +1324,7 @@ BEGIN
         USING ERRCODE='P6010';
     END IF;
 
-    --APPLY DECIMAL QUANTITY PROVISON
+    --APPLY decimal(30, 6) QUANTITY PROVISON
     _base_unit_cost := _base_unit_cost * (_backup_quantity / _base_quantity);
 
     RETURN _base_unit_cost;
@@ -1500,7 +1500,7 @@ AS
 $$
     DECLARE _price              public.money_strict2;
     DECLARE _costing_unit_id    integer;
-    DECLARE _factor             decimal;
+    DECLARE _factor             decimal(30, 6);
   
 BEGIN    
     SELECT 
@@ -1589,10 +1589,10 @@ LANGUAGE plpgsql;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_mavcogs.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal, _factor decimal(24, 4));
+DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6));
 
-CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal, _factor decimal(24, 4))
-RETURNS decimal(24, 4)
+CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6))
+RETURNS numeric(30, 6)
 AS
 $$
     DECLARE _base_unit_cost money_strict;
@@ -1602,8 +1602,8 @@ BEGIN
             id              SERIAL NOT NULL,
             value_date      date,
             audit_ts        TIMESTAMP WITH TIME ZONE,
-            base_quantity   decimal,
-            price           decimal
+            base_quantity   decimal(30, 6),
+            price           decimal(30, 6)
             
     ) ON COMMIT DROP;
 
@@ -1620,7 +1620,7 @@ BEGIN
     FROM inventory.verified_checkout_details_view
     WHERE item_id = $1
     AND store_id=$2
-    order by value_date, audit_ts, stock_detail_id;
+    order by value_date, audit_ts, checkout_detail_id;
 
 
 
@@ -2054,7 +2054,7 @@ RETURNS money_strict2
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _factor decimal;
+    DECLARE _factor decimal(30, 6);
 BEGIN
     _base_unit_id    = inventory.get_root_unit_id(_unit_id);
     _factor          = inventory.convert_unit(_unit_id, _base_unit_id);
@@ -2208,7 +2208,7 @@ TABLE
     item_name               text,
     unit_id                 integer,
     unit_name               text,
-    quantity                decimal
+    quantity                decimal(30, 6)
 )
 AS
 $$
@@ -2222,7 +2222,7 @@ BEGIN
         item_name           text,
         unit_id             integer,
         unit_name           text,
-        quantity            decimal,
+        quantity            decimal(30, 6),
         maintain_inventory  boolean
     ) ON COMMIT DROP;
 
@@ -2541,7 +2541,7 @@ BEGIN
         item_id                         integer, 
         quantity                        integer_strict,
         unit_id                         integer,
-        base_quantity                   decimal,
+        base_quantity                   decimal(30, 6),
         base_unit_id                    integer,                
         price                           money_strict
     ) ON COMMIT DROP;

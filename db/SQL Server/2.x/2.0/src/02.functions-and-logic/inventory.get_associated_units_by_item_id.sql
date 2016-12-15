@@ -14,7 +14,7 @@ AS
 BEGIN
     DECLARE @unit_id integer;
 
-    SELECT inventory.items.unit_id INTO @unit_id
+    SELECT @unit_id = inventory.items.unit_id
     FROM inventory.items
     WHERE inventory.items.item_id = @item_id
     AND inventory.items.deleted = 0;
@@ -26,6 +26,7 @@ BEGIN
 END;
 
 GO
+
 
 IF OBJECT_ID('inventory.get_associated_units_by_item_code') IS NOT NULL
 DROP FUNCTION inventory.get_associated_units_by_item_code;
@@ -43,7 +44,7 @@ AS
 BEGIN
     DECLARE @unit_id integer;
 
-    SELECT inventory.items.unit_id INTO @unit_id
+    SELECT @unit_id = inventory.items.unit_id
     FROM inventory.items
     WHERE LOWER(item_code) = LOWER(@item_code)
     AND inventory.items.deleted = 0;

@@ -1,9 +1,9 @@
-﻿IF OBJECT_ID('inventory.get_cost_of_od_method') IS NOT NULL
-DROP inventory.get_cost_of_od_method;
+﻿IF OBJECT_ID('inventory.get_cost_of_good_method') IS NOT NULL
+DROP FUNCTION inventory.get_cost_of_good_method;
 
 GO
 
-CREATE FUNCTION inventory.get_cost_of_od_method(@office_id integer)
+CREATE FUNCTION inventory.get_cost_of_good_method(@office_id integer)
 RETURNS national character varying(500)
 AS
 
@@ -18,6 +18,6 @@ END;
 
 
 
---SELECT * FROM inventory.get_cost_of_od_method(1);
+--SELECT * FROM inventory.get_cost_of_good_method(1);
 
 GO

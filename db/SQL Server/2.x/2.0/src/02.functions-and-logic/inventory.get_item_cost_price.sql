@@ -1,4 +1,5 @@
-﻿IF OBJECT_ID('inventory.get_item_cost_price') IS NOT NULL
+﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_item_cost_price.sql --<--<--
+IF OBJECT_ID('inventory.get_item_cost_price') IS NOT NULL
 DROP FUNCTION inventory.get_item_cost_price;
 
 GO
@@ -9,20 +10,17 @@ AS
 BEGIN    
     DECLARE @price              dbo.money_strict2;
     DECLARE @costing_unit_id    integer;
-    DECLARE @factor             decimal;
+    DECLARE @factor             decimal(30, 6);
 
     SELECT 
-        cost_price, 
-        unit_id
-    INTO 
-        @price, 
-        @costing_unit_id
+        @price = cost_price, 
+        @costing_unit_id = unit_id
     FROM inventory.items
     WHERE inventory.items.item_id = @item_id
     AND inventory.items.deleted = 0;
 
     --Get the unitary conversion factor if the requested unit does not match with the price defition.
-    @factor = inventory.convert_unit(@unit_id, @costing_unit_id);
+    SET @factor = inventory.convert_unit(@unit_id, @costing_unit_id);
     RETURN @price * @factor;
 END;
 

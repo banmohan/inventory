@@ -11,13 +11,10 @@ BEGIN
     (
 	    SELECT inventory.customers.account_id
 	    FROM inventory.customers
-	    WHERE inventory.customers.customer_id=_customer_id
+	    WHERE inventory.customers.customer_id=@customer_id
 	    AND inventory.customers.deleted = 0
     );
 END;
-
-
-
 
 
 GO

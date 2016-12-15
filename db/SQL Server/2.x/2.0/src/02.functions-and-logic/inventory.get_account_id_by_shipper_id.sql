@@ -11,13 +11,9 @@ BEGIN
     (
 	    SELECT inventory.shippers.account_id
 	    FROM inventory.shippers
-	    WHERE inventory.shippers.shipper_id=_shipper_id
+	    WHERE inventory.shippers.shipper_id=@shipper_id
 	    AND inventory.shippers.deleted = 0
     );
 END;
-
-
-
-
 
 GO

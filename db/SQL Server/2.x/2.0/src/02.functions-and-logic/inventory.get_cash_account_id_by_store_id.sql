@@ -11,7 +11,7 @@ BEGIN
     (
 	    SELECT inventory.stores.default_cash_account_id
 	    FROM inventory.stores
-	    WHERE inventory.stores.store_id=_store_id
+	    WHERE inventory.stores.store_id=@store_id
 	    AND inventory.stores.deleted = 0
     );
 END;

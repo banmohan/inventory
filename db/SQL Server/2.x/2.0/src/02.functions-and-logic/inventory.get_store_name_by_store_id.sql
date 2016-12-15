@@ -3,7 +3,7 @@ DROP FUNCTION inventory.get_store_name_by_store_id;
 
 GO
 
-CREATE OR REPLACE FUNCTION inventory.get_store_name_by_store_id(@store_id integer)
+CREATE FUNCTION inventory.get_store_name_by_store_id(@store_id integer)
 RETURNS national character varying(500)
 AS
 

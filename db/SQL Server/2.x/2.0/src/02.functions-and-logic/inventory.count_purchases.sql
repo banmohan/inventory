@@ -4,24 +4,20 @@ DROP FUNCTION inventory.count_purchases;
 GO
 
 CREATE FUNCTION inventory.count_purchases(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @debit decimal;
-    DECLARE @factor decimal;
+    DECLARE @debit decimal(30, 6);
+    DECLARE @factor decimal(30, 6);
 
     --Get the base item unit
-    SELECT 
-        inventory.get_root_unit_id(inventory.items.unit_id) 
-    INTO @base_unit_id
+    SELECT @base_unit_id= inventory.get_root_unit_id(inventory.items.unit_id) 
     FROM inventory.items
     WHERE inventory.items.item_id=@item_id
     AND inventory.items.deleted = 0;
 
-    SELECT
-        COALESCE(SUM(base_quantity), 0)
-    INTO @debit
+    SELECT @debit =  COALESCE(SUM(base_quantity), 0)
     FROM inventory.checkout_details
     INNER JOIN inventory.checkouts
     ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
@@ -32,12 +28,9 @@ BEGIN
     AND inventory.checkout_details.store_id=@store_id
     AND inventory.checkout_details.transaction_type='Dr';
 
-    @factor = inventory.convert_unit(@base_unit_id, @unit_id);    
+    SET @factor = inventory.convert_unit(@base_unit_id, @unit_id);    
     RETURN @debit * @factor;
 END;
-
-
-
 
 
 GO

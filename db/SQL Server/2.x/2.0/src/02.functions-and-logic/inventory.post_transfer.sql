@@ -13,7 +13,7 @@ CREATE PROCEDURE inventory.post_transfer
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.transfer_type
+    @details                                inventory.transfer_type READONLY
 )
 AS
 BEGIN
@@ -21,9 +21,18 @@ BEGIN
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
 
-    IF NOT finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date)
+    DECLARE @can_post_transaction           bit;
+    DECLARE @error_message                  national character varying(MAX);
+
+    SELECT
+        @can_post_transaction   = can_post_transaction,
+        @error_message          = error_message
+    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+    IF(@can_post_transaction = 0)
     BEGIN
-        RETURN 0;
+        RAISERROR(@error_message, 10, 1);
+        RETURN;
     END;
 
     DECLARE @temp_stock_details TABLE
@@ -121,28 +130,25 @@ BEGIN
         RAISERROR('Negative stock is not allowed.', 10, 1);
     END;
 
-    INSERT INTO finance.transaction_master(transaction_master_id, transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
+    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
     SELECT
-            nextval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id')), 
-            finance.get_new_transaction_counter(@value_date), 
-            finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
-            @book_name,
-            @value_date,
-            @book_date,
-            @login_id,
-            @user_id,
-            @office_id,
-            @reference_number,
-            @statement_reference;
+        finance.get_new_transaction_counter(@value_date), 
+        finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
+        @book_name,
+        @value_date,
+        @book_date,
+        @login_id,
+        @user_id,
+        @office_id,
+        @reference_number,
+        @statement_reference;
+
+    SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    @transaction_master_id  = currval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id'));
-
-
-    INSERT INTO inventory.checkouts(checkout_id, transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
-    SELECT nextval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id')), @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
-
-    @checkout_id  = currval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id'));
+    INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
+    SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
+    SET @checkout_id                = SCOPE_IDENTITY();
 
     INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
     SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price

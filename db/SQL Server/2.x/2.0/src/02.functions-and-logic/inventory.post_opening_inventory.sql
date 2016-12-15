@@ -12,7 +12,7 @@ CREATE PROCEDURE inventory.post_opening_inventory
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.opening_stock_type
+    @details                                inventory.opening_stock_type READONLY
 )
 AS
 BEGIN
@@ -22,9 +22,18 @@ BEGIN
     DECLARE @tran_counter                   integer;
     DECLARE @transaction_code national character varying(50);
 
-    IF NOT finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date)
+    DECLARE @can_post_transaction           bit;
+    DECLARE @error_message                  national character varying(MAX);
+
+    SELECT
+        @can_post_transaction   = can_post_transaction,
+        @error_message          = error_message
+    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+    IF(@can_post_transaction = 0)
     BEGIN
-        return 0;
+        RAISERROR(@error_message, 10, 1);
+        RETURN;
     END;
     
     DECLARE @temp_stock_details TABLE
@@ -33,9 +42,9 @@ BEGIN
         tran_type                       national character varying(2),
         store_id                        integer,
         item_id                         integer, 
-        quantity                        dbo.integer_strict,
+        quantity                        dbo.decimal_strict2,
         unit_id                         integer,
-        base_quantity                   decimal,
+        base_quantity                   decimal(30, 6),
         base_unit_id                    integer,                
         price                           dbo.money_strict
     ) ;
@@ -71,16 +80,19 @@ BEGIN
     END;
 
     
-    @transaction_master_id  = nextval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id'));
-    @checkout_id            = nextval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id'));
-    @tran_counter           = finance.get_new_transaction_counter(@value_date);
-    @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
+    SET @tran_counter           = finance.get_new_transaction_counter(@value_date);
+    SET @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
 
-    INSERT INTO finance.transaction_master(transaction_master_id, transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
-    SELECT @transaction_master_id, @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
+
+    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
+    SELECT @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
+    SET @transaction_master_id = SCOPE_IDENTITY();
+
 
     INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, checkout_id, transaction_master_id, posted_by, office_id)
     SELECT @book_name, @value_date, @book_date, @checkout_id, @transaction_master_id, @user_id, @office_id;
+    SET @transaction_master_id = SCOPE_IDENTITY();
+
 
     INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
     SELECT @value_date, @book_date, @checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price

@@ -65,11 +65,11 @@ INSERT INTO inventory.shippers(shipper_name, company_name, account_id)
 SELECT 'Default', 'Default', finance.get_account_id_by_account_number('20110');
 
 
-INSERT INTO inventory.item_groups(item_group_code, item_group_name, sales_account_id, sales_discount_account_id, sales_return_account_id, purchase_account_id, purchase_discount_account_id, inventory_account_id, cost_of_ods_sold_account_id)
+INSERT INTO inventory.item_groups(item_group_code, item_group_name, sales_account_id, sales_discount_account_id, sales_return_account_id, purchase_account_id, purchase_discount_account_id, inventory_account_id, cost_of_goods_sold_account_id)
 SELECT 'DEF', 'Default', finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200');
 
 
-INSERT INTO inventory.item_groups(item_group_code, item_group_name, parent_item_group_id, sales_account_id, sales_discount_account_id, sales_return_account_id, purchase_account_id, purchase_discount_account_id, inventory_account_id, cost_of_ods_sold_account_id)
+INSERT INTO inventory.item_groups(item_group_code, item_group_name, parent_item_group_id, sales_account_id, sales_discount_account_id, sales_return_account_id, purchase_account_id, purchase_discount_account_id, inventory_account_id, cost_of_goods_sold_account_id)
 SELECT 'FSTF',     'Fast Food',                           CAST(NULL AS integer),    finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200')    UNION ALL
 SELECT 'SOF',     'Soft Drinks',                       NULL,            finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200')    UNION ALL
 SELECT 'DRF',     'Dry Foods',                           NULL,            finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200') UNION ALL    
@@ -213,7 +213,7 @@ SELECT 'CHLV',  'Chicken Liver',                            inventory.get_item_g
 
 UPDATE inventory.items
 SET photo = '/dashboard/inventory/services/attachments/' + item_code + '.jpg'
-WHERE inventory.items.maintain_inventory;
+WHERE inventory.items.maintain_inventory = 1;
 
 
 INSERT INTO inventory.customers(customer_code, customer_name, customer_type_id, company_name, account_id, currency_code)
@@ -236,10 +236,6 @@ SELECT 'AML', 'Amul', inventory.get_customer_type_id_by_customer_type_code('C'),
 UPDATE inventory.items
 SET cost_price = ROUND(cost_price / 100, 2),
 selling_price = ROUND(cost_price / 70, 2);
-
-
-UPDATE inventory.customers
-SET contact_phone_numbers = floor(random() * (9000000000 + 901933933));
 
 GO
 

@@ -335,7 +335,7 @@ CREATE TABLE inventory.checkout_details
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.decimal_strict NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           numeric NOT NULL,
+    base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW())
 );
 

@@ -14,7 +14,7 @@ CREATE PROCEDURE inventory.post_adjustment
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.adjustment_type
+    @details                                inventory.adjustment_type READONLY
 )
 AS
 BEGIN
@@ -24,9 +24,18 @@ BEGIN
     DECLARE @is_periodic                    bit = inventory.is_periodic_inventory(@office_id);
     DECLARE @default_currency_code          national character varying(12);
 
-    IF NOT finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date)
+    DECLARE @can_post_transaction           bit;
+    DECLARE @error_message                  national character varying(MAX);
+
+    SELECT
+        @can_post_transaction   = can_post_transaction,
+        @error_message          = error_message
+    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+    IF(@can_post_transaction = 0)
     BEGIN
-        return 0;
+        RAISERROR(@error_message, 10, 1);
+        RETURN;
     END;
     
     DECLARE @temp_stock_details TABLE
@@ -41,9 +50,9 @@ BEGIN
         quantity                        dbo.decimal_strict,
         base_quantity                   dbo.decimal_strict,                
         price                           dbo.money_strict,
-        cost_of_ods_sold              dbo.money_strict2 DEFAULT(0),
+        cost_of_goods_sold              dbo.money_strict2 DEFAULT(0),
         inventory_account_id            integer,
-        cost_of_ods_sold_account_id   integer
+        cost_of_goods_sold_account_id   integer
     ) 
     ; 
 
@@ -104,7 +113,7 @@ BEGIN
         base_unit_id                    = inventory.get_root_unit_id(unit_id),
         price                           = inventory.get_item_cost_price(item_id, unit_id),
         inventory_account_id            = inventory.get_inventory_account_id(item_id),
-        cost_of_ods_sold_account_id   = inventory.get_cost_of_ods_sold_account_id(item_id);
+        cost_of_goods_sold_account_id   = inventory.get_cost_of_goods_sold_account_id(item_id);
 
 
     IF EXISTS
@@ -140,61 +149,62 @@ BEGIN
     --No accounting treatment is needed for periodic accounting system.
     IF(@is_periodic = 0)
     BEGIN
-        @default_currency_code  = core.get_currency_code_by_office_id(@office_id);
+        SET @default_currency_code  = core.get_currency_code_by_office_id(@office_id);
 
         UPDATE @temp_stock_details 
         SET 
-            cost_of_ods_sold = inventory.get_cost_of_ods_sold(item_id, unit_id, store_id, quantity);
+            cost_of_goods_sold = inventory.get_cost_of_goods_sold(item_id, unit_id, store_id, quantity);
     
         INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
-        SELECT 'Dr', cost_of_ods_sold_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0))
+        SELECT 'Dr', cost_of_goods_sold_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
         FROM @temp_stock_details
-        GROUP BY cost_of_ods_sold_account_id;
+        GROUP BY cost_of_goods_sold_account_id;
 
         INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
-        SELECT 'Cr', inventory_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0))
+        SELECT 'Cr', inventory_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
         FROM @temp_stock_details
         GROUP BY inventory_account_id;
     END;
     
-    @transaction_master_id  = nextval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id'));
-
     INSERT INTO finance.transaction_master
     (
-            transaction_master_id,
-            transaction_counter,
-            transaction_code,
-            book,
-            value_date,
-            book_date,
-            login_id,
-            user_id,
-            office_id,
-            reference_number,
-            statement_reference
+        transaction_counter,
+        transaction_code,
+        book,
+        value_date,
+        book_date,
+        login_id,
+        user_id,
+        office_id,
+        reference_number,
+        statement_reference
     )
     SELECT
-            @transaction_master_id, 
-            finance.get_new_transaction_counter(@value_date), 
-            finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
-            @book_name,
-            @value_date,
-            @book_date,
-            @login_id,
-            @user_id,
-            @office_id,
-            @reference_number,
-            @statement_reference;
+        finance.get_new_transaction_counter(@value_date), 
+        finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
+        @book_name,
+        @value_date,
+        @book_date,
+        @login_id,
+        @user_id,
+        @office_id,
+        @reference_number,
+        @statement_reference;
+
+    SET @transaction_master_id = SCOPE_IDENTITY();
 
     INSERT INTO finance.transaction_details(office_id, value_date, book_date, transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency)
     SELECT @office_id, @value_date, @book_date, @transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency
     FROM @temp_transaction_details
     ORDER BY tran_type DESC;
 
-    INSERT INTO inventory.checkouts(checkout_id, transaction_master_id, value_date, book_date, transaction_book, posted_by, office_id)
-    SELECT nextval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id')), @transaction_master_id, @value_date, @book_date, @book_name, @user_id, @office_id;
 
-    @checkout_id                                = currval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id'));
+
+    INSERT INTO inventory.checkouts(transaction_master_id, value_date, book_date, transaction_book, posted_by, office_id)
+    SELECT @transaction_master_id, @value_date, @book_date, @book_name, @user_id, @office_id;
+
+    SET @checkout_id                = SCOPE_IDENTITY();
+
 
     INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
     SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
@@ -202,7 +212,7 @@ BEGIN
 
     EXECUTE finance.auto_verify @transaction_master_id, @office_id;
     
-    PROCEDURE @transaction_master_id;
+    SELECT @transaction_master_id;
 END;
 
 

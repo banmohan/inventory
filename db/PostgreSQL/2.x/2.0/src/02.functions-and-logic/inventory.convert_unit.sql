@@ -1,11 +1,11 @@
 ﻿DROP FUNCTION IF EXISTS inventory.convert_unit(from_unit integer, to_unit integer);
 
 CREATE FUNCTION inventory.convert_unit(from_unit integer, to_unit integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
-    DECLARE _factor decimal;
+    DECLARE _factor decimal(30, 6);
 BEGIN
     IF(inventory.get_root_unit_id($1) != inventory.get_root_unit_id($2)) THEN
         RETURN 0;

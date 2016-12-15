@@ -9,12 +9,10 @@ AS
 BEGIN
     DECLARE @unit_id integer;
 
-    @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
+    SET @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
 
     RETURN inventory.get_root_unit_id(@unit_id);
 END;
-
-
 
 
 GO

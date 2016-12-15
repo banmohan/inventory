@@ -18,9 +18,9 @@ RETURNS @result TABLE
     book_date               date,
     tran_code national character varying(50),
     statement_reference     national character varying(2000),
-    debit                   decimal(24, 4),
-    credit                  decimal(24, 4),
-    balance                 decimal(24, 4),
+    debit                   numeric(30, 6),
+    credit                  numeric(30, 6),
+    balance                 numeric(30, 6),
     book                    national character varying(50),
     item_id                 integer,
     item_code national character varying(50),
@@ -108,15 +108,16 @@ BEGIN
         LEFT JOIN temp_account_statement AS c 
             ON (c.id <= temp_account_statement.id)
         GROUP BY temp_account_statement.id
-        ORDER BY temp_account_statement.id
     ) AS c
     WHERE id = c.id;
 
-    UPDATE @result SET 
+    UPDATE @result 
+    SET
         item_code = inventory.items.item_code,
         item_name = inventory.items.item_name
-    FROM inventory.items
-    WHERE item_id = inventory.items.item_id;
+    FROM @result AS result 
+    INNER JOIN inventory.items
+    ON result.item_id = inventory.items.item_id;
 
     RETURN;        
 END;

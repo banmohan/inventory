@@ -59,7 +59,7 @@ CREATE TABLE inventory.suppliers
     company_zipcode                         national character varying(1000),
     company_phone_numbers                   national character varying(1000),
     company_fax                             national character varying(100),
-    lo                                    dbo.photo,
+    logo                                    dbo.photo,
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
@@ -111,7 +111,7 @@ CREATE TABLE inventory.customers
     company_zipcode                         national character varying(1000),
     company_phone_numbers                   national character varying(1000),
     company_fax                             national character varying(100),
-    lo                                    dbo.photo,
+    logo                                    dbo.photo,
     contact_first_name                      national character varying(100),
     contact_middle_name                     national character varying(100),
     contact_last_name                       national character varying(100),
@@ -144,7 +144,7 @@ CREATE TABLE inventory.item_groups
     purchase_account_id                     integer NOT NULL REFERENCES finance.accounts,
     purchase_discount_account_id            integer NOT NULL REFERENCES finance.accounts,
     inventory_account_id                    integer NOT NULL REFERENCES finance.accounts,
-    cost_of_ods_sold_account_id           integer NOT NULL REFERENCES finance.accounts,    
+    cost_of_goods_sold_account_id           integer NOT NULL REFERENCES finance.accounts,    
     parent_item_group_id                    integer REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
@@ -199,7 +199,7 @@ CREATE TABLE inventory.items
     selling_price                           dbo.decimal_strict2,
     selling_price_includes_tax                bit NOT NULL DEFAULT(0),
     reorder_level                           dbo.integer_strict2 NOT NULL DEFAULT(0),
-    reorder_quantity                        dbo.integer_strict2 NOT NULL DEFAULT(0),
+    reorder_quantity                        dbo.decimal_strict2 NOT NULL DEFAULT(0),
     reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
     maintain_inventory                      bit NOT NULL DEFAULT(1),
     photo                                   dbo.photo,
@@ -332,13 +332,13 @@ CREATE TABLE inventory.checkout_details
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   dbo.money_strict NOT NULL,
     discount                                dbo.money_strict2 NOT NULL DEFAULT(0),    
-    cost_of_ods_sold                      dbo.money_strict2 NOT NULL DEFAULT(0),
+    cost_of_goods_sold                      dbo.money_strict2 NOT NULL DEFAULT(0),
     tax                                        dbo.money_strict2 NOT NULL DEFAULT(0),
     shipping_charge                         dbo.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                dbo.decimal_strict NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           numeric(24, 23) NOT NULL,
+    base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE())
 );
 
@@ -515,10 +515,10 @@ DROP FUNCTION inventory.convert_unit;
 GO
 
 CREATE FUNCTION inventory.convert_unit(@from_unit integer, @to_unit integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 AS
 BEGIN
-    DECLARE @factor decimal;
+    DECLARE @factor decimal(30, 6);
 
     IF(inventory.get_root_unit_id(@from_unit) != inventory.get_root_unit_id(@to_unit))
     BEGIN
@@ -530,7 +530,7 @@ BEGIN
         RETURN 1.00;
     END;
     
-    IF(inventory.is_parent_unit(@from_unit, @to_unit))
+    IF(inventory.is_parent_unit(@from_unit, @to_unit) = 1)
     BEGIN
             WITH unit_cte(unit_id, value) AS 
             (
@@ -547,7 +547,7 @@ BEGIN
                 inventory.compound_units AS c 
                 WHERE base_unit_id = p.unit_id
             )
-        SELECT 1.00/value INTO @factor
+        SELECT @factor = 1.00/value
         FROM unit_cte
         WHERE unit_id=@to_unit;
     END
@@ -567,7 +567,7 @@ BEGIN
                 WHERE base_unit_id = p.unit_id
             )
 
-        SELECT value INTO @factor
+        SELECT @factor = value
         FROM unit_cte
         WHERE unit_id=@from_unit;
     END;
@@ -590,17 +590,17 @@ DROP FUNCTION inventory.count_item_in_stock;
 GO
 
 CREATE FUNCTION inventory.count_item_in_stock(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 AS
 BEGIN
-    DECLARE @debit decimal;
-    DECLARE @credit decimal;
-    DECLARE @balance decimal;
+    DECLARE @debit decimal(30, 6);
+    DECLARE @credit decimal(30, 6);
+    DECLARE @balance decimal(30, 6);
 
-    @debit = inventory.count_purchases(@item_id, @unit_id, @store_id);
-    @credit = inventory.count_sales(@item_id, @unit_id, @store_id);
+    SET @debit = inventory.count_purchases(@item_id, @unit_id, @store_id);
+    SET @credit = inventory.count_sales(@item_id, @unit_id, @store_id);
 
-    @balance= @debit - @credit;    
+    SET  @balance= @debit - @credit;    
     return @balance;  
 END;
 
@@ -619,24 +619,20 @@ DROP FUNCTION inventory.count_purchases;
 GO
 
 CREATE FUNCTION inventory.count_purchases(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @debit decimal;
-    DECLARE @factor decimal;
+    DECLARE @debit decimal(30, 6);
+    DECLARE @factor decimal(30, 6);
 
     --Get the base item unit
-    SELECT 
-        inventory.get_root_unit_id(inventory.items.unit_id) 
-    INTO @base_unit_id
+    SELECT @base_unit_id= inventory.get_root_unit_id(inventory.items.unit_id) 
     FROM inventory.items
     WHERE inventory.items.item_id=@item_id
     AND inventory.items.deleted = 0;
 
-    SELECT
-        COALESCE(SUM(base_quantity), 0)
-    INTO @debit
+    SELECT @debit =  COALESCE(SUM(base_quantity), 0)
     FROM inventory.checkout_details
     INNER JOIN inventory.checkouts
     ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
@@ -647,17 +643,15 @@ BEGIN
     AND inventory.checkout_details.store_id=@store_id
     AND inventory.checkout_details.transaction_type='Dr';
 
-    @factor = inventory.convert_unit(@base_unit_id, @unit_id);    
+    SET @factor = inventory.convert_unit(@base_unit_id, @unit_id);    
     RETURN @debit * @factor;
 END;
-
-
-
 
 
 GO
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.count_sales.sql --<--<--
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.count_sales.sql --<--<--
 IF OBJECT_ID('inventory.count_sales') IS NOT NULL
 DROP FUNCTION inventory.count_sales;
@@ -665,24 +659,20 @@ DROP FUNCTION inventory.count_sales;
 GO
 
 CREATE FUNCTION inventory.count_sales(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @credit decimal;
-    DECLARE @factor decimal;
+    DECLARE @credit decimal(30, 6);
+    DECLARE @factor decimal(30, 6);
 
     --Get the base item unit
-    SELECT 
-        inventory.get_root_unit_id(inventory.items.unit_id) 
-    INTO @base_unit_id
+    SELECT @base_unit_id =  inventory.get_root_unit_id(inventory.items.unit_id) 
     FROM inventory.items
     WHERE inventory.items.item_id=@item_id
     AND inventory.items.deleted = 0;
 
-    SELECT 
-        COALESCE(SUM(base_quantity), 0)
-    INTO @credit
+    SELECT @credit =  COALESCE(SUM(base_quantity), 0)
     FROM inventory.checkout_details
     INNER JOIN inventory.checkouts
     ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
@@ -693,13 +683,9 @@ BEGIN
     AND inventory.checkout_details.store_id=@store_id
     AND inventory.checkout_details.transaction_type='Cr';
 
-    @factor = inventory.convert_unit(@base_unit_id, @unit_id);
+    SET @factor = inventory.convert_unit(@base_unit_id, @unit_id);
     RETURN @credit * @factor;
 END;
-
-
-
-
 
 GO
 
@@ -718,13 +704,10 @@ BEGIN
     (
 	    SELECT inventory.customers.account_id
 	    FROM inventory.customers
-	    WHERE inventory.customers.customer_id=_customer_id
+	    WHERE inventory.customers.customer_id=@customer_id
 	    AND inventory.customers.deleted = 0
     );
 END;
-
-
-
 
 
 GO
@@ -744,14 +727,10 @@ BEGIN
     (
 	    SELECT inventory.shippers.account_id
 	    FROM inventory.shippers
-	    WHERE inventory.shippers.shipper_id=_shipper_id
+	    WHERE inventory.shippers.shipper_id=@shipper_id
 	    AND inventory.shippers.deleted = 0
     );
 END;
-
-
-
-
 
 GO
 
@@ -805,9 +784,9 @@ RETURNS @result TABLE
     book_date               date,
     tran_code national character varying(50),
     statement_reference     national character varying(2000),
-    debit                   decimal(24, 4),
-    credit                  decimal(24, 4),
-    balance                 decimal(24, 4),
+    debit                   numeric(30, 6),
+    credit                  numeric(30, 6),
+    balance                 numeric(30, 6),
     book                    national character varying(50),
     item_id                 integer,
     item_code national character varying(50),
@@ -895,15 +874,16 @@ BEGIN
         LEFT JOIN temp_account_statement AS c 
             ON (c.id <= temp_account_statement.id)
         GROUP BY temp_account_statement.id
-        ORDER BY temp_account_statement.id
     ) AS c
     WHERE id = c.id;
 
-    UPDATE @result SET 
+    UPDATE @result 
+    SET
         item_code = inventory.items.item_code,
         item_name = inventory.items.item_name
-    FROM inventory.items
-    WHERE item_id = inventory.items.item_id;
+    FROM @result AS result 
+    INNER JOIN inventory.items
+    ON result.item_id = inventory.items.item_id;
 
     RETURN;        
 END;
@@ -981,11 +961,11 @@ GO
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_associated_units.sql --<--<--
 IF OBJECT_ID('inventory.get_associated_unit_csv_list') IS NOT NULL
-DROP FUNCTION inventory.get_associated_unit_list;
+DROP FUNCTION inventory.get_associated_unit_csv_list;
 
 GO
 
-CREATE FUNCTION inventory.get_associated_unit_list(@any_unit_id integer)
+CREATE FUNCTION inventory.get_associated_unit_csv_list(@any_unit_id integer)
 RETURNS @result TABLE
 (
     unit_id             integer
@@ -1093,7 +1073,7 @@ AS
 BEGIN
     DECLARE @unit_id integer;
 
-    SELECT inventory.items.unit_id INTO @unit_id
+    SELECT @unit_id = inventory.items.unit_id
     FROM inventory.items
     WHERE inventory.items.item_id = @item_id
     AND inventory.items.deleted = 0;
@@ -1105,6 +1085,7 @@ BEGIN
 END;
 
 GO
+
 
 IF OBJECT_ID('inventory.get_associated_units_by_item_code') IS NOT NULL
 DROP FUNCTION inventory.get_associated_units_by_item_code;
@@ -1122,7 +1103,7 @@ AS
 BEGIN
     DECLARE @unit_id integer;
 
-    SELECT inventory.items.unit_id INTO @unit_id
+    SELECT @unit_id = inventory.items.unit_id
     FROM inventory.items
     WHERE LOWER(item_code) = LOWER(@item_code)
     AND inventory.items.deleted = 0;
@@ -1138,49 +1119,48 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_base_quantity_by_unit_name.sql --<--<--
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_base_quantity_by_unit_name.sql --<--<--
 IF OBJECT_ID('inventory.get_base_quantity_by_unit_name') IS NOT NULL
 DROP FUNCTION inventory.get_base_quantity_by_unit_name;
 
 GO
 
-CREATE FUNCTION inventory.get_base_quantity_by_unit_name(@unit_name national character varying(500), @multiplier numeric(24, 23))
-RETURNS decimal
+CREATE FUNCTION inventory.get_base_quantity_by_unit_name(@unit_name national character varying(500), @multiplier numeric(30, 6))
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @unit_id integer;
     DECLARE @root_unit_id integer;
-    DECLARE @factor decimal;
+    DECLARE @factor decimal(30, 6);
 
-    @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
-    @root_unit_id = inventory.get_root_unit_id(@unit_id);
-    @factor = inventory.convert_unit(@unit_id, @root_unit_id);
+    SET @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
+    SET @root_unit_id = inventory.get_root_unit_id(@unit_id);
+    SET @factor = inventory.convert_unit(@unit_id, @root_unit_id);
 
     RETURN @factor * @multiplier;
 END;
 
 GO
-
 
 IF OBJECT_ID('inventory.get_base_quantity_by_unit_id') IS NOT NULL
 DROP FUNCTION inventory.get_base_quantity_by_unit_id;
 
 GO
 
-CREATE FUNCTION inventory.get_base_quantity_by_unit_id(@unit_id integer, @multiplier numeric(24, 23))
-RETURNS decimal
+CREATE FUNCTION inventory.get_base_quantity_by_unit_id(@unit_id integer, @multiplier numeric(30, 6))
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @root_unit_id integer;
-    DECLARE @factor decimal;
+    DECLARE @factor decimal(30, 6);
 
-    @root_unit_id = inventory.get_root_unit_id(@unit_id);
-    @factor = inventory.convert_unit(@root_unit_id, @root_unit_id);
+    SET @root_unit_id = inventory.get_root_unit_id(@unit_id);
+    SET @factor = inventory.convert_unit(@root_unit_id, @root_unit_id);
 
     RETURN @factor * @multiplier;
 END;
-
-
-
 
 GO
 
@@ -1197,12 +1177,10 @@ AS
 BEGIN
     DECLARE @unit_id integer;
 
-    @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
+    SET @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
 
     RETURN inventory.get_root_unit_id(@unit_id);
 END;
-
-
 
 
 GO
@@ -1248,7 +1226,7 @@ BEGIN
     (
 	    SELECT inventory.stores.default_cash_account_id
 	    FROM inventory.stores
-	    WHERE inventory.stores.store_id=_store_id
+	    WHERE inventory.stores.store_id=@store_id
 	    AND inventory.stores.deleted = 0
     );
 END;
@@ -1275,7 +1253,7 @@ BEGIN
     (
 	    SELECT inventory.stores.default_cash_repository_id
 	    FROM inventory.stores
-	    WHERE inventory.stores.store_id=_store_id
+	    WHERE inventory.stores.store_id=@store_id
 	    AND inventory.stores.deleted = 0
     );
 END;
@@ -1313,12 +1291,12 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_good_method.sql --<--<--
-IF OBJECT_ID('inventory.get_cost_of_od_method') IS NOT NULL
-DROP inventory.get_cost_of_od_method;
+IF OBJECT_ID('inventory.get_cost_of_good_method') IS NOT NULL
+DROP FUNCTION inventory.get_cost_of_good_method;
 
 GO
 
-CREATE FUNCTION inventory.get_cost_of_od_method(@office_id integer)
+CREATE FUNCTION inventory.get_cost_of_good_method(@office_id integer)
 RETURNS national character varying(500)
 AS
 
@@ -1333,34 +1311,35 @@ END;
 
 
 
---SELECT * FROM inventory.get_cost_of_od_method(1);
+--SELECT * FROM inventory.get_cost_of_good_method(1);
 
 GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
-IF OBJECT_ID('inventory.get_cost_of_ods_sold') IS NOT NULL
-DROP FUNCTION inventory.get_cost_of_ods_sold;
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
+IF OBJECT_ID('inventory.get_cost_of_goods_sold') IS NOT NULL
+DROP FUNCTION inventory.get_cost_of_goods_sold;
 
 GO
 
-CREATE FUNCTION inventory.get_cost_of_ods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity decimal)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity decimal(30, 6))
 RETURNS dbo.money_strict
 AS
 BEGIN
-    DECLARE @backup_quantity            decimal;
-    DECLARE @base_quantity              decimal;
+    DECLARE @backup_quantity            decimal(30, 6);
+    DECLARE @base_quantity              decimal(30, 6);
     DECLARE @base_unit_id               integer;
     DECLARE @base_unit_cost             dbo.money_strict;
     DECLARE @total_sold                 integer;
     DECLARE @office_id                  integer = inventory.get_office_id_by_store_id(@store_id);
-    DECLARE @method                     national character varying(1000) = inventory.get_cost_of_od_method(@office_id);
+    DECLARE @method                     national character varying(1000) = inventory.get_cost_of_good_method(@office_id);
 
-    --backup base quantity in decimal
-    @backup_quantity                = inventory.get_base_quantity_by_unit_id(@unit_id, @quantity);
+    --backup base quantity in decimal(30, 6)
+    SET @backup_quantity                = inventory.get_base_quantity_by_unit_id(@unit_id, @quantity);
     --convert base quantity to whole number
-    @base_quantity                  = CEILING(@backup_quantity);
-    @base_unit_id                   = inventory.get_root_unit_id(@unit_id);
+    SET @base_quantity                  = CEILING(@backup_quantity);
+    SET @base_unit_id                   = inventory.get_root_unit_id(@unit_id);
         
     IF(@method = 'MAVCO')
     BEGIN
@@ -1368,11 +1347,11 @@ BEGIN
     END; 
 
 
-    SELECT COALESCE(SUM(base_quantity), 0) INTO @total_sold
+    SELECT @total_sold = COALESCE(SUM(base_quantity), 0)
     FROM inventory.verified_checkout_details_view
     WHERE transaction_type='Cr';
 
-    DECLARE @temp_cost_of_ods_sold TABLE
+    DECLARE @temp_cost_of_goods_sold TABLE
     (
         id                     bigint IDENTITY,
         checkout_detail_id     bigint,
@@ -1414,69 +1393,69 @@ BEGIN
         AND store_id = @store_id
     )
         
-    INSERT INTO @temp_cost_of_ods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
+    INSERT INTO @temp_cost_of_goods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
     SELECT checkout_detail_id, audit_ts, value_date, price, transaction_type FROM stock_cte
     ORDER BY value_date, audit_ts, checkout_detail_id;
 
 
     IF(@method = 'LIFO')
     BEGIN
-        SELECT SUM(price) INTO @base_unit_cost
+        SELECT @base_unit_cost = SUM(price)
         FROM 
         (
             SELECT price
-            FROM @temp_cost_of_ods_sold
+            FROM @temp_cost_of_goods_sold
             WHERE transaction_type ='Dr'
             ORDER BY id DESC
             OFFSET @total_sold ROWS
-            FETCH NEXT @base_quantity ROWS ONLY
+            FETCH NEXT CAST(@base_quantity AS integer) ROWS ONLY
         ) S;
     END
     ELSE IF (@method = 'FIFO')
     BEGIN
-        SELECT SUM(price) INTO @base_unit_cost
+        SELECT @base_unit_cost = SUM(price)
         FROM 
         (
             SELECT price
-            FROM @temp_cost_of_ods_sold
+            FROM @temp_cost_of_goods_sold
             WHERE transaction_type ='Dr'
             ORDER BY id
             OFFSET @total_sold ROWS
-            FETCH NEXT @base_quantity ROWS ONLY
+            FETCH NEXT CAST(@base_quantity AS integer) ROWS ONLY
         ) S;
     END
     ELSE IF (@method != 'MAVCO')
     BEGIN
-        RAISERROR('Invalid configuration: COGS method.', 10, 1);
+        RETURN 0;
+        --RAISERROR('Invalid configuration: COGS method.', 10, 1);
     END;
 
-    --APPLY DECIMAL QUANTITY PROVISON
-    @base_unit_cost = @base_unit_cost * (@backup_quantity / @base_quantity);
+    --APPLY decimal(30, 6) QUANTITY PROVISON
+    SET @base_unit_cost = @base_unit_cost * (@backup_quantity / @base_quantity);
 
     RETURN @base_unit_cost;
 END;
 
 
 
---SELECT * FROM inventory.get_cost_of_ods_sold(1,1, 1, 3.5);
+--SELECT * FROM inventory.get_cost_of_goods_sold(1,1, 1, 3.5);
 
 GO
-
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold_account_id.sql --<--<--
-IF OBJECT_ID('inventory.get_cost_of_ods_sold_account_id') IS NOT NULL
-DROP FUNCTION inventory.get_cost_of_ods_sold_account_id;
+IF OBJECT_ID('inventory.get_cost_of_goods_sold_account_id') IS NOT NULL
+DROP FUNCTION inventory.get_cost_of_goods_sold_account_id;
 
 GO
 
-CREATE FUNCTION inventory.get_cost_of_ods_sold_account_id(@item_id integer)
+CREATE FUNCTION inventory.get_cost_of_goods_sold_account_id(@item_id integer)
 RETURNS integer
 AS
 BEGIN
     RETURN
     (
 	    SELECT
-	        cost_of_ods_sold_account_id
+	        cost_of_goods_sold_account_id
 	    FROM inventory.item_groups
 	    INNER JOIN inventory.items
 	    ON inventory.item_groups.item_group_id = inventory.items.item_group_id
@@ -1487,7 +1466,7 @@ END;
 
 
 
---SELECT inventory.get_cost_of_ods_sold_account_id(1);
+--SELECT inventory.get_cost_of_goods_sold_account_id(1);
 
 GO
 
@@ -1679,7 +1658,7 @@ DROP FUNCTION inventory.get_item_code_by_item_id;
 
 GO
 
-CREATE OR REPLACE FUNCTION inventory.get_item_code_by_item_id(item_id_ integer)
+CREATE FUNCTION inventory.get_item_code_by_item_id(@item_id integer)
 RETURNS character varying AS
 
 BEGIN
@@ -1687,16 +1666,16 @@ BEGIN
     (
 	    SELECT item_code
 	    FROM inventory.items
-	    WHERE inventory.items.item_id = item_id_
+	    WHERE inventory.items.item_id = @item_id
 	    AND inventory.items.deleted = 0
     );
 END
 
-
-
 GO
 
 
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_item_cost_price.sql --<--<--
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_item_cost_price.sql --<--<--
 IF OBJECT_ID('inventory.get_item_cost_price') IS NOT NULL
 DROP FUNCTION inventory.get_item_cost_price;
@@ -1709,20 +1688,17 @@ AS
 BEGIN    
     DECLARE @price              dbo.money_strict2;
     DECLARE @costing_unit_id    integer;
-    DECLARE @factor             decimal;
+    DECLARE @factor             decimal(30, 6);
 
     SELECT 
-        cost_price, 
-        unit_id
-    INTO 
-        @price, 
-        @costing_unit_id
+        @price = cost_price, 
+        @costing_unit_id = unit_id
     FROM inventory.items
     WHERE inventory.items.item_id = @item_id
     AND inventory.items.deleted = 0;
 
     --Get the unitary conversion factor if the requested unit does not match with the price defition.
-    @factor = inventory.convert_unit(@unit_id, @costing_unit_id);
+    SET @factor = inventory.convert_unit(@unit_id, @costing_unit_id);
     RETURN @price * @factor;
 END;
 
@@ -1791,22 +1767,20 @@ DROP FUNCTION inventory.get_item_name_by_item_id;
 
 GO
 
-CREATE OR REPLACE FUNCTION inventory.get_item_name_by_item_id(item_id_ int)
-  RETURNS character varying(50) AS
-
+CREATE FUNCTION inventory.get_item_name_by_item_id(@item_id int)
+RETURNS character varying(50) AS
 BEGIN
     RETURN
     (
 	    SELECT item_name
 	    FROM inventory.items
-	    WHERE inventory.items.item_id = item_id_
+	    WHERE inventory.items.item_id = @item_id
 	    AND inventory.items.deleted = 0
     );
 END
 
-  
-
 GO
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_item_type_id_by_item_type_code.sql --<--<--
@@ -1841,28 +1815,27 @@ DROP FUNCTION inventory.get_mavcogs;
 
 GO
 
-CREATE FUNCTION inventory.get_mavcogs(@item_id integer, @store_id integer, @base_quantity decimal, @factor decimal(24, 4))
-RETURNS decimal(24, 4)
+CREATE FUNCTION inventory.get_mavcogs(@item_id integer, @store_id integer, @base_quantity numeric(30, 6), @factor numeric(30, 6))
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_cost dbo.money_strict;
 
     DECLARE @temp_staging TABLE
     (
-            id              integer IDENTITY NOT NULL,
-            value_date      date,
-            audit_ts        DATETIMEOFFSET,
-            base_quantity   decimal,
-            price           decimal
-            
+        id              integer IDENTITY NOT NULL,
+        value_date      date,
+        audit_ts        DATETIMEOFFSET,
+        base_quantity   numeric(30, 6),
+        price           numeric(30, 6)
     ) ;
 
 
     INSERT INTO @temp_staging(value_date, audit_ts, base_quantity, price)
     SELECT value_date, audit_ts, 
-    CASE WHEN tran_type = 'Dr' THEN
+    CASE WHEN transaction_type = 'Dr' THEN
     base_quantity ELSE base_quantity  * -1 END, 
-    CASE WHEN tran_type = 'Dr' THEN
+    CASE WHEN transaction_type = 'Dr' THEN
     (price * quantity/base_quantity)
     ELSE
     0
@@ -1870,7 +1843,7 @@ BEGIN
     FROM inventory.verified_checkout_details_view
     WHERE item_id = @item_id
     AND store_id=@store_id
-    order by value_date, audit_ts, stock_detail_id;
+    order by value_date, audit_ts, checkout_detail_id;
 
 
 
@@ -1881,9 +1854,9 @@ BEGIN
       FROM @temp_staging WHERE id = 1
       UNION ALL
       SELECT child.id, child.base_quantity, 
-             CASE WHEN child.base_quantity < 0 then parent.sum_m / parent.sum_base_quantity ELSE child.price END, 
+             CAST(CASE WHEN child.base_quantity < 0 then parent.sum_m / parent.sum_base_quantity ELSE child.price END AS numeric(30, 6)), 
              parent.sum_m + CASE WHEN child.base_quantity < 0 then parent.sum_m / parent.sum_base_quantity ELSE child.price END * child.base_quantity,
-             parent.sum_base_quantity + child.base_quantity,
+             CAST(parent.sum_base_quantity + child.base_quantity AS numeric(30, 6)),
              child.id 
       FROM @temp_staging child JOIN stock_transaction parent on child.id = parent.last_id + 1
     )
@@ -1895,7 +1868,7 @@ BEGIN
             --base_quantity * price AS amount,                                      --left for debuging purpose
             --SUM(base_quantity * price) OVER(ORDER BY id) AS cv_amount,            --left for debuging purpose
             --SUM(base_quantity) OVER(ORDER BY id) AS cv_quantity,                  --left for debuging purpose
-            SUM(base_quantity * price) OVER(ORDER BY id)  / SUM(base_quantity) OVER(ORDER BY id) INTO @base_unit_cost
+            @base_unit_cost = SUM(base_quantity * price) OVER(ORDER BY id)  / SUM(base_quantity) OVER(ORDER BY id)
     FROM stock_transaction
     ORDER BY id DESC;
 
@@ -1908,6 +1881,8 @@ END;
 
 
 GO
+
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_office_id_by_store_id.sql --<--<--
@@ -1937,6 +1912,8 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_opening_inventory_status.sql --<--<--
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_opening_inventory_status.sql --<--<--
 IF OBJECT_ID('inventory.get_opening_inventory_status') IS NOT NULL
 DROP FUNCTION inventory.get_opening_inventory_status;
 
@@ -1957,8 +1934,7 @@ BEGIN
     DECLARE @multiple_inventory_allowed             bit;
     DECLARE @has_opening_inventory                  bit = 0;
 
-    SELECT inventory.inventory_setup.allow_multiple_opening_inventory 
-    INTO @multiple_inventory_allowed    
+    SELECT @multiple_inventory_allowed = inventory.inventory_setup.allow_multiple_opening_inventory 
     FROM inventory.inventory_setup
     WHERE inventory.inventory_setup.office_id = @office_id;
 
@@ -1970,7 +1946,7 @@ BEGIN
         AND finance.transaction_master.office_id = @office_id
     )
     BEGIN
-        @has_opening_inventory                      = 1;
+        SET @has_opening_inventory                      = 1;
     END;
     
     INSERT INTO @result
@@ -2222,7 +2198,7 @@ BEGIN
     (
         SELECT inventory.stores.store_id
         FROM inventory.stores
-        WHERE inventory.stores.store_code=_store_code 
+        WHERE inventory.stores.store_code=@store_code 
         AND inventory.stores.deleted = 0
     );
 END;
@@ -2265,7 +2241,7 @@ DROP FUNCTION inventory.get_store_name_by_store_id;
 
 GO
 
-CREATE OR REPLACE FUNCTION inventory.get_store_name_by_store_id(@store_id integer)
+CREATE FUNCTION inventory.get_store_name_by_store_id(@store_id integer)
 RETURNS national character varying(500)
 AS
 
@@ -2462,36 +2438,33 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_write_off_cost_of_goods_sold.sql --<--<--
-IF OBJECT_ID('inventory.get_write_off_cost_of_ods_sold') IS NOT NULL
-DROP FUNCTION inventory.get_write_off_cost_of_ods_sold;
+IF OBJECT_ID('inventory.get_write_off_cost_of_goods_sold') IS NOT NULL
+DROP FUNCTION inventory.get_write_off_cost_of_goods_sold;
 
 GO
 
-CREATE FUNCTION inventory.get_write_off_cost_of_ods_sold(@checkout_id bigint, @item_id integer, @unit_id integer, @quantity integer)
+CREATE FUNCTION inventory.get_write_off_cost_of_goods_sold(@checkout_id bigint, @item_id integer, @unit_id integer, @quantity integer)
 RETURNS dbo.money_strict2
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @factor decimal;
+    DECLARE @factor decimal(30, 6);
 
-    @base_unit_id    = inventory.get_root_unit_id(@unit_id);
-    @factor          = inventory.convert_unit(@unit_id, @base_unit_id);
+    SET @base_unit_id    = inventory.get_root_unit_id(@unit_id);
+    SET @factor          = inventory.convert_unit(@unit_id, @base_unit_id);
 
 
     RETURN
     (
 	    SELECT
-	        SUM((cost_of_ods_sold / base_quantity) * @factor * @quantity)     
+	        SUM((cost_of_goods_sold / base_quantity) * @factor * @quantity)     
 	         FROM inventory.checkout_details
 	    WHERE checkout_id = @checkout_id
 	    AND item_id = @item_id
 	);    
 END;
 
-
-
-
---SELECT * FROM inventory.get_write_off_cost_of_ods_sold(7, 3, 1, 1);
+--SELECT * FROM inventory.get_write_off_cost_of_goods_sold(7, 3, 1, 1);
 
 
 GO
@@ -2505,40 +2478,36 @@ GO
 
 CREATE FUNCTION inventory.is_parent_unit(@parent integer, @child integer)
 RETURNS bit
-AS
-      
+AS      
 BEGIN
-    IF @parent!=@child
-    BEGIN
-        IF EXISTS
-        (
-            WITH unit_cte(unit_id) AS 
-            (
-             SELECT tn.compare_unit_id
-                FROM inventory.compound_units AS tn 
-                WHERE tn.base_unit_id = @parent
-                AND tn.deleted = 0
-            UNION ALL
-             SELECT
-                c.compare_unit_id
-                FROM unit_cte AS p, 
-              inventory.compound_units AS c 
-                WHERE base_unit_id = p.unit_id
-            )
+    DECLARE @rows int;
 
-            SELECT * FROM unit_cte
-            WHERE unit_id=@child
+    IF(@parent!=@child)
+    BEGIN
+        WITH unit_cte(unit_id) AS 
+        (
+            SELECT tn.compare_unit_id
+            FROM inventory.compound_units AS tn 
+            WHERE tn.base_unit_id = @parent
+            AND tn.deleted = 0
+            UNION ALL
+            SELECT
+            c.compare_unit_id
+            FROM unit_cte AS p, 
+            inventory.compound_units AS c 
+            WHERE base_unit_id = p.unit_id
         )
+
+        SELECT @rows = COUNT(*) from unit_cte
+        WHERE unit_id=@child;
+
+        IF(COALESCE(@rows, 0) > 0)
         BEGIN
             RETURN 1;
         END;
     END;
     RETURN 0;
 END;
-
-
-
-
 
 GO
 
@@ -2653,7 +2622,7 @@ RETURNS @result TABLE
     item_name               national character varying(1000),
     unit_id                 integer,
     unit_name               national character varying(1000),
-    quantity                decimal
+    quantity                decimal(30, 6)
 )
 AS
 
@@ -2665,7 +2634,7 @@ BEGIN
         item_name           national character varying(1000),
         unit_id             integer,
         unit_name           national character varying(1000),
-        quantity            decimal,
+        quantity            decimal(30, 6),
         maintain_inventory  bit
     ) ;
 
@@ -2678,19 +2647,23 @@ BEGIN
     WHERE inventory.verified_checkout_details_view.store_id = @store_id
     GROUP BY inventory.verified_checkout_details_view.item_id, inventory.verified_checkout_details_view.store_id, inventory.verified_checkout_details_view.base_unit_id;
 
-    UPDATE @temp_closing_stock SET 
+    UPDATE @temp_closing_stock 
+    SET 
         item_code = inventory.items.item_code,
         item_name = inventory.items.item_name,
         maintain_inventory = inventory.items.maintain_inventory
-    FROM inventory.items
-    WHERE item_id = inventory.items.item_id;
+    FROM @temp_closing_stock AS temp_closing_stock
+    INNER JOIN inventory.items
+    ON temp_closing_stock.item_id = inventory.items.item_id;
 
     DELETE FROM @temp_closing_stock WHERE maintain_inventory = 0;
 
-    UPDATE @temp_closing_stock SET 
+    UPDATE @temp_closing_stock 
+    SET 
         unit_name = inventory.units.unit_name
-    FROM inventory.units
-    WHERE unit_id = inventory.units.unit_id;
+    FROM @temp_closing_stock AS temp_closing_stock
+    INNER JOIN inventory.units
+    ON temp_closing_stock.unit_id = inventory.units.unit_id;
 
     INSERT INTO @result
     SELECT 
@@ -2707,11 +2680,10 @@ BEGIN
 END;
 
 
-
-
 --SELECT * FROM inventory.list_closing_stock(1);
 
 GO
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.post_adjustment.sql --<--<--
@@ -2731,7 +2703,7 @@ CREATE PROCEDURE inventory.post_adjustment
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.adjustment_type
+    @details                                inventory.adjustment_type READONLY
 )
 AS
 BEGIN
@@ -2741,9 +2713,18 @@ BEGIN
     DECLARE @is_periodic                    bit = inventory.is_periodic_inventory(@office_id);
     DECLARE @default_currency_code          national character varying(12);
 
-    IF NOT finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date)
+    DECLARE @can_post_transaction           bit;
+    DECLARE @error_message                  national character varying(MAX);
+
+    SELECT
+        @can_post_transaction   = can_post_transaction,
+        @error_message          = error_message
+    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+    IF(@can_post_transaction = 0)
     BEGIN
-        return 0;
+        RAISERROR(@error_message, 10, 1);
+        RETURN;
     END;
     
     DECLARE @temp_stock_details TABLE
@@ -2758,9 +2739,9 @@ BEGIN
         quantity                        dbo.decimal_strict,
         base_quantity                   dbo.decimal_strict,                
         price                           dbo.money_strict,
-        cost_of_ods_sold              dbo.money_strict2 DEFAULT(0),
+        cost_of_goods_sold              dbo.money_strict2 DEFAULT(0),
         inventory_account_id            integer,
-        cost_of_ods_sold_account_id   integer
+        cost_of_goods_sold_account_id   integer
     ) 
     ; 
 
@@ -2821,7 +2802,7 @@ BEGIN
         base_unit_id                    = inventory.get_root_unit_id(unit_id),
         price                           = inventory.get_item_cost_price(item_id, unit_id),
         inventory_account_id            = inventory.get_inventory_account_id(item_id),
-        cost_of_ods_sold_account_id   = inventory.get_cost_of_ods_sold_account_id(item_id);
+        cost_of_goods_sold_account_id   = inventory.get_cost_of_goods_sold_account_id(item_id);
 
 
     IF EXISTS
@@ -2857,61 +2838,62 @@ BEGIN
     --No accounting treatment is needed for periodic accounting system.
     IF(@is_periodic = 0)
     BEGIN
-        @default_currency_code  = core.get_currency_code_by_office_id(@office_id);
+        SET @default_currency_code  = core.get_currency_code_by_office_id(@office_id);
 
         UPDATE @temp_stock_details 
         SET 
-            cost_of_ods_sold = inventory.get_cost_of_ods_sold(item_id, unit_id, store_id, quantity);
+            cost_of_goods_sold = inventory.get_cost_of_goods_sold(item_id, unit_id, store_id, quantity);
     
         INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
-        SELECT 'Dr', cost_of_ods_sold_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0))
+        SELECT 'Dr', cost_of_goods_sold_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
         FROM @temp_stock_details
-        GROUP BY cost_of_ods_sold_account_id;
+        GROUP BY cost_of_goods_sold_account_id;
 
         INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
-        SELECT 'Cr', inventory_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_ods_sold, 0))
+        SELECT 'Cr', inventory_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
         FROM @temp_stock_details
         GROUP BY inventory_account_id;
     END;
     
-    @transaction_master_id  = nextval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id'));
-
     INSERT INTO finance.transaction_master
     (
-            transaction_master_id,
-            transaction_counter,
-            transaction_code,
-            book,
-            value_date,
-            book_date,
-            login_id,
-            user_id,
-            office_id,
-            reference_number,
-            statement_reference
+        transaction_counter,
+        transaction_code,
+        book,
+        value_date,
+        book_date,
+        login_id,
+        user_id,
+        office_id,
+        reference_number,
+        statement_reference
     )
     SELECT
-            @transaction_master_id, 
-            finance.get_new_transaction_counter(@value_date), 
-            finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
-            @book_name,
-            @value_date,
-            @book_date,
-            @login_id,
-            @user_id,
-            @office_id,
-            @reference_number,
-            @statement_reference;
+        finance.get_new_transaction_counter(@value_date), 
+        finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
+        @book_name,
+        @value_date,
+        @book_date,
+        @login_id,
+        @user_id,
+        @office_id,
+        @reference_number,
+        @statement_reference;
+
+    SET @transaction_master_id = SCOPE_IDENTITY();
 
     INSERT INTO finance.transaction_details(office_id, value_date, book_date, transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency)
     SELECT @office_id, @value_date, @book_date, @transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency
     FROM @temp_transaction_details
     ORDER BY tran_type DESC;
 
-    INSERT INTO inventory.checkouts(checkout_id, transaction_master_id, value_date, book_date, transaction_book, posted_by, office_id)
-    SELECT nextval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id')), @transaction_master_id, @value_date, @book_date, @book_name, @user_id, @office_id;
 
-    @checkout_id                                = currval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id'));
+
+    INSERT INTO inventory.checkouts(transaction_master_id, value_date, book_date, transaction_book, posted_by, office_id)
+    SELECT @transaction_master_id, @value_date, @book_date, @book_name, @user_id, @office_id;
+
+    SET @checkout_id                = SCOPE_IDENTITY();
+
 
     INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
     SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
@@ -2919,7 +2901,7 @@ BEGIN
 
     EXECUTE finance.auto_verify @transaction_master_id, @office_id;
     
-    PROCEDURE @transaction_master_id;
+    SELECT @transaction_master_id;
 END;
 
 
@@ -2952,7 +2934,7 @@ CREATE PROCEDURE inventory.post_opening_inventory
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.opening_stock_type
+    @details                                inventory.opening_stock_type READONLY
 )
 AS
 BEGIN
@@ -2962,9 +2944,18 @@ BEGIN
     DECLARE @tran_counter                   integer;
     DECLARE @transaction_code national character varying(50);
 
-    IF NOT finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date)
+    DECLARE @can_post_transaction           bit;
+    DECLARE @error_message                  national character varying(MAX);
+
+    SELECT
+        @can_post_transaction   = can_post_transaction,
+        @error_message          = error_message
+    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+    IF(@can_post_transaction = 0)
     BEGIN
-        return 0;
+        RAISERROR(@error_message, 10, 1);
+        RETURN;
     END;
     
     DECLARE @temp_stock_details TABLE
@@ -2973,9 +2964,9 @@ BEGIN
         tran_type                       national character varying(2),
         store_id                        integer,
         item_id                         integer, 
-        quantity                        dbo.integer_strict,
+        quantity                        dbo.decimal_strict2,
         unit_id                         integer,
-        base_quantity                   decimal,
+        base_quantity                   decimal(30, 6),
         base_unit_id                    integer,                
         price                           dbo.money_strict
     ) ;
@@ -3011,16 +3002,19 @@ BEGIN
     END;
 
     
-    @transaction_master_id  = nextval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id'));
-    @checkout_id            = nextval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id'));
-    @tran_counter           = finance.get_new_transaction_counter(@value_date);
-    @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
+    SET @tran_counter           = finance.get_new_transaction_counter(@value_date);
+    SET @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
 
-    INSERT INTO finance.transaction_master(transaction_master_id, transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
-    SELECT @transaction_master_id, @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
+
+    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
+    SELECT @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
+    SET @transaction_master_id = SCOPE_IDENTITY();
+
 
     INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, checkout_id, transaction_master_id, posted_by, office_id)
     SELECT @book_name, @value_date, @book_date, @checkout_id, @transaction_master_id, @user_id, @office_id;
+    SET @transaction_master_id = SCOPE_IDENTITY();
+
 
     INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
     SELECT @value_date, @book_date, @checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
@@ -3068,7 +3062,7 @@ CREATE PROCEDURE inventory.post_transfer
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.transfer_type
+    @details                                inventory.transfer_type READONLY
 )
 AS
 BEGIN
@@ -3076,9 +3070,18 @@ BEGIN
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
 
-    IF NOT finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date)
+    DECLARE @can_post_transaction           bit;
+    DECLARE @error_message                  national character varying(MAX);
+
+    SELECT
+        @can_post_transaction   = can_post_transaction,
+        @error_message          = error_message
+    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+    IF(@can_post_transaction = 0)
     BEGIN
-        RETURN 0;
+        RAISERROR(@error_message, 10, 1);
+        RETURN;
     END;
 
     DECLARE @temp_stock_details TABLE
@@ -3176,28 +3179,25 @@ BEGIN
         RAISERROR('Negative stock is not allowed.', 10, 1);
     END;
 
-    INSERT INTO finance.transaction_master(transaction_master_id, transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
+    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
     SELECT
-            nextval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id')), 
-            finance.get_new_transaction_counter(@value_date), 
-            finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
-            @book_name,
-            @value_date,
-            @book_date,
-            @login_id,
-            @user_id,
-            @office_id,
-            @reference_number,
-            @statement_reference;
+        finance.get_new_transaction_counter(@value_date), 
+        finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
+        @book_name,
+        @value_date,
+        @book_date,
+        @login_id,
+        @user_id,
+        @office_id,
+        @reference_number,
+        @statement_reference;
+
+    SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    @transaction_master_id  = currval(pg_get_integer IDENTITY_sequence('finance.transaction_master', 'transaction_master_id'));
-
-
-    INSERT INTO inventory.checkouts(checkout_id, transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
-    SELECT nextval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id')), @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
-
-    @checkout_id  = currval(pg_get_integer IDENTITY_sequence('inventory.checkouts', 'checkout_id'));
+    INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
+    SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
+    SET @checkout_id                = SCOPE_IDENTITY();
 
     INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
     SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
@@ -3441,8 +3441,8 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.views/inventory.checkout_view.sql --<--<--
-IF OBJECT_ID('inventory.checkout_view CASCADE') IS NOT NULL
-DROP VIEW inventory.checkout_view CASCADE;
+IF OBJECT_ID('inventory.checkout_view') IS NOT NULL
+DROP VIEW inventory.checkout_view-- CASCADE;
 
 GO
 
@@ -3569,15 +3569,15 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.views/inventory.verified_checkout_view.sql --<--<--
-DROP MATERIALIZED VIEW IF EXISTS inventory.verified_checkout_view;
+IF OBJECT_ID('inventory.verified_checkout_view') IS NOT NULL
+DROP VIEW inventory.verified_checkout_view;
 
-CREATE MATERIALIZED VIEW inventory.verified_checkout_view
+GO
+
+CREATE VIEW inventory.verified_checkout_view
 AS
 SELECT * FROM inventory.checkout_view
 WHERE verification_status_id > 0;
-
-ALTER MATERIALIZED VIEW inventory.verified_checkout_view
-OWNER TO frapid_db_user;
 
 GO
 

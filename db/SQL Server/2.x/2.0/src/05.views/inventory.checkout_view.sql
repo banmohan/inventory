@@ -1,5 +1,5 @@
-﻿IF OBJECT_ID('inventory.checkout_view CASCADE') IS NOT NULL
-DROP VIEW inventory.checkout_view CASCADE;
+﻿IF OBJECT_ID('inventory.checkout_view') IS NOT NULL
+DROP VIEW inventory.checkout_view-- CASCADE;
 
 GO
 

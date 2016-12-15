@@ -4,10 +4,10 @@ DROP FUNCTION inventory.convert_unit;
 GO
 
 CREATE FUNCTION inventory.convert_unit(@from_unit integer, @to_unit integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 AS
 BEGIN
-    DECLARE @factor decimal;
+    DECLARE @factor decimal(30, 6);
 
     IF(inventory.get_root_unit_id(@from_unit) != inventory.get_root_unit_id(@to_unit))
     BEGIN
@@ -19,7 +19,7 @@ BEGIN
         RETURN 1.00;
     END;
     
-    IF(inventory.is_parent_unit(@from_unit, @to_unit))
+    IF(inventory.is_parent_unit(@from_unit, @to_unit) = 1)
     BEGIN
             WITH unit_cte(unit_id, value) AS 
             (
@@ -36,7 +36,7 @@ BEGIN
                 inventory.compound_units AS c 
                 WHERE base_unit_id = p.unit_id
             )
-        SELECT 1.00/value INTO @factor
+        SELECT @factor = 1.00/value
         FROM unit_cte
         WHERE unit_id=@to_unit;
     END
@@ -56,7 +56,7 @@ BEGIN
                 WHERE base_unit_id = p.unit_id
             )
 
-        SELECT value INTO @factor
+        SELECT @factor = value
         FROM unit_cte
         WHERE unit_id=@from_unit;
     END;

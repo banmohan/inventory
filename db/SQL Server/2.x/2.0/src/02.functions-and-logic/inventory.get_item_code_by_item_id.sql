@@ -3,7 +3,7 @@ DROP FUNCTION inventory.get_item_code_by_item_id;
 
 GO
 
-CREATE OR REPLACE FUNCTION inventory.get_item_code_by_item_id(item_id_ integer)
+CREATE FUNCTION inventory.get_item_code_by_item_id(@item_id integer)
 RETURNS character varying AS
 
 BEGIN
@@ -11,11 +11,10 @@ BEGIN
     (
 	    SELECT item_code
 	    FROM inventory.items
-	    WHERE inventory.items.item_id = item_id_
+	    WHERE inventory.items.item_id = @item_id
 	    AND inventory.items.deleted = 0
     );
 END
 
-
-
 GO
+
