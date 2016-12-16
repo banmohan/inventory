@@ -17,6 +17,8 @@ CREATE PROCEDURE inventory.post_transfer
 )
 AS
 BEGIN
+    SET NOCOUNT ON;
+
     DECLARE @transaction_master_id          bigint;
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
