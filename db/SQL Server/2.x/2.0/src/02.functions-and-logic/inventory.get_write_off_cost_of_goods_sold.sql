@@ -4,7 +4,7 @@ DROP FUNCTION inventory.get_write_off_cost_of_goods_sold;
 GO
 
 CREATE FUNCTION inventory.get_write_off_cost_of_goods_sold(@checkout_id bigint, @item_id integer, @unit_id integer, @quantity integer)
-RETURNS dbo.money_strict2
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;

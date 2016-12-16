@@ -45,9 +45,9 @@ BEGIN
         unit_id         integer,
         base_unit_id    integer,
         unit_name       national character varying(50),
-        quantity        dbo.decimal_strict,
-        base_quantity   dbo.decimal_strict,                
-        price           dbo.money_strict
+        quantity        decimal(30, 6),
+        base_quantity   decimal(30, 6),                
+        price           decimal(30, 6)
     ) 
     ; 
 

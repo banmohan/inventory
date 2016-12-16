@@ -192,13 +192,13 @@ CREATE TABLE inventory.items
     lead_time_in_days                       integer,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     hot_item                                bit NOT NULL DEFAULT(0),
-    is_taxable_item                            bit NOT NULL DEFAULT(1),
-    cost_price                              dbo.decimal_strict2,
-    cost_price_includes_tax                    bit NOT NULL DEFAULT(0),
-    selling_price                           dbo.decimal_strict2,
-    selling_price_includes_tax                bit NOT NULL DEFAULT(0),
-    reorder_level                           dbo.integer_strict2 NOT NULL DEFAULT(0),
-    reorder_quantity                        dbo.decimal_strict2 NOT NULL DEFAULT(0),
+    is_taxable_item                         bit NOT NULL DEFAULT(1),
+    cost_price                              decimal(30, 6),
+    cost_price_includes_tax                 bit NOT NULL DEFAULT(0),
+    selling_price                           decimal(30, 6),
+    selling_price_includes_tax              bit NOT NULL DEFAULT(0),
+    reorder_level                           integer NOT NULL DEFAULT(0),
+    reorder_quantity                        decimal(30, 6) NOT NULL DEFAULT(0),
     reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
     maintain_inventory                      bit NOT NULL DEFAULT(1),
     photo                                   dbo.photo,
@@ -207,7 +207,7 @@ CREATE TABLE inventory.items
     is_variant_of                           integer REFERENCES inventory.items,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
-    deleted                                    bit DEFAULT(0)    
+    deleted                                 bit DEFAULT(0)    
 );
 
 
@@ -305,7 +305,7 @@ CREATE TABLE inventory.checkouts
     transaction_master_id                    bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
-    discount                                dbo.decimal_strict2 DEFAULT(0),
+    discount                                decimal(30, 6) DEFAULT(0),
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -329,13 +329,13 @@ CREATE TABLE inventory.checkout_details
     transaction_type                        national character varying(2) NOT NULL
                                             CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    price                                   dbo.money_strict NOT NULL,
-    discount                                dbo.money_strict2 NOT NULL DEFAULT(0),    
-    cost_of_goods_sold                      dbo.money_strict2 NOT NULL DEFAULT(0),
-    tax                                        dbo.money_strict2 NOT NULL DEFAULT(0),
-    shipping_charge                         dbo.money_strict2 NOT NULL DEFAULT(0),    
+    price                                   decimal(30, 6) NOT NULL,
+    discount                                decimal(30, 6) NOT NULL DEFAULT(0),    
+    cost_of_goods_sold                      decimal(30, 6) NOT NULL DEFAULT(0),
+    tax                                        decimal(30, 6) NOT NULL DEFAULT(0),
+    shipping_charge                         decimal(30, 6) NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
-    quantity                                dbo.decimal_strict NOT NULL,
+    quantity                                decimal(30, 6) NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE())
@@ -378,10 +378,10 @@ CREATE TABLE inventory.inventory_transfer_request_details
     inventory_transfer_request_id           bigint NOT NULL REFERENCES inventory.inventory_transfer_requests,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                dbo.decimal_strict2 NOT NULL,
+    quantity                                decimal(30, 6) NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           dbo.decimal_strict2 NOT NULL
+    base_quantity                           decimal(30, 6) NOT NULL
 );
 
 CREATE TABLE inventory.inventory_transfer_deliveries
@@ -407,10 +407,10 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
     inventory_transfer_delivery_id          bigint NOT NULL REFERENCES inventory.inventory_transfer_deliveries,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                dbo.decimal_strict2 NOT NULL,
+    quantity                                decimal(30, 6) NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           dbo.decimal_strict2 NOT NULL
+    base_quantity                           decimal(30, 6) NOT NULL
 );
 
 
@@ -464,8 +464,8 @@ AS TABLE
     store_name      national character varying(50),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        dbo.decimal_strict,
-    rate            dbo.money_strict2
+    quantity        decimal(30, 6),
+    rate            decimal(30, 6)
 );
 
 CREATE TYPE inventory.adjustment_type 
@@ -474,7 +474,7 @@ AS TABLE
     tran_type       national character varying(2),
     item_code       national character varying(12),
     unit_name       national character varying(50),
-    quantity        dbo.decimal_strict
+    quantity        decimal(30, 6)
 );
 
 
@@ -483,12 +483,12 @@ AS TABLE
 (
     store_id            integer,
     item_id               integer,
-    quantity            dbo.decimal_strict,
+    quantity            decimal(30, 6),
     unit_id               national character varying(50),
-    price               dbo.money_strict,
-    discount            dbo.money_strict2,
-    tax                 dbo.money_strict2,
-    shipping_charge     dbo.money_strict2
+    price               decimal(30, 6),
+    discount            decimal(30, 6),
+    tax                 decimal(30, 6),
+    shipping_charge     decimal(30, 6)
 );
 
 
@@ -497,9 +497,9 @@ AS TABLE
 (
     store_id            integer,
     item_id               integer,
-    quantity            dbo.decimal_strict,
+    quantity            decimal(30, 6),
     unit_id               integer,
-    price                  dbo.money_strict
+    price                  decimal(30, 6)
 );
 
 

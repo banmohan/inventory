@@ -10,6 +10,6 @@ namespace MixERP.Inventory.ViewModels
         [Required]
         public string UnitName { get; set; }
         [Required]
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
     }
 }

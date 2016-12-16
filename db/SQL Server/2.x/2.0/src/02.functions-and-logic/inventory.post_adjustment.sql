@@ -47,10 +47,10 @@ BEGIN
         unit_id                         integer,
         base_unit_id                    integer,
         unit_name                       national character varying(50),
-        quantity                        dbo.decimal_strict,
-        base_quantity                   dbo.decimal_strict,                
-        price                           dbo.money_strict,
-        cost_of_goods_sold              dbo.money_strict2 DEFAULT(0),
+        quantity                        decimal(30, 6),
+        base_quantity                   decimal(30, 6),                
+        price                           decimal(30, 6),
+        cost_of_goods_sold              decimal(30, 6) DEFAULT(0),
         inventory_account_id            integer,
         cost_of_goods_sold_account_id   integer
     ) 
@@ -63,10 +63,10 @@ BEGIN
         statement_reference         national character varying(2000), 
         cash_repository_id          integer, 
         currency_code               national character varying(12), 
-        amount_in_currency          dbo.money_strict, 
+        amount_in_currency          decimal(30, 6), 
         local_currency_code         national character varying(12), 
-        er                          dbo.decimal_strict, 
-        amount_in_local_currency    dbo.money_strict
+        er                          decimal(30, 6), 
+        amount_in_local_currency    decimal(30, 6)
     ) ;
 
     INSERT INTO @temp_stock_details(tran_type, store_id, item_code, unit_name, quantity)

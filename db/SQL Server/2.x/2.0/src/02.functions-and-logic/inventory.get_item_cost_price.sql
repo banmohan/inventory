@@ -5,10 +5,10 @@ DROP FUNCTION inventory.get_item_cost_price;
 GO
 
 CREATE FUNCTION inventory.get_item_cost_price(@item_id integer, @unit_id integer)
-RETURNS dbo.money_strict2
+RETURNS decimal(30, 6)
 AS  
 BEGIN    
-    DECLARE @price              dbo.money_strict2;
+    DECLARE @price              decimal(30, 6);
     DECLARE @costing_unit_id    integer;
     DECLARE @factor             decimal(30, 6);
 

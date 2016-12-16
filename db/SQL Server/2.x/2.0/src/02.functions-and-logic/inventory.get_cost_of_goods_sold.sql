@@ -5,13 +5,13 @@ DROP FUNCTION inventory.get_cost_of_goods_sold;
 GO
 
 CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity decimal(30, 6))
-RETURNS dbo.money_strict
+RETURNS decimal(30, 6)
 AS
 BEGIN
     DECLARE @backup_quantity            decimal(30, 6);
     DECLARE @base_quantity              decimal(30, 6);
     DECLARE @base_unit_id               integer;
-    DECLARE @base_unit_cost             dbo.money_strict;
+    DECLARE @base_unit_cost             decimal(30, 6);
     DECLARE @total_sold                 integer;
     DECLARE @office_id                  integer = inventory.get_office_id_by_store_id(@store_id);
     DECLARE @method                     national character varying(1000) = inventory.get_cost_of_good_method(@office_id);
@@ -38,7 +38,7 @@ BEGIN
         checkout_detail_id     bigint,
         audit_ts               DATETIMEOFFSET,
         value_date             date,
-        price                  dbo.money_strict,
+        price                  decimal(30, 6),
         transaction_type       national character varying(1000)
                     
     ) ;

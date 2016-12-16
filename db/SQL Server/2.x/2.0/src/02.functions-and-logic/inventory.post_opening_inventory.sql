@@ -42,11 +42,11 @@ BEGIN
         tran_type                       national character varying(2),
         store_id                        integer,
         item_id                         integer, 
-        quantity                        dbo.decimal_strict2,
+        quantity                        decimal(30, 6),
         unit_id                         integer,
         base_quantity                   decimal(30, 6),
         base_unit_id                    integer,                
-        price                           dbo.money_strict
+        price                           decimal(30, 6)
     ) ;
 
     INSERT INTO @temp_stock_details(store_id, item_id, quantity, unit_id, price)

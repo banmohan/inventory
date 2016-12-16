@@ -7,7 +7,7 @@ CREATE FUNCTION inventory.get_mavcogs(@item_id integer, @store_id integer, @base
 RETURNS numeric(30, 6)
 AS
 BEGIN
-    DECLARE @base_unit_cost dbo.money_strict;
+    DECLARE @base_unit_cost decimal(30, 6);
 
     DECLARE @temp_staging TABLE
     (
