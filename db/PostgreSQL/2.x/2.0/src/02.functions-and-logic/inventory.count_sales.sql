@@ -1,12 +1,12 @@
 ﻿DROP FUNCTION IF EXISTS inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer);
 CREATE FUNCTION inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal
+RETURNS decimal(30, 6)
 STABLE
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _credit decimal;
-    DECLARE _factor decimal;
+    DECLARE _credit decimal(30, 6);
+    DECLARE _factor decimal(30, 6);
 BEGIN
     --Get the base item unit
     SELECT 

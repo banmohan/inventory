@@ -58,30 +58,30 @@ WriteLiteral("\r\n\r\n<script>\r\n    var scrudFactory = new Object();\r\n\r\n  
 "ustomers\";\r\n\r\n    scrudFactory.viewAPI = \"/api/forms/inventory/customers\";\r\n    " +
 "scrudFactory.viewTableName = \"inventory.customers\";\r\n\r\n    scrudFactory.formAPI " +
 "= \"/api/forms/inventory/customers\";\r\n    scrudFactory.formTableName = \"inventory" +
-".customers\";\r\n    scrudFactory.uploadHanlder = \"/dashboard/inventory/services/at" +
-"tachments\";\r\n\r\n    scrudFactory.excludedColumns = [\"audit_user_id\", \"audit_ts\"];" +
-"\r\n\r\n    scrudFactory.allowDelete = true;\r\n    scrudFactory.allowEdit = true;\r\n\r\n" +
-"    scrudFactory.live = \"CustomerName\";\r\n\r\n    scrudFactory.card = {\r\n        im" +
-"age: \"Photo\",\r\n        header: \"CustomerName\",\r\n        meta: \"CustomerCode\",\r\n " +
-"       description: \"ContactPhoneNumbers\"        \r\n    };\r\n\r\n    scrudFactory.la" +
-"yout = [\r\n        {\r\n            tab: \"\",\r\n            fields: [\r\n              " +
-"  [\"CustomerId\", \"\"],\r\n                [\"Photo\", \"\"],\r\n                [\"Custome" +
-"rCode\", \"CustomerName\"],\r\n                [\"CustomerTypeId\", \"\"],\r\n             " +
-"   [\"Logo\", \"\"]\r\n            ]\r\n        }\r\n    ];\r\n\r\n    scrudFactory.keys = [\r\n" +
-"        {\r\n            property: \"CustomerTypeId\",\r\n            url: \'/api/forms" +
-"/inventory/customer-types/display-fields\',\r\n            data: null,\r\n           " +
-" valueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r\n    " +
-"        property: \"AccountId\",\r\n            url: \'/api/views/finance/accounts/di" +
+".customers\";\r\n\r\n    scrudFactory.uploadHanlder = \"/dashboard/inventory/services/" +
+"attachments\";\r\n\r\n    scrudFactory.excludedColumns = [\"audit_user_id\", \"audit_ts\"" +
+"];\r\n\r\n    scrudFactory.allowDelete = true;\r\n    scrudFactory.allowEdit = true;\r\n" +
+"\r\n    scrudFactory.live = \"CustomerName\";\r\n\r\n    scrudFactory.card = {\r\n        " +
+"image: \"Photo\",\r\n        header: \"CustomerName\",\r\n        meta: \"CustomerCode\",\r" +
+"\n        description: \"ContactPhoneNumbers\"        \r\n    };\r\n\r\n    scrudFactory." +
+"layout = [\r\n        {\r\n            tab: \"\",\r\n            fields: [\r\n            " +
+"    [\"CustomerId\", \"\"],\r\n                [\"Photo\", \"\"],\r\n                [\"Custo" +
+"merCode\", \"CustomerName\"],\r\n                [\"CustomerTypeId\", \"\"],\r\n           " +
+"     [\"Logo\", \"\"]\r\n            ]\r\n        }\r\n    ];\r\n\r\n    scrudFactory.keys = [" +
+"\r\n        {\r\n            property: \"CustomerTypeId\",\r\n            url: \'/api/for" +
+"ms/inventory/customer-types/display-fields\',\r\n            data: null,\r\n         " +
+"   valueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r\n  " +
+"          property: \"AccountId\",\r\n            url: \'/api/views/finance/receivabl" +
+"e-account-selector-view/display-fields\',\r\n            data: null,\r\n            v" +
+"alueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r\n      " +
+"      property: \"CurrencyCode\",\r\n            url: \'/api/views/core/currencies/di" +
 "splay-fields\',\r\n            data: null,\r\n            valueField: \"Key\",\r\n       " +
-"     textField: \"Value\"\r\n        },\r\n        {\r\n            property: \"CurrencyC" +
-"ode\",\r\n            url: \'/api/views/core/currencies/display-fields\',\r\n          " +
-"  data: null,\r\n            valueField: \"Key\",\r\n            textField: \"Value\"\r\n " +
-"       }\r\n    ];\r\n\r\n\r\n\r\n    $.get(\'/ScrudFactory/View.html\', function (view) {\r\n" +
-"        $.get(\'/ScrudFactory/Form.html\', function (form) {\r\n            $(\"#Scru" +
-"dFactoryView\").html(view);\r\n            $(\"#ScrudFactoryForm\").html(form);\r\n    " +
-"        $.cachedScript(\"/assets/js/scrudfactory-view.js\");\r\n            $.cached" +
-"Script(\"/assets/js/scrudfactory-form.js\");\r\n        });\r\n    });\r\n</script>\r\n\r\n<" +
-"div");
+"     textField: \"Value\"\r\n        }\r\n    ];\r\n\r\n\r\n\r\n    $.get(\'/ScrudFactory/View." +
+"html\', function (view) {\r\n        $.get(\'/ScrudFactory/Form.html\', function (for" +
+"m) {\r\n            $(\"#ScrudFactoryView\").html(view);\r\n            $(\"#ScrudFacto" +
+"ryForm\").html(form);\r\n            $.cachedScript(\"/assets/js/scrudfactory-view.j" +
+"s\");\r\n            $.cachedScript(\"/assets/js/scrudfactory-form.js\");\r\n        })" +
+";\r\n    });\r\n</script>\r\n\r\n<div");
 
 WriteLiteral(" id=\"ScrudFactoryForm\"");
 

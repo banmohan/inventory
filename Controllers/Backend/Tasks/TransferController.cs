@@ -64,7 +64,7 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
 
             try
             {
-                long id = await InventoryTransfers.AddAsync(this.Tenant, model).ConfigureAwait(true);
+                long id = await InventoryTransfers.PostAsync(this.Tenant, model).ConfigureAwait(true);
                 return this.Ok(id);
             }
             catch (Exception ex)

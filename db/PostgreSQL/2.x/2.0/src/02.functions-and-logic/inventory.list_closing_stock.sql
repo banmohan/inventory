@@ -15,7 +15,7 @@ TABLE
     item_name               text,
     unit_id                 integer,
     unit_name               text,
-    quantity                decimal
+    quantity                decimal(30, 6)
 )
 AS
 $$
@@ -29,7 +29,7 @@ BEGIN
         item_name           text,
         unit_id             integer,
         unit_name           text,
-        quantity            decimal,
+        quantity            decimal(30, 6),
         maintain_inventory  boolean
     ) ON COMMIT DROP;
 

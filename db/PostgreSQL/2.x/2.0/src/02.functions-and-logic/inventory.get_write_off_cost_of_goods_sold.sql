@@ -5,7 +5,7 @@ RETURNS money_strict2
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _factor decimal;
+    DECLARE _factor decimal(30, 6);
 BEGIN
     _base_unit_id    = inventory.get_root_unit_id(_unit_id);
     _factor          = inventory.convert_unit(_unit_id, _base_unit_id);

@@ -33,7 +33,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -61,27 +60,28 @@ WriteLiteral("\r\n\r\n<script>\r\n    var scrudFactory = new Object();\r\n\r\n  
 "= \"/api/forms/inventory/suppliers\";\r\n    scrudFactory.formTableName = \"inventory" +
 ".suppliers\";\r\n\r\n    scrudFactory.excludedColumns = [\"audit_user_id\", \"audit_ts\"]" +
 ";\r\n\r\n    scrudFactory.allowDelete = true;\r\n    scrudFactory.allowEdit = true;\r\n\r" +
-"\n    scrudFactory.live = \"SupplierName\";\r\n\r\n    scrudFactory.card = {\r\n        i" +
-"mage: \"photo\",\r\n        header: \"supplier_name\",\r\n        meta: \"supplier_code\"," +
-"\r\n        description: \"contact_phone_numbers\"        \r\n    };\r\n\r\n    scrudFacto" +
-"ry.layout = [\r\n        {\r\n            tab: \"\",\r\n            fields: [\r\n         " +
-"       [\"SupplierId\", \"\"],\r\n                [\"Photo\", \"\"],\r\n                [\"Su" +
-"pplierCode\", \"SupplierName\"],\r\n                [\"SupplierTypeId\", \"\"],\r\n        " +
-"        [\"Logo\", \"\"],\r\n            ]\r\n        }\r\n    ];\r\n\r\n    scrudFactory.keys" +
-" = [\r\n        {\r\n            property: \"SupplierTypeId\",\r\n            url: \'/api" +
-"/forms/inventory/supplier-types/display-fields\',\r\n            data: null,\r\n     " +
-"       valueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {" +
-"\r\n            property: \"AccountId\",\r\n            url: \'/api/views/finance/accou" +
-"nts/display-fields\',\r\n            data: null,\r\n            valueField: \"Key\",\r\n " +
-"           textField: \"Value\"\r\n        },\r\n        {\r\n            property: \"Cur" +
-"rencyCode\",\r\n            url: \'/api/views/core/currencies/display-fields\',\r\n    " +
-"        data: null,\r\n            valueField: \"Key\",\r\n            textField: \"Val" +
-"ue\"\r\n        }\r\n    ];\r\n\r\n\r\n\r\n    $.get(\'/ScrudFactory/View.html\', function (vie" +
-"w) {\r\n        $.get(\'/ScrudFactory/Form.html\', function (form) {\r\n            $(" +
-"\"#ScrudFactoryView\").html(view);\r\n            $(\"#ScrudFactoryForm\").html(form);" +
-"\r\n            $.cachedScript(\"/assets/js/scrudfactory-view.js\");\r\n            $." +
-"cachedScript(\"/assets/js/scrudfactory-form.js\");\r\n        });\r\n    });\r\n</script" +
-">\r\n\r\n<div");
+"\n    scrudFactory.live = \"SupplierName\";\r\n    scrudFactory.uploadHanlder = \"/das" +
+"hboard/inventory/services/attachments\";\r\n\r\n    scrudFactory.card = {\r\n        im" +
+"age: \"Photo\",\r\n        header: \"SupplierName\",\r\n        meta: \"SupplierCode\",\r\n " +
+"       description: \"ContactPhoneNumbers\"        \r\n    };\r\n\r\n    scrudFactory.la" +
+"yout = [\r\n        {\r\n            tab: \"\",\r\n            fields: [\r\n              " +
+"  [\"SupplierId\", \"\"],\r\n                [\"Photo\", \"\"],\r\n                [\"Supplie" +
+"rCode\", \"SupplierName\"],\r\n                [\"SupplierTypeId\", \"\"],\r\n             " +
+"   [\"Logo\", \"\"]\r\n            ]\r\n        }\r\n    ];\r\n\r\n    scrudFactory.keys = [\r\n" +
+"        {\r\n            property: \"SupplierTypeId\",\r\n            url: \'/api/forms" +
+"/inventory/supplier-types/display-fields\',\r\n            data: null,\r\n           " +
+" valueField: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r\n    " +
+"        property: \"AccountId\",\r\n            url: \'/api/views/finance/payable-acc" +
+"ount-selector-view/display-fields\',\r\n            data: null,\r\n            valueF" +
+"ield: \"Key\",\r\n            textField: \"Value\"\r\n        },\r\n        {\r\n           " +
+" property: \"CurrencyCode\",\r\n            url: \'/api/views/core/currencies/lookup-" +
+"fields\',\r\n            data: null,\r\n            valueField: \"Key\",\r\n            t" +
+"extField: \"Value\"\r\n        }\r\n    ];\r\n\r\n\r\n\r\n    $.get(\'/ScrudFactory/View.html\'," +
+" function (view) {\r\n        $.get(\'/ScrudFactory/Form.html\', function (form) {\r\n" +
+"            $(\"#ScrudFactoryView\").html(view);\r\n            $(\"#ScrudFactoryForm" +
+"\").html(form);\r\n            $.cachedScript(\"/assets/js/scrudfactory-view.js\");\r\n" +
+"            $.cachedScript(\"/assets/js/scrudfactory-form.js\");\r\n        });\r\n   " +
+" });\r\n</script>\r\n\r\n<div");
 
 WriteLiteral(" id=\"ScrudFactoryForm\"");
 

@@ -39,7 +39,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -149,104 +148,103 @@ WriteLiteral("    <style>\r\n        #dashboard-container {\r\n            paddi
 "m .info .photo img {\r\n                    height: 390px;\r\n                    fi" +
 "lter: grayscale(70%);\r\n                }\r\n\r\n                .item.list .item .in" +
 "fo .name {\r\n                    font-size: 1.4em;\r\n                    font-weig" +
-"ht: 100;\r\n                    position: relative;\r\n                    z-index: " +
+"ht: 600;\r\n                    position: relative;\r\n                    z-index: " +
 "1;\r\n                    top: -5.5em;\r\n                    line-height: 1.2em;\r\n " +
 "                   text-align: center;\r\n                    text-shadow: 2px 2px" +
 " 10px black;\r\n                }\r\n\r\n                .item.list .item .info .price" +
-" {\r\n                    font-size: 3em;\r\n                    font-weight: 100 !i" +
-"mportant;\r\n                    text-align: right;\r\n                    position:" +
-" relative;\r\n                    z-index: 1;\r\n                    top: 0.7em;\r\n  " +
-"                  text-shadow: -2px 3px 10px #000;\r\n                    color: #" +
-"eee;\r\n                }\r\n\r\n\r\n        .category.list {\r\n            padding: 4px;" +
-"\r\n            text-align: center;\r\n            background-color: #555;\r\n        " +
-"}\r\n\r\n            .category.list .filter {\r\n                text-align: right;\r\n " +
-"               display: inline-block;\r\n            }\r\n\r\n            .category.li" +
-"st .category, .cat.filter {\r\n                display: inline-block;\r\n           " +
-"     background-color: #555;\r\n                color: white;\r\n                pad" +
-"ding: 4px 12px;\r\n                margin: 2px;\r\n                border-radius: 12" +
-"px;\r\n                text-transform: uppercase;\r\n                font-size: 0.9e" +
-"m;\r\n                letter-spacing: 1px;\r\n                cursor: pointer;\r\n    " +
-"            text-shadow: 0 0 2px white;\r\n            }\r\n\r\n            .category." +
-"list .cat.filter {\r\n                background-color: #444;\r\n            }\r\n\r\n  " +
-"          .category.list .category.selected, .category.list .category:hover {\r\n " +
-"               background-color: #78AD05;\r\n            }\r\n\r\n            .categor" +
-"y.list .cat.filter:hover {\r\n                background-color: #FA6400 !important" +
-";\r\n            }\r\n\r\n        .search.panel {\r\n            background-color: #666;" +
-"\r\n            padding: 1em;\r\n            text-align: center;\r\n        }\r\n\r\n     " +
-"       .search.panel input {\r\n                text-align: center;\r\n             " +
-"   font-size: 1.1em;\r\n                background-color: transparent;\r\n          " +
-"      border: 1px solid #999;\r\n                border-radius: 2em;\r\n            " +
-"    text-transform: uppercase;\r\n                height: 2em;\r\n                wi" +
-"dth: 20em;\r\n            }\r\n\r\n\r\n        .opening.items .item {\r\n            backg" +
-"round-color: #333;\r\n            padding: 3px 9px;\r\n            border-bottom: 1p" +
-"x dotted #444;\r\n            cursor: pointer;\r\n            -webkit-user-select: n" +
-"one; /* webkit (safari, chrome) browsers */\r\n            -moz-user-select: none;" +
-" /* mozilla browsers */\r\n            -khtml-user-select: none; /* webkit (konque" +
-"ror) browsers */\r\n            -ms-user-select: none; /* IE10+ */\r\n        }\r\n\r\n " +
-"           .opening.items .item:nth-child(even) {\r\n                background-co" +
-"lor: #373737 !important;\r\n            }\r\n\r\n            .opening.items .item:hove" +
-"r {\r\n                background-color: #3a3a3a !important;\r\n            }\r\n\r\n   " +
-"         .opening.items .item .block {\r\n                display: inline-block;\r\n" +
-"                height: 82px;\r\n                overflow: hidden;\r\n            }\r" +
-"\n\r\n                .opening.items .item .block img {\r\n                    height" +
-": 82px;\r\n                }\r\n\r\n            .opening.items .item .photo.block {\r\n " +
-"               width: 90px;\r\n                overflow: hidden;\r\n            }\r\n\r" +
-"\n            .opening.items .item .number.block {\r\n                width: 120px;" +
-"\r\n            }\r\n\r\n\r\n                .opening.items .item .number.block button {" +
-"\r\n                    height: 100%;\r\n                    text-transform: upperca" +
-"se;\r\n                    letter-spacing: 1px;\r\n                    font-weight: " +
-"100;\r\n                }\r\n\r\n            .opening.items .item input {\r\n           " +
-"     font-size: 1.3em;\r\n                margin: 0 0 0.3em 0;\r\n                ba" +
-"ckground-color: #333;\r\n                border: 1px solid #555;\r\n                " +
-"width: 100%;\r\n                padding: 4px 16px;\r\n                text-align: ri" +
-"ght;\r\n                border-radius: 0.5em;\r\n            }\r\n\r\n            .openi" +
-"ng.items .item .info.block {\r\n                width: calc(100% - 220px);\r\n      " +
-"          padding: 1em;\r\n            }\r\n\r\n                .opening.items .item ." +
-"info.block .price.info,\r\n                .opening.items .item .info.block .heade" +
-"r {\r\n                    display: block;\r\n                }\r\n\r\n                ." +
-"opening.items .item .info.block .header {\r\n                    font-size: 1.5em;" +
-"\r\n                    font-weight: 100;\r\n                    text-transform: upp" +
-"ercase;\r\n                }\r\n\r\n                .opening.items .item .info.block ." +
-"price.info {\r\n                    padding-top: 4px;\r\n                }\r\n\r\n      " +
-"          .opening.items .item .info.block .price.info\r\n                {\r\n     " +
-"               font-size: 1.1em;\r\n                    text-align: left;\r\n       " +
-"             padding: 0;\r\n                    text-transform: none;\r\n           " +
-"         color: #fbd842;\r\n                }\r\n\r\n\r\n        .tender.info {\r\n       " +
-"     background-color: #333;\r\n            width: 100%;\r\n            cursor: poin" +
-"ter;\r\n            margin: 0 0 8px 0;\r\n            padding: 6px 0;\r\n        }\r\n\r\n" +
-"\r\n            .tender.info:hover {\r\n                background-color: #3f3f3f;\r\n" +
-"            }\r\n\r\n\r\n        .summary.items {\r\n            padding: 0.5em 1em;\r\n  " +
-"          display: flex;\r\n        }\r\n\r\n            .summary.items > .item {\r\n   " +
-"             display: inline-flex;\r\n                flex-direction: column;\r\n   " +
-"             padding: 2px;\r\n            }\r\n\r\n        .two.summary.items > .item " +
-"{\r\n            width: 48%;\r\n        }\r\n\r\n        .one.summary.items > .item {\r\n " +
-"           width: 96%;\r\n        }\r\n\r\n        .summary.items > .item > .descripti" +
-"on {\r\n            padding-bottom: 0.5em;\r\n            font-size: 0.9em;\r\n       " +
-"     text-align: left;\r\n        }\r\n\r\n        .summary.items > .item > .money {\r\n" +
-"            padding-top: 0.1em;\r\n            font-size: 3em;\r\n        }\r\n\r\n\r\n   " +
-"     input.pan.number,\r\n        input.customer.name,\r\n        input.customer.add" +
-"ress {\r\n            font-size: 12px !important;\r\n            padding: 8px !impor" +
-"tant;\r\n        }\r\n\r\n        .customer.name.item {\r\n            width: 40% !impor" +
-"tant;\r\n        }\r\n\r\n        .customer.address.item {\r\n            width: 30% !im" +
-"portant;\r\n        }\r\n\r\n        .pan.number.item {\r\n            width: 25% !impor" +
-"tant;\r\n        }\r\n\r\n        .inverted.dropdown,\r\n        .inverted.dropdown inpu" +
-"t.search,\r\n        .inverted.dropdown .menu,\r\n        .inverted.dropdown .item,\r" +
-"\n        .inverted.dropdown .message {\r\n            background-color: #555 !impo" +
-"rtant;\r\n            color: #eee !important;\r\n            border: 1px solid #666 " +
-"!important;\r\n        }\r\n\r\n            .inverted.dropdown .item.selected,\r\n      " +
-"      .inverted.dropdown .item:hover {\r\n                background-color: #666 !" +
-"important;\r\n            }\r\n\r\n        .summary.items input,\r\n        .summary.ite" +
-"ms select {\r\n            background-color: #555 !important;\r\n            color: " +
-"#eee !important;\r\n            border: 1px solid #666 !important;\r\n            pa" +
-"dding: .87em;\r\n            border-radius: 0.4em;\r\n            width: 100%;\r\n    " +
-"        -moz-appearance: none; /* Firefox */\r\n        }\r\n\r\n        select.invert" +
-"ed {\r\n            background-color: #333;\r\n            border: 1px solid #555;\r\n" +
-"            width: 100%;\r\n            padding: 0.55em 1em;\r\n            border-r" +
-"adius: 0.5em;\r\n            -moz-appearance: none; /* Firefox */\r\n        }\r\n    " +
-"</style>\r\n");
+" {\r\n                    font-size: 3em;\r\n                    font-weight: 400;\r\n" +
+"                    text-align: right;\r\n                    position: relative;\r" +
+"\n                    z-index: 1;\r\n                    top: 0.7em;\r\n             " +
+"       text-shadow: -2px 3px 10px #000;\r\n                    color: #eee;\r\n     " +
+"           }\r\n\r\n\r\n        .category.list {\r\n            padding: 4px;\r\n         " +
+"   text-align: center;\r\n            background-color: #555;\r\n        }\r\n\r\n      " +
+"      .category.list .filter {\r\n                text-align: right;\r\n            " +
+"    display: inline-block;\r\n            }\r\n\r\n            .category.list .categor" +
+"y, .cat.filter {\r\n                display: inline-block;\r\n                backgr" +
+"ound-color: #555;\r\n                color: white;\r\n                padding: 4px 1" +
+"2px;\r\n                margin: 2px;\r\n                border-radius: 12px;\r\n      " +
+"          text-transform: uppercase;\r\n                font-size: 0.9em;\r\n       " +
+"         letter-spacing: 1px;\r\n                cursor: pointer;\r\n            }\r\n" +
+"\r\n            .category.list .cat.filter {\r\n                background-color: #4" +
+"44;\r\n            }\r\n\r\n            .category.list .category.selected, .category.l" +
+"ist .category:hover {\r\n                background-color: #78AD05;\r\n            }" +
+"\r\n\r\n            .category.list .cat.filter:hover {\r\n                background-c" +
+"olor: #FA6400 !important;\r\n            }\r\n\r\n        .search.panel {\r\n           " +
+" background-color: #666;\r\n            padding: 1em;\r\n            text-align: cen" +
+"ter;\r\n        }\r\n\r\n            .search.panel input {\r\n                text-align" +
+": center;\r\n                font-size: 1.1em;\r\n                background-color: " +
+"transparent;\r\n                border: 1px solid #999;\r\n                border-ra" +
+"dius: 2em;\r\n                text-transform: uppercase;\r\n                height: " +
+"2em;\r\n                width: 20em;\r\n            }\r\n\r\n\r\n        .opening.items .i" +
+"tem {\r\n            background-color: #333;\r\n            padding: 3px 9px;\r\n     " +
+"       border-bottom: 1px dotted #444;\r\n            cursor: pointer;\r\n          " +
+"  -webkit-user-select: none; /* webkit (safari, chrome) browsers */\r\n           " +
+" -moz-user-select: none; /* mozilla browsers */\r\n            -khtml-user-select:" +
+" none; /* webkit (konqueror) browsers */\r\n            -ms-user-select: none; /* " +
+"IE10+ */\r\n        }\r\n\r\n            .opening.items .item:nth-child(even) {\r\n     " +
+"           background-color: #373737 !important;\r\n            }\r\n\r\n            ." +
+"opening.items .item:hover {\r\n                background-color: #3a3a3a !importan" +
+"t;\r\n            }\r\n\r\n            .opening.items .item .block {\r\n                " +
+"display: inline-block;\r\n                height: 82px;\r\n                overflow:" +
+" hidden;\r\n            }\r\n\r\n                .opening.items .item .block img {\r\n  " +
+"                  height: 82px;\r\n                }\r\n\r\n            .opening.items" +
+" .item .photo.block {\r\n                width: 90px;\r\n                overflow: h" +
+"idden;\r\n            }\r\n\r\n            .opening.items .item .number.block {\r\n     " +
+"           width: 120px;\r\n            }\r\n\r\n\r\n                .opening.items .ite" +
+"m .number.block button {\r\n                    height: 100%;\r\n                   " +
+" text-transform: uppercase;\r\n                    letter-spacing: 1px;\r\n         " +
+"           font-weight: 100;\r\n                }\r\n\r\n            .opening.items .i" +
+"tem input {\r\n                font-size: 1.3em;\r\n                margin: 0 0 0.3e" +
+"m 0;\r\n                background-color: #333;\r\n                border: 1px solid" +
+" #555;\r\n                width: 100%;\r\n                padding: 4px 16px;\r\n      " +
+"          text-align: right;\r\n                border-radius: 0.5em;\r\n           " +
+" }\r\n\r\n            .opening.items .item .info.block {\r\n                width: cal" +
+"c(100% - 220px);\r\n                padding: 1em;\r\n            }\r\n\r\n              " +
+"  .opening.items .item .info.block .price.info,\r\n                .opening.items " +
+".item .info.block .header {\r\n                    display: block;\r\n              " +
+"  }\r\n\r\n                .opening.items .item .info.block .header {\r\n             " +
+"       font-size: 1.5em;\r\n                    font-weight: 100;\r\n               " +
+"     text-transform: uppercase;\r\n                }\r\n\r\n                .opening.i" +
+"tems .item .info.block .price.info {\r\n                    padding-top: 4px;\r\n   " +
+"             }\r\n\r\n                .opening.items .item .info.block .price.info\r\n" +
+"                {\r\n                    font-size: 1.1em;\r\n                    te" +
+"xt-align: left;\r\n                    padding: 0;\r\n                    text-trans" +
+"form: none;\r\n                    color: #fbd842;\r\n                }\r\n\r\n\r\n       " +
+" .tender.info {\r\n            background-color: #333;\r\n            width: 100%;\r\n" +
+"            cursor: pointer;\r\n            margin: 0 0 8px 0;\r\n            paddin" +
+"g: 6px 0;\r\n        }\r\n\r\n\r\n            .tender.info:hover {\r\n                back" +
+"ground-color: #3f3f3f;\r\n            }\r\n\r\n\r\n        .summary.items {\r\n           " +
+" padding: 0.5em 1em;\r\n            display: flex;\r\n        }\r\n\r\n            .summ" +
+"ary.items > .item {\r\n                display: inline-flex;\r\n                flex" +
+"-direction: column;\r\n                padding: 2px;\r\n            }\r\n\r\n        .tw" +
+"o.summary.items > .item {\r\n            width: 48%;\r\n        }\r\n\r\n        .one.su" +
+"mmary.items > .item {\r\n            width: 96%;\r\n        }\r\n\r\n        .summary.it" +
+"ems > .item > .description {\r\n            padding-bottom: 0.5em;\r\n            fo" +
+"nt-size: 0.9em;\r\n            text-align: left;\r\n        }\r\n\r\n        .summary.it" +
+"ems > .item > .money {\r\n            padding-top: 0.1em;\r\n            font-size: " +
+"3em;\r\n        }\r\n\r\n\r\n        input.pan.number,\r\n        input.customer.name,\r\n  " +
+"      input.customer.address {\r\n            font-size: 12px !important;\r\n       " +
+"     padding: 8px !important;\r\n        }\r\n\r\n        .customer.name.item {\r\n     " +
+"       width: 40% !important;\r\n        }\r\n\r\n        .customer.address.item {\r\n  " +
+"          width: 30% !important;\r\n        }\r\n\r\n        .pan.number.item {\r\n     " +
+"       width: 25% !important;\r\n        }\r\n\r\n        .inverted.dropdown,\r\n       " +
+" .inverted.dropdown input.search,\r\n        .inverted.dropdown .menu,\r\n        .i" +
+"nverted.dropdown .item,\r\n        .inverted.dropdown .message {\r\n            back" +
+"ground-color: #555 !important;\r\n            color: #eee !important;\r\n           " +
+" border: 1px solid #666 !important;\r\n        }\r\n\r\n            .inverted.dropdown" +
+" .item.selected,\r\n            .inverted.dropdown .item:hover {\r\n                " +
+"background-color: #666 !important;\r\n            }\r\n\r\n        .summary.items inpu" +
+"t,\r\n        .summary.items select {\r\n            background-color: #555 !importa" +
+"nt;\r\n            color: #eee !important;\r\n            border: 1px solid #666 !im" +
+"portant;\r\n            padding: .87em;\r\n            border-radius: 0.4em;\r\n      " +
+"      width: 100%;\r\n            -moz-appearance: none; /* Firefox */\r\n        }\r" +
+"\n\r\n        select.inverted {\r\n            background-color: #333;\r\n            b" +
+"order: 1px solid #555;\r\n            width: 100%;\r\n            padding: 0.55em 1e" +
+"m;\r\n            border-radius: 0.5em;\r\n            -moz-appearance: none; /* Fir" +
+"efox */\r\n        }\r\n    </style>\r\n");
 
             
-            #line 419 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 418 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
 
@@ -300,7 +298,7 @@ WriteLiteral(">\r\n");
 WriteLiteral("                            ");
 
             
-            #line 434 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 433 "..\..\Views\Setup\OpeningInventory\New.cshtml"
                        Write(meta.OfficeName);
 
             
@@ -317,7 +315,7 @@ WriteLiteral(">\r\n");
 WriteLiteral("                            ");
 
             
-            #line 437 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 436 "..\..\Views\Setup\OpeningInventory\New.cshtml"
                        Write(meta.Name);
 
             
@@ -334,7 +332,7 @@ WriteLiteral(">\r\n");
 WriteLiteral("                            ");
 
             
-            #line 440 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 439 "..\..\Views\Setup\OpeningInventory\New.cshtml"
                        Write(meta.OfficeCode);
 
             
@@ -351,7 +349,7 @@ WriteLiteral(">\r\n");
 WriteLiteral("                            ");
 
             
-            #line 443 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 442 "..\..\Views\Setup\OpeningInventory\New.cshtml"
                        Write(meta.OfficeName);
 
             
@@ -560,7 +558,7 @@ WriteLiteral(" class=\"opening items\"");
 WriteLiteral(">\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n");
 
             
-            #line 525 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 524 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
 
@@ -583,7 +581,7 @@ WriteLiteral(@"    <script>
 ");
 
             
-            #line 540 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 539 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
             
@@ -618,7 +616,7 @@ WriteLiteral(@"    <script>
 ");
 
             
-            #line 567 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 566 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
             
@@ -684,110 +682,110 @@ WriteLiteral("    <script>\r\n    var products = [];\r\n    var metaUnits = [];\
 "\n            function loadUnits(el, defaultUnitId, validUnits) {\r\n              " +
 "  el.html(\"\");\r\n\r\n                var units = window.Enumerable.From(window.meta" +
 "Units)\r\n                    .Where(function (x) {\r\n                        retur" +
-"n validUnits.indexOf(x.unit_id.toString()) > -1;\r\n                    }).ToArray" +
-"();\r\n\r\n                $.each(units, function () {\r\n                    var unit" +
-" = this;\r\n\r\n                    var option = $(\"<option/ >\");\r\n                 " +
-"   option.attr(\"value\", unit.unit_id);\r\n                    option.html(unit.uni" +
-"t_name);\r\n\r\n                    if (defaultUnitId === unit.unit_id) {\r\n         " +
-"               option.attr(\"selected\", \"\");\r\n                    };\r\n\r\n         " +
-"           option.appendTo(el);\r\n                });\r\n\r\n            };\r\n\r\n      " +
-"      loadUnits(unitSelect, unitId, validUnits.split(\',\'));\r\n\r\n            funct" +
-"ion updateItemTotal(el) {\r\n                var quantityEl = el.find(\"input.quant" +
-"ity\");\r\n\r\n                var quantity = parseInt(quantityEl.val() || 0);\r\n     " +
-"           var price = parseFloat(el.find(\"input.price\").val());\r\n              " +
-"  //var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n                var a" +
-"mount = (price * quantity).toFixed(2);\r\n\r\n                el.find(\"span.quantity" +
-"\").html(quantity);\r\n                el.find(\"span.amount\").html(amount);\r\n\r\n    " +
-"            window.updateTotal();\r\n\r\n            };\r\n\r\n            quantityInput" +
-".on(\"keyup\", function () {\r\n                var el = $(this);\r\n                v" +
-"ar parentInfo = el.parent().parent();\r\n                updateItemTotal(parentInf" +
-"o);\r\n            });\r\n\r\n            priceInput.on(\"keyup\", function () {\r\n      " +
-"          var el = $(this);\r\n                var parentInfo = el.parent().parent" +
-"();\r\n                updateItemTotal(parentInfo);\r\n            });\r\n\r\n\r\n        " +
-"    function getPrice(el) {\r\n                function request(itemId, unitId) {\r" +
-"\n                    var url = \"/dashboard/inventory/items/cost-price/{itemId}/{" +
-"unitId}\";\r\n                    url = url.replace(\"{itemId}\", itemId);\r\n         " +
-"           url = url.replace(\"{unitId}\", unitId);\r\n\r\n                    return " +
-"window.getAjaxRequest(url);\r\n                };\r\n\r\n                var itemId = " +
-"el.attr(\"data-item-id\");\r\n                var unitId = el.val();\r\n\r\n            " +
-"    $(\".pos.opening.segment\").addClass(\"loading\");\r\n                var ajax = r" +
-"equest(itemId, unitId);\r\n\r\n                ajax.success(function (response) {\r\n " +
-"                   $(\".pos.opening.segment\").removeClass(\"loading\");\r\n          " +
-"          var priceInput = el.parent().parent().parent().find(\"input.price\");\r\n " +
-"                   priceInput.val(response).trigger(\"keyup\");\r\n                }" +
-");\r\n\r\n                ajax.fail(function (xr) {\r\n                    $(\".pos.ope" +
-"ning.segment\").removeClass(\"loading\");\r\n                    console.log(window.g" +
-"etAjaxErrorMessage(xhr));\r\n                });\r\n            };\r\n\r\n            un" +
-"itSelect.on(\"change\", function () {\r\n                getPrice($(this));\r\n       " +
-"     });\r\n\r\n            item.on(\"contextmenu\", function (e) {\r\n                e" +
-".preventDefault();\r\n                var el = $(this);\r\n                var input" +
-"El = el.find(\".number.block input\");\r\n                var buttonEl = el.find(\".n" +
-"umber.block button\");\r\n\r\n                inputEl.toggle();\r\n                butt" +
-"onEl.toggle();\r\n            });\r\n\r\n            item.appendTo(targetEl);\r\n       " +
-"     quantityInput.trigger(\"keyup\");\r\n            window.updateTotal();\r\n       " +
-" });\r\n    };\r\n\r\n    function updateTotal() {\r\n        var candidates = $(\"#Openi" +
-"ngItems div.item\");\r\n        var amountEl = $(\"#SummaryItems div.amount .money\")" +
-";\r\n\r\n        var totalPrice = 0;\r\n        //var totalQuantity = 0;\r\n\r\n        $." +
-"each(candidates, function () {\r\n            var el = $(this);\r\n            var q" +
-"uantityEl = el.find(\"input.quantity\");\r\n\r\n            var quantity = parseInt(qu" +
-"antityEl.val() || 0);\r\n            var price = parseFloat(el.find(\"input.price\")" +
-".val());\r\n            //var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n " +
-"           var amount = price * quantity;\r\n            totalPrice += amount;\r\n  " +
-"          //totalQuantity += quantity;\r\n        });\r\n\r\n        totalPrice = pars" +
-"eFloat(totalPrice.toFixed(2));\r\n\r\n        amountEl.html(totalPrice);\r\n    };\r\n\r\n" +
-"    function displayCategories() {\r\n        var categories = window.Enumerable.F" +
-"rom(products).Distinct(function (x) { return x.ItemGroupName }).Select(function " +
-"(x) { return x.ItemGroupName }).ToArray();\r\n        var targetEl = $(\".cat.filte" +
-"r\");\r\n        $(\".category.list\").find(\".category\").remove();\r\n\r\n        targetE" +
-"l.unbind(\"click\").bind(\"click\", function () {\r\n            displayProducts();\r\n " +
-"           $(\".category\").removeClass(\"selected\");\r\n            targetEl.hide();" +
-"\r\n            initializeClickAndAction();\r\n        });\r\n\r\n        $.each(categor" +
-"ies, function () {\r\n            var category = $(\"<div class=\'category\' />\");\r\n " +
-"           category.html(this);\r\n\r\n            category.unbind(\"click\").bind(\"cl" +
-"ick\", function () {\r\n                $(\".search.panel input\").val(\"\");\r\n        " +
-"        var el = $(this);\r\n                var name = el.text();\r\n\r\n            " +
-"    if (name) {\r\n                    displayProducts(name);\r\n                   " +
-" $(\".category\").removeClass(\"selected\");\r\n                    el.addClass(\"selec" +
-"ted\");\r\n\r\n                    targetEl.show();\r\n                } else {\r\n      " +
-"              targetEl.hide();\r\n                };\r\n\r\n                initialize" +
-"ClickAndAction();\r\n            });\r\n\r\n            targetEl.before(category);\r\n  " +
-"      });\r\n    };\r\n\r\n    function displayProducts(category, searchQuery) {\r\n    " +
-"    var target = $(\"#POSItemList\");\r\n\r\n        var groupItems;\r\n\r\n        if (!c" +
-"ategory && !searchQuery) {\r\n            groupItems = products;\r\n        } else {" +
-"\r\n            if (category && searchQuery) {\r\n                groupItems = windo" +
-"w.Enumerable\r\n                    .From(products)\r\n                    .Where(fu" +
-"nction (x) {\r\n                        return x.ItemGroupName.toLowerCase() === c" +
-"ategory.toString().toLowerCase()\r\n                            && x.ItemName.toLo" +
-"werCase().indexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArr" +
-"ay();\r\n            } else if (!category && searchQuery) {\r\n                group" +
-"Items = window.Enumerable\r\n                    .From(products)\r\n                " +
-"    .Where(function (x) {\r\n                        return x.ItemName.toLowerCase" +
-"().indexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray();\r\n" +
-"            } else {\r\n                groupItems = window.Enumerable\r\n          " +
-"          .From(products)\r\n                    .Where(function (x) {\r\n          " +
-"              return x.ItemGroupName.toLowerCase() === category.toString().toLow" +
-"erCase();\r\n                    }).ToArray();\r\n            };\r\n        };\r\n\r\n    " +
-"    target.html(\"\").hide();\r\n\r\n        $.each(groupItems, function () {\r\n       " +
-"     var product = this;\r\n\r\n            var item = $(\"<div class=\'item\' />\");\r\n " +
-"           item.attr(\"data-item-id\", product.ItemId);\r\n            item.attr(\"da" +
-"ta-item-code\", product.ItemCode);\r\n            item.attr(\"data-item-name\", produ" +
-"ct.ItemName);\r\n            item.attr(\"data-item-group\", product.ItemGroupName);\r" +
-"\n            item.attr(\"data-brand\", product.BrandName);\r\n            item.attr(" +
-"\"data-unit-id\", product.UnitId);\r\n            item.attr(\"data-valid-units\", prod" +
-"uct.ValidUnits);\r\n            item.attr(\"data-barcode\", product.Barcode);\r\n     " +
-"       item.attr(\"data-photo\", product.Photo);\r\n            item.attr(\"data-cost" +
-"-price\", product.CostPrice);\r\n\r\n            if (product.HotItem) {\r\n            " +
-"    item.addClass(\"hot\");\r\n            };\r\n\r\n            var info = $(\"<div clas" +
-"s=\'info\' />\");\r\n\r\n            var price = $(\"<div class=\'price\' />\");\r\n         " +
-"   price.html(product.CostPrice);\r\n\r\n            price.appendTo(info);\r\n\r\n\r\n    " +
-"        var photo = $(\"<div class=\'photo\' />\");\r\n            var img = $(\"<img /" +
-">\");\r\n            img.attr(\"src\", product.Photo + \"?Height=200&Width=200\");\r\n\r\n " +
-"           img.appendTo(photo);\r\n            photo.appendTo(info);\r\n\r\n          " +
-"  var name = $(\"<div class=\'name\' />\");\r\n            name.html(product.ItemName)" +
-";\r\n\r\n            name.appendTo(info);\r\n\r\n            info.appendTo(item);\r\n     " +
-"       item.appendTo(target);\r\n        });\r\n\r\n        if (searchQuery) {\r\n      " +
-"      target.show();\r\n            return;\r\n        };\r\n\r\n        target.fadeIn(5" +
-"00);\r\n    };\r\n\r\n    </script>\r\n");
+"n validUnits.indexOf(x.UnitId.toString()) > -1;\r\n                    }).ToArray(" +
+");\r\n\r\n                $.each(units, function () {\r\n                    var unit " +
+"= this;\r\n\r\n                    var option = $(\"<option/ >\");\r\n                  " +
+"  option.attr(\"value\", unit.UnitId);\r\n                    option.html(unit.UnitN" +
+"ame);\r\n\r\n                    if (defaultUnitId === unit.UnitId) {\r\n             " +
+"           option.attr(\"selected\", \"\");\r\n                    };\r\n\r\n             " +
+"       option.appendTo(el);\r\n                });\r\n\r\n            };\r\n\r\n          " +
+"  loadUnits(unitSelect, unitId, validUnits.split(\',\'));\r\n\r\n            function " +
+"updateItemTotal(el) {\r\n                var quantityEl = el.find(\"input.quantity\"" +
+");\r\n\r\n                var quantity = parseInt(quantityEl.val() || 0);\r\n         " +
+"       var price = parseFloat(el.find(\"input.price\").val());\r\n                //" +
+"var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n                var amoun" +
+"t = (price * quantity).toFixed(2);\r\n\r\n                el.find(\"span.quantity\").h" +
+"tml(quantity);\r\n                el.find(\"span.amount\").html(amount);\r\n\r\n        " +
+"        window.updateTotal();\r\n\r\n            };\r\n\r\n            quantityInput.on(" +
+"\"keyup\", function () {\r\n                var el = $(this);\r\n                var p" +
+"arentInfo = el.parent().parent();\r\n                updateItemTotal(parentInfo);\r" +
+"\n            });\r\n\r\n            priceInput.on(\"keyup\", function () {\r\n          " +
+"      var el = $(this);\r\n                var parentInfo = el.parent().parent();\r" +
+"\n                updateItemTotal(parentInfo);\r\n            });\r\n\r\n\r\n            " +
+"function getPrice(el) {\r\n                function request(itemId, unitId) {\r\n   " +
+"                 var url = \"/dashboard/inventory/items/cost-price/{itemId}/{unit" +
+"Id}\";\r\n                    url = url.replace(\"{itemId}\", itemId);\r\n             " +
+"       url = url.replace(\"{unitId}\", unitId);\r\n\r\n                    return wind" +
+"ow.getAjaxRequest(url);\r\n                };\r\n\r\n                var itemId = el.a" +
+"ttr(\"data-item-id\");\r\n                var unitId = el.val();\r\n\r\n                " +
+"$(\".pos.opening.segment\").addClass(\"loading\");\r\n                var ajax = reque" +
+"st(itemId, unitId);\r\n\r\n                ajax.success(function (response) {\r\n     " +
+"               $(\".pos.opening.segment\").removeClass(\"loading\");\r\n              " +
+"      var priceInput = el.parent().parent().parent().find(\"input.price\");\r\n     " +
+"               priceInput.val(response).trigger(\"keyup\");\r\n                });\r\n" +
+"\r\n                ajax.fail(function (xr) {\r\n                    $(\".pos.opening" +
+".segment\").removeClass(\"loading\");\r\n                    console.log(window.getAj" +
+"axErrorMessage(xhr));\r\n                });\r\n            };\r\n\r\n            unitSe" +
+"lect.on(\"change\", function () {\r\n                getPrice($(this));\r\n           " +
+" });\r\n\r\n            item.on(\"contextmenu\", function (e) {\r\n                e.pre" +
+"ventDefault();\r\n                var el = $(this);\r\n                var inputEl =" +
+" el.find(\".number.block input\");\r\n                var buttonEl = el.find(\".numbe" +
+"r.block button\");\r\n\r\n                inputEl.toggle();\r\n                buttonEl" +
+".toggle();\r\n            });\r\n\r\n            item.appendTo(targetEl);\r\n           " +
+" quantityInput.trigger(\"keyup\");\r\n            window.updateTotal();\r\n        });" +
+"\r\n    };\r\n\r\n    function updateTotal() {\r\n        var candidates = $(\"#OpeningIt" +
+"ems div.item\");\r\n        var amountEl = $(\"#SummaryItems div.amount .money\");\r\n\r" +
+"\n        var totalPrice = 0;\r\n        //var totalQuantity = 0;\r\n\r\n        $.each" +
+"(candidates, function () {\r\n            var el = $(this);\r\n            var quant" +
+"ityEl = el.find(\"input.quantity\");\r\n\r\n            var quantity = parseInt(quanti" +
+"tyEl.val() || 0);\r\n            var price = parseFloat(el.find(\"input.price\").val" +
+"());\r\n            //var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n     " +
+"       var amount = price * quantity;\r\n            totalPrice += amount;\r\n      " +
+"      //totalQuantity += quantity;\r\n        });\r\n\r\n        totalPrice = parseFlo" +
+"at(totalPrice.toFixed(2));\r\n\r\n        amountEl.html(totalPrice);\r\n    };\r\n\r\n    " +
+"function displayCategories() {\r\n        var categories = window.Enumerable.From(" +
+"products).Distinct(function (x) { return x.ItemGroupName }).Select(function (x) " +
+"{ return x.ItemGroupName }).ToArray();\r\n        var targetEl = $(\".cat.filter\");" +
+"\r\n        $(\".category.list\").find(\".category\").remove();\r\n\r\n        targetEl.un" +
+"bind(\"click\").bind(\"click\", function () {\r\n            displayProducts();\r\n     " +
+"       $(\".category\").removeClass(\"selected\");\r\n            targetEl.hide();\r\n  " +
+"          initializeClickAndAction();\r\n        });\r\n\r\n        $.each(categories," +
+" function () {\r\n            var category = $(\"<div class=\'category\' />\");\r\n     " +
+"       category.html(this);\r\n\r\n            category.unbind(\"click\").bind(\"click\"" +
+", function () {\r\n                $(\".search.panel input\").val(\"\");\r\n            " +
+"    var el = $(this);\r\n                var name = el.text();\r\n\r\n                " +
+"if (name) {\r\n                    displayProducts(name);\r\n                    $(\"" +
+".category\").removeClass(\"selected\");\r\n                    el.addClass(\"selected\"" +
+");\r\n\r\n                    targetEl.show();\r\n                } else {\r\n          " +
+"          targetEl.hide();\r\n                };\r\n\r\n                initializeClic" +
+"kAndAction();\r\n            });\r\n\r\n            targetEl.before(category);\r\n      " +
+"  });\r\n    };\r\n\r\n    function displayProducts(category, searchQuery) {\r\n        " +
+"var target = $(\"#POSItemList\");\r\n\r\n        var groupItems;\r\n\r\n        if (!categ" +
+"ory && !searchQuery) {\r\n            groupItems = products;\r\n        } else {\r\n  " +
+"          if (category && searchQuery) {\r\n                groupItems = window.En" +
+"umerable\r\n                    .From(products)\r\n                    .Where(functi" +
+"on (x) {\r\n                        return x.ItemGroupName.toLowerCase() === categ" +
+"ory.toString().toLowerCase()\r\n                            && x.ItemName.toLowerC" +
+"ase().indexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray()" +
+";\r\n            } else if (!category && searchQuery) {\r\n                groupItem" +
+"s = window.Enumerable\r\n                    .From(products)\r\n                    " +
+".Where(function (x) {\r\n                        return x.ItemName.toLowerCase().i" +
+"ndexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray();\r\n    " +
+"        } else {\r\n                groupItems = window.Enumerable\r\n              " +
+"      .From(products)\r\n                    .Where(function (x) {\r\n              " +
+"          return x.ItemGroupName.toLowerCase() === category.toString().toLowerCa" +
+"se();\r\n                    }).ToArray();\r\n            };\r\n        };\r\n\r\n        " +
+"target.html(\"\").hide();\r\n\r\n        $.each(groupItems, function () {\r\n           " +
+" var product = this;\r\n\r\n            var item = $(\"<div class=\'item\' />\");\r\n     " +
+"       item.attr(\"data-item-id\", product.ItemId);\r\n            item.attr(\"data-i" +
+"tem-code\", product.ItemCode);\r\n            item.attr(\"data-item-name\", product.I" +
+"temName);\r\n            item.attr(\"data-item-group\", product.ItemGroupName);\r\n   " +
+"         item.attr(\"data-brand\", product.BrandName);\r\n            item.attr(\"dat" +
+"a-unit-id\", product.UnitId);\r\n            item.attr(\"data-valid-units\", product." +
+"ValidUnits);\r\n            item.attr(\"data-barcode\", product.Barcode);\r\n         " +
+"   item.attr(\"data-photo\", product.Photo);\r\n            item.attr(\"data-cost-pri" +
+"ce\", product.CostPrice);\r\n\r\n            if (product.HotItem) {\r\n                " +
+"item.addClass(\"hot\");\r\n            };\r\n\r\n            var info = $(\"<div class=\'i" +
+"nfo\' />\");\r\n\r\n            var price = $(\"<div class=\'price\' />\");\r\n            p" +
+"rice.html(product.CostPrice);\r\n\r\n            price.appendTo(info);\r\n\r\n\r\n        " +
+"    var photo = $(\"<div class=\'photo\' />\");\r\n            var img = $(\"<img />\");" +
+"\r\n            img.attr(\"src\", product.Photo + \"?Height=200&Width=200\");\r\n\r\n     " +
+"       img.appendTo(photo);\r\n            photo.appendTo(info);\r\n\r\n            va" +
+"r name = $(\"<div class=\'name\' />\");\r\n            name.html(product.ItemName);\r\n\r" +
+"\n            name.appendTo(info);\r\n\r\n            info.appendTo(item);\r\n         " +
+"   item.appendTo(target);\r\n        });\r\n\r\n        if (searchQuery) {\r\n          " +
+"  target.show();\r\n            return;\r\n        };\r\n\r\n        target.fadeIn(500);" +
+"\r\n    };\r\n\r\n    </script>\r\n");
 
 WriteLiteral("    <script>\r\n    $(\"#CheckoutButton\").unbind(\"click\").bind(\"click\", function () " +
 "{\r\n\r\n        function request(model) {\r\n            var url = \"/dashboard/invent" +
@@ -824,7 +822,7 @@ WriteLiteral("    <script>\r\n    $(\"#CheckoutButton\").unbind(\"click\").bind(
 "lert(JSON.stringify(xhr));\r\n        });\r\n    });\r\n    </script>\r\n");
 
             
-            #line 1040 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 1039 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
             
@@ -846,7 +844,7 @@ WriteLiteral(@"    <script>
 ");
 
             
-            #line 1054 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 1053 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
             
@@ -884,7 +882,7 @@ WriteLiteral(@"    <script>
 ");
 
             
-            #line 1084 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 1083 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 
 
             
@@ -895,7 +893,7 @@ WriteLiteral("    <script>\r\n    setTimeout(function () {\r\n        $(\".decim
 " \"/dashboard/inventory/setup/opening-inventory\";\r\n    </script>\r\n");
 
             
-            #line 1092 "..\..\Views\Setup\OpeningInventory\New.cshtml"
+            #line 1091 "..\..\Views\Setup\OpeningInventory\New.cshtml"
 }
 
             

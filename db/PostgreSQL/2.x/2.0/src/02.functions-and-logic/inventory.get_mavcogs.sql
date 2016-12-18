@@ -1,7 +1,7 @@
-﻿DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal, _factor decimal(24, 4));
+﻿DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6));
 
-CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal, _factor decimal(24, 4))
-RETURNS decimal(24, 4)
+CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6))
+RETURNS numeric(30, 6)
 AS
 $$
     DECLARE _base_unit_cost money_strict;
@@ -11,8 +11,8 @@ BEGIN
             id              SERIAL NOT NULL,
             value_date      date,
             audit_ts        TIMESTAMP WITH TIME ZONE,
-            base_quantity   decimal,
-            price           decimal
+            base_quantity   decimal(30, 6),
+            price           decimal(30, 6)
             
     ) ON COMMIT DROP;
 
@@ -29,7 +29,7 @@ BEGIN
     FROM inventory.verified_checkout_details_view
     WHERE item_id = $1
     AND store_id=$2
-    order by value_date, audit_ts, stock_detail_id;
+    order by value_date, audit_ts, checkout_detail_id;
 
 
 

@@ -135,13 +135,13 @@ CREATE TABLE inventory.item_groups
     item_group_name                         national character varying(500) NOT NULL,
     exclude_from_purchase                   boolean NOT NULL DEFAULT(false),
     exclude_from_sales                      boolean NOT NULL DEFAULT(false),    
-    sales_account_id                        bigint NOT NULL REFERENCES finance.accounts,
-    sales_discount_account_id               bigint NOT NULL REFERENCES finance.accounts,
-    sales_return_account_id                 bigint NOT NULL REFERENCES finance.accounts,
-    purchase_account_id                     bigint NOT NULL REFERENCES finance.accounts,
-    purchase_discount_account_id            bigint NOT NULL REFERENCES finance.accounts,
-    inventory_account_id                    bigint NOT NULL REFERENCES finance.accounts,
-    cost_of_goods_sold_account_id           bigint NOT NULL REFERENCES finance.accounts,    
+    sales_account_id                        integer NOT NULL REFERENCES finance.accounts,
+    sales_discount_account_id               integer NOT NULL REFERENCES finance.accounts,
+    sales_return_account_id                 integer NOT NULL REFERENCES finance.accounts,
+    purchase_account_id                     integer NOT NULL REFERENCES finance.accounts,
+    purchase_discount_account_id            integer NOT NULL REFERENCES finance.accounts,
+    inventory_account_id                    integer NOT NULL REFERENCES finance.accounts,
+    cost_of_goods_sold_account_id           integer NOT NULL REFERENCES finance.accounts,    
     parent_item_group_id                    integer REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
@@ -288,7 +288,7 @@ CREATE TABLE inventory.shippers
     pan_number                              national character varying(50),
     sst_number                              national character varying(50),
     cst_number                              national character varying(50),
-    account_id                              bigint NOT NULL REFERENCES finance.accounts(account_id),
+    account_id                              integer NOT NULL REFERENCES finance.accounts(account_id),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
@@ -335,7 +335,7 @@ CREATE TABLE inventory.checkout_details
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.decimal_strict NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           numeric NOT NULL,
+    base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW())
 );
 

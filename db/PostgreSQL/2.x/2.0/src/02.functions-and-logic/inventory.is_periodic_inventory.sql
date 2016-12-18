@@ -14,3 +14,14 @@ END
 $$
 LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION finance.is_periodic_inventory(_office_id integer)
+RETURNS boolean
+AS
+$$
+BEGIN
+    RETURN inventory.is_periodic_inventory(@office_id);
+END
+$$
+LANGUAGE plpgsql;
+
