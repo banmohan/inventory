@@ -53,6 +53,10 @@ SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/
 
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'block layout', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'book', 'Reports');
+SELECT * FROM core.create_menu('Inventory', 'Physical Count', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/PhysicalCount.xml', 'circle', 'Reports');
+SELECT * FROM core.create_menu('Inventory', 'Customer Contacts', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/CustomerContacts.xml', 'users', 'Reports');
+SELECT * FROM core.create_menu('Inventory', 'Low Inventory Report', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/LowInventory.xml', 'battery low', 'Reports');
+SELECT * FROM core.create_menu('Inventory', 'Profit Status by Item', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/ProfitStatusByItem.xml', 'bar chart', 'Reports');
 
 
 SELECT * FROM auth.create_app_menu_policy
