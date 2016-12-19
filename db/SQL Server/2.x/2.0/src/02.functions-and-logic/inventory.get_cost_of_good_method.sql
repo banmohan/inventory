@@ -6,7 +6,6 @@ GO
 CREATE FUNCTION inventory.get_cost_of_good_method(@office_id integer)
 RETURNS national character varying(500)
 AS
-
 BEGIN
     RETURN
     (
@@ -16,8 +15,6 @@ BEGIN
     );
 END;
 
-
+GO
 
 --SELECT * FROM inventory.get_cost_of_good_method(1);
-
-GO

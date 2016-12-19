@@ -1299,7 +1299,6 @@ GO
 CREATE FUNCTION inventory.get_cost_of_good_method(@office_id integer)
 RETURNS national character varying(500)
 AS
-
 BEGIN
     RETURN
     (
@@ -1309,11 +1308,9 @@ BEGIN
     );
 END;
 
-
+GO
 
 --SELECT * FROM inventory.get_cost_of_good_method(1);
-
-GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
@@ -1556,7 +1553,6 @@ GO
 CREATE FUNCTION inventory.get_customer_name_by_customer_id(@customer_id integer)
 RETURNS national character varying(500)
 AS
-
 BEGIN
     RETURN
     (
@@ -1565,9 +1561,6 @@ BEGIN
 	    WHERE inventory.customers.customer_id = @customer_id
     );
 END;
-
-
-
 
 GO
 
@@ -1659,8 +1652,8 @@ DROP FUNCTION inventory.get_item_code_by_item_id;
 GO
 
 CREATE FUNCTION inventory.get_item_code_by_item_id(@item_id integer)
-RETURNS character varying AS
-
+RETURNS national character varying(24) 
+AS
 BEGIN
     RETURN
     (
@@ -1768,7 +1761,8 @@ DROP FUNCTION inventory.get_item_name_by_item_id;
 GO
 
 CREATE FUNCTION inventory.get_item_name_by_item_id(@item_id int)
-RETURNS character varying(50) AS
+RETURNS national character varying(50) 
+AS
 BEGIN
     RETURN
     (

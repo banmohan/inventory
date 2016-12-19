@@ -1,7 +1,8 @@
 ﻿DROP FUNCTION IF EXISTS inventory.get_item_name_by_item_id(item_id_ int);
 
 CREATE OR REPLACE FUNCTION inventory.get_item_name_by_item_id(item_id_ int)
-  RETURNS character varying(50) AS
+RETURNS national character varying(50) 
+AS
 $$
 BEGIN
     RETURN item_name
