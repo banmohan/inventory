@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.TransferEntry
             string sql = @"EXECUTE inventory.post_transfer
                             @OfficeId, @UserId, @LoginId, @ValueDate, @BookDate, 
                             @ReferenceNumber, @StatementReference, 
-                            @Details
+                            @Details, @TransactionMasterId OUTPUT
                           ;";
 
             using (var connection = new SqlConnection(connectionString))
@@ -37,9 +38,12 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.TransferEntry
                         command.Parameters.AddWithNullableValue("@Details", details, "inventory.transfer_type");
                     }
 
+                    command.Parameters.Add("@TransactionMasterId", SqlDbType.BigInt).Direction = ParameterDirection.Output;
+
                     connection.Open();
-                    var awaiter = await command.ExecuteScalarAsync().ConfigureAwait(false);
-                    return awaiter.To<long>();
+                    await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                    return command.Parameters["@TransactionMasterId"].Value.To<long>();
                 }
             }
         }
@@ -47,23 +51,23 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.TransferEntry
         public DataTable GetDetails(IEnumerable<TransferType> details)
         {
             var table = new DataTable();
-            table.Columns.Add("ItemCode", typeof(string));
-            table.Columns.Add("ItemName", typeof(string));
-            table.Columns.Add("Quantity", typeof(decimal));
-            table.Columns.Add("StoreName", typeof(string));
             table.Columns.Add("TransactionType", typeof(string));
+            table.Columns.Add("StoreName", typeof(string));
+            table.Columns.Add("ItemCode", typeof(string));
             table.Columns.Add("UnitName", typeof(string));
+            table.Columns.Add("Quantity", typeof(decimal));
+            table.Columns.Add("Rate", typeof(decimal));
 
             foreach (var detail in details)
             {
                 var row = table.NewRow();
 
-                row["ItemCode"] = detail.ItemCode;
-                row["ItemName"] = detail.ItemName;
-                row["Quantity"] = detail.Quantity;
-                row["StoreName"] = detail.StoreName;
                 row["TransactionType"] = detail.TransferTypeEnum.ToString();
+                row["StoreName"] = detail.StoreName;
+                row["ItemCode"] = detail.ItemCode;
                 row["UnitName"] = detail.UnitName;
+                row["Quantity"] = detail.Quantity;
+                row["Rate"] = DBNull.Value;
 
                 table.Rows.Add(row);
             }

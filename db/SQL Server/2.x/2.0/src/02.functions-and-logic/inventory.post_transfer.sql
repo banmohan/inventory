@@ -13,13 +13,14 @@ CREATE PROCEDURE inventory.post_transfer
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.transfer_type READONLY
+    @details                                inventory.transfer_type READONLY,
+	@transaction_master_id					bigint OUTPUT
 )
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
-    DECLARE @transaction_master_id          bigint;
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
 
@@ -41,12 +42,12 @@ BEGIN
     (
         tran_type       national character varying(2),
         store_id        integer,
-        store_name      national character varying(50),
+        store_name      national character varying(500),
         item_id         integer,
-        item_code       national character varying(12),
+        item_code       national character varying(24),
         unit_id         integer,
         base_unit_id    integer,
-        unit_name       national character varying(50),
+        unit_name       national character varying(500),
         quantity        decimal(30, 6),
         base_quantity   decimal(30, 6),                
         price           decimal(30, 6)
@@ -162,16 +163,5 @@ BEGIN
 END;
 
 
-
-
--- SELECT * FROM inventory.post_transfer(1, 1, 1, '1-1-2020', '1-1-2020', '22', 'Test', 
--- ARRAY[
--- ROW('Cr', 'Store 1', 'RMBP', 'Dozen', 2),
--- ROW('Dr', 'down 1', 'RMBP', 'Piece', 24)
--- ]
--- );
-
-
-
-
 GO
+

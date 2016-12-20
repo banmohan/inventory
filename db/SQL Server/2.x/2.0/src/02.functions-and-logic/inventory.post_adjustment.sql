@@ -19,6 +19,7 @@ CREATE PROCEDURE inventory.post_adjustment
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
     DECLARE @transaction_master_id          bigint;
     DECLARE @checkout_id                    bigint;

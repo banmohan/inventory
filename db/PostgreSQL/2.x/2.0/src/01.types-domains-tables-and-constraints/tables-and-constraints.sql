@@ -223,7 +223,7 @@ CREATE TABLE inventory.stores
 (
     store_id                                SERIAL PRIMARY KEY,
     store_code                              national character varying(24) NOT NULL,
-    store_name                              national character varying(100) NOT NULL,
+    store_name                              national character varying(500) NOT NULL,
     store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
 	office_id								integer NOT NULL REFERENCES core.offices,
     default_account_id_for_checks           integer NOT NULL REFERENCES finance.accounts,
@@ -459,9 +459,9 @@ CREATE TYPE inventory.transfer_type
 AS
 (
     tran_type       national character varying(2),
-    store_name      national character varying(50),
-    item_code       national character varying(12),
-    unit_name       national character varying(50),
+    store_name      national character varying(500),
+    item_code       national character varying(24),
+    unit_name       national character varying(500),
     quantity        public.decimal_strict,
     rate            public.money_strict2
 );
@@ -470,8 +470,8 @@ CREATE TYPE inventory.adjustment_type
 AS
 (
     tran_type       national character varying(2),
-    item_code       national character varying(12),
-    unit_name       national character varying(50),
+    item_code       national character varying(24),
+    unit_name       national character varying(500),
     quantity        public.decimal_strict
 );
 

@@ -127,12 +127,12 @@
     var addRow = function () {
         itemCodeInputText.val(itemSelect.getSelectedValue());
 
-        var tranType = transactionTypeSelect.getSelectedValue();
-        var storeName = storeSelect.getSelectedText();
-        var itemCode = itemCodeInputText.val();
-        var itemName = itemSelect.getSelectedText();
-        var unitName = unitSelect.getSelectedText();
-        var quantity = parseInt(quantityInputText.val() || 0);
+        const tranType = transactionTypeSelect.getSelectedValue();
+        const storeName = storeSelect.getSelectedText();
+        const itemCode = itemCodeInputText.val();
+        const itemName = itemSelect.getSelectedText();
+        const unitName = unitSelect.getSelectedText();
+        const quantity = parseInt(quantityInputText.val() || 0);
 
         if (transactionTypeSelect.length) {
             if (window.isNullOrWhiteSpace(tranType) || tranType === "Select") {
@@ -187,13 +187,13 @@
     };
 
     function appendToTable(tranType, storeName, itemCode, itemName, unitName, quantity) {
-        var rows = transferGridView.find("tbody tr:not(:last-child)");
+        const rows = transferGridView.find("tbody tr:not(:last-child)");
         var match = false;
         var html;
 
         if (transactionTypeSelect.length) {
             rows.each(function () {
-                var row = $(this);
+                const row = $(this);
                 if (window.getColumnText(row, 0) !== tranType &&
                     window.getColumnText(row, 1) === storeName &&
                     window.getColumnText(row, 2) === itemCode) {
@@ -225,7 +225,7 @@
         };
 
         rows.each(function () {
-            var row = $(this);
+            const row = $(this);
             if (window.getColumnText(row, 0) === storeName &&
                 window.getColumnText(row, 1) === itemCode) {
                 window.displayMessage("Duplicate Entry");
@@ -254,24 +254,24 @@
 
     saveButton.click(function () {
         function request(model) {
-            var url = "/dashboard/inventory/tasks/inventory-transfers";
-            var data = JSON.stringify(model);
+            const url = "/dashboard/inventory/tasks/inventory-transfers";
+            const data = JSON.stringify(model);
             return window.getAjaxRequest(url, "POST", data);
         };
 
         function getModel() {
             function getDetails() {
                 var model = [];
-                var rows = $("#TransferGridView tbody tr:not(:last-child)");
+                const rows = $("#TransferGridView tbody tr:not(:last-child)");
 
                 $.each(rows, function() {
-                    var row = $(this);
-                    var transferType = row.find("td:nth-child(1)").html();
-                    var storeName = row.find("td:nth-child(2)").html();
-                    var itemCode = row.find("td:nth-child(3)").html();
-                    var itemName = row.find("td:nth-child(4)").html();
-                    var unitName = row.find("td:nth-child(5)").html();
-                    var quantity = window.parseFloat2(row.find("td:nth-child(6)").html());
+                    const row = $(this);
+                    const transferType = row.find("td:nth-child(1)").html();
+                    const storeName = row.find("td:nth-child(2)").html();
+                    const itemCode = row.find("td:nth-child(3)").html();
+                    const itemName = row.find("td:nth-child(4)").html();
+                    const unitName = row.find("td:nth-child(5)").html();
+                    const quantity = window.parseFloat2(row.find("td:nth-child(6)").html());
 
                     model.push({
                         ItemCode: itemCode,
@@ -286,11 +286,11 @@
                 return model;
             };
 
-            var valueDate = window.parseLocalizedDate($("#ValueDateTextBox").val());
-            var bookDate = window.parseLocalizedDate($("#BookDateTextBox").val());
-            var referenceNumber = $("#ReferenceNumberInputText").val();
-            var statementReference = $("#StatementReferenceTextArea").val();
-            var details = getDetails();
+            const valueDate = window.parseLocalizedDate($("#ValueDateTextBox").val());
+            const bookDate = window.parseLocalizedDate($("#BookDateTextBox").val());
+            const referenceNumber = $("#ReferenceNumberInputText").val();
+            const statementReference = $("#StatementReferenceTextArea").val();
+            const details = getDetails();
 
             if (!window.isDate(valueDate)) {
                 window.makeDirty($("#ValueDateTextBox"));
@@ -327,11 +327,11 @@
             return false;
         };
 
-        var model = getModel();
-        var ajax = request(model);
+        const model = getModel();
+        const ajax = request(model);
 
         ajax.success(function(response) {
-            var url = "/dashboard/inventory/tasks/transfers/checklist/" + response;
+            const url = "/dashboard/inventory/tasks/transfers/checklist/" + response;
             document.location = url;
         });
 
@@ -363,11 +363,11 @@
 
     function loadItems() {
         function request() {
-            var url = "/dashboard/inventory/items/stockable";
+            const url = "/dashboard/inventory/items/stockable";
             return window.getAjaxRequest(url);
         };
 
-        var ajax = request();
+        const ajax = request();
         ajax.success(function (response) {
             var options = "<option>Select</option>";
 
@@ -391,8 +391,8 @@
             return window.getAjaxRequest(url);
         };
 
-        var itemCode = itemCodeInputText.val();
-        var ajax = request(itemCode);
+        const itemCode = itemCodeInputText.val();
+        const ajax = request(itemCode);
         ajax.success(function (response) {
             var options = "<option>Select</option>";
 
@@ -407,36 +407,6 @@
             unitSelect.html(options);
         });
     };
-
-    function removeLoaderInstance() {
-        removeLoader(transferGridView);
-    };
-
-    //Check if ItemPopup window has updated the hidden field.
-    function ajaxDataBindCallBack(targetControl) {
-        if (targetControl.is(itemSelect)) {
-            var itemId = parseInt(itemIdHidden.val() || 0);
-
-            itemIdHidden.val("");
-
-            if (itemId > 0) {
-                var targetControls = $([]);
-                targetControls.push(itemCodeInputText);
-                targetControls.push(itemSelect);
-
-                url = itemIdQuerySericeUrl;
-                data = appendParameter("", "itemId", itemId);
-                data = getData(data);
-
-                ajaxUpdateVal(url, data, targetControls);
-            }
-        };
-    };
-
-    shortcut.add("F4", function () {
-        url = itemPopupUrl;
-        showWindow(url);
-    });
 
     shortcut.add("CTRL+ENTER", function () {
         addButton.trigger('click');

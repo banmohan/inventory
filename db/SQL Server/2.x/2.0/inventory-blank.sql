@@ -14,7 +14,7 @@ CREATE TABLE inventory.units
     unit_name                               national character varying(500) NOT NULL,    
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE TABLE inventory.compound_units
@@ -226,7 +226,7 @@ CREATE TABLE inventory.stores
 (
     store_id                                integer IDENTITY PRIMARY KEY,
     store_code                              national character varying(24) NOT NULL,
-    store_name                              national character varying(100) NOT NULL,
+    store_name                              national character varying(500) NOT NULL,
     store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
     office_id                                integer NOT NULL REFERENCES core.offices,
     default_account_id_for_checks           integer NOT NULL REFERENCES finance.accounts,
@@ -462,9 +462,9 @@ CREATE TYPE inventory.transfer_type
 AS TABLE
 (
     tran_type       national character varying(2),
-    store_name      national character varying(50),
-    item_code       national character varying(12),
-    unit_name       national character varying(50),
+    store_name      national character varying(500),
+    item_code       national character varying(24),
+    unit_name       national character varying(500),
     quantity        decimal(30, 6),
     rate            decimal(30, 6)
 );
@@ -473,8 +473,8 @@ CREATE TYPE inventory.adjustment_type
 AS TABLE
 (
     tran_type       national character varying(2),
-    item_code       national character varying(12),
-    unit_name       national character varying(50),
+    item_code       national character varying(24),
+    unit_name       national character varying(500),
     quantity        decimal(30, 6)
 );
 
@@ -1078,8 +1078,16 @@ BEGIN
     WHERE inventory.items.item_id = @item_id
     AND inventory.items.deleted = 0;
 
-    INSERT INTO @result
-    SELECT * FROM inventory.get_associated_units(@unit_id);
+    INSERT INTO @result(unit_id)
+    SELECT * FROM inventory.get_associated_unit_list(@unit_id);
+
+	UPDATE @result
+	SET 
+		unit_code = inventory.units.unit_code,
+		unit_name = inventory.units.unit_name
+	FROM @result AS result
+	INNER JOIN inventory.units
+	ON result.unit_id = inventory.units.unit_id;
 
     RETURN;
 END;
@@ -1108,8 +1116,16 @@ BEGIN
     WHERE LOWER(item_code) = LOWER(@item_code)
     AND inventory.items.deleted = 0;
 
-    INSERT INTO @result
-    SELECT * FROM inventory.get_associated_units(@unit_id);
+    INSERT INTO @result(unit_id)
+    SELECT * FROM inventory.get_associated_unit_list(@unit_id);
+
+	UPDATE @result
+	SET 
+		unit_code = inventory.units.unit_code,
+		unit_name = inventory.units.unit_name
+	FROM @result AS result
+	INNER JOIN inventory.units
+	ON result.unit_id = inventory.units.unit_id;
 
     RETURN;
 END;
@@ -2702,6 +2718,7 @@ CREATE PROCEDURE inventory.post_adjustment
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
     DECLARE @transaction_master_id          bigint;
     DECLARE @checkout_id                    bigint;
@@ -2930,17 +2947,18 @@ CREATE PROCEDURE inventory.post_opening_inventory
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.opening_stock_type READONLY
+    @details                                inventory.opening_stock_type READONLY,
+	@transaction_master_id					bigint OUTPUT
 )
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
     DECLARE @book_name                      national character varying(1000) = 'Opening Inventory';
-    DECLARE @transaction_master_id          bigint;
-    DECLARE @checkout_id                bigint;
+    DECLARE @checkout_id					bigint;
     DECLARE @tran_counter                   integer;
-    DECLARE @transaction_code national character varying(50);
+    DECLARE @transaction_code				national character varying(50);
 
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
@@ -3009,9 +3027,9 @@ BEGIN
     SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, checkout_id, transaction_master_id, posted_by, office_id)
-    SELECT @book_name, @value_date, @book_date, @checkout_id, @transaction_master_id, @user_id, @office_id;
-    SET @transaction_master_id = SCOPE_IDENTITY();
+    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, transaction_master_id, posted_by, office_id)
+    SELECT @book_name, @value_date, @book_date, @transaction_master_id, @user_id, @office_id;
+    SET @checkout_id = SCOPE_IDENTITY();
 
 
     INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
@@ -3021,25 +3039,6 @@ BEGIN
     EXECUTE finance.auto_verify @transaction_master_id, @office_id;    
     SELECT @transaction_master_id;
 END;
-
-
-
--- 
--- SELECT * FROM inventory.post_opening_inventory
--- (
---     2,
---     2,
---     5,
---     '1-1-2020',
---     '1-1-2020',
---     '3424',
---     'ASDF',
---     ARRAY[
---          ROW(1, 1, 1, 1,180000),
---          ROW(1, 2, 1, 1,130000),
---          ROW(1, 3, 1, 1,110000)]);
--- 
-
 
 GO
 
@@ -3060,13 +3059,14 @@ CREATE PROCEDURE inventory.post_transfer
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.transfer_type READONLY
+    @details                                inventory.transfer_type READONLY,
+	@transaction_master_id					bigint OUTPUT
 )
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
-    DECLARE @transaction_master_id          bigint;
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
 
@@ -3088,12 +3088,12 @@ BEGIN
     (
         tran_type       national character varying(2),
         store_id        integer,
-        store_name      national character varying(50),
+        store_name      national character varying(500),
         item_id         integer,
-        item_code       national character varying(12),
+        item_code       national character varying(24),
         unit_id         integer,
         base_unit_id    integer,
-        unit_name       national character varying(50),
+        unit_name       national character varying(500),
         quantity        decimal(30, 6),
         base_quantity   decimal(30, 6),                
         price           decimal(30, 6)
@@ -3209,19 +3209,8 @@ BEGIN
 END;
 
 
-
-
--- SELECT * FROM inventory.post_transfer(1, 1, 1, '1-1-2020', '1-1-2020', '22', 'Test', 
--- ARRAY[
--- ROW('Cr', 'Store 1', 'RMBP', 'Dozen', 2),
--- ROW('Dr', 'down 1', 'RMBP', 'Piece', 24)
--- ]
--- );
-
-
-
-
 GO
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/03.menus/menus.sql --<--<--

@@ -20,8 +20,8 @@ namespace MixERP.Inventory.DTO
         public bool HotItem { get; set; }
         public decimal CostPrice { get; set; }
         public decimal SellingPrice { get; set; }
-        public int ReorderLevel { get; set; }
-        public int ReorderQuantity { get; set; }
+        public decimal ReorderLevel { get; set; }
+        public decimal ReorderQuantity { get; set; }
         public int ReorderUnitId { get; set; }
         public bool MaintainInventory { get; set; }
         public string Photo { get; set; }

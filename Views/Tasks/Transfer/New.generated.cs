@@ -39,7 +39,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -318,110 +317,111 @@ WriteLiteral(">\r\n</div>\r\n\r\n<script>\r\n    var addButton = $(\"#AddButton\
 ";\r\n\r\n    var url = \"\";\r\n    var data = \"\";\r\n\r\n    $(document).ready(function () " +
 "{\r\n        loadStores();\r\n        loadItems();\r\n    });\r\n\r\n    addButton.click(f" +
 "unction () {\r\n        addRow();\r\n    });\r\n\r\n    var addRow = function () {\r\n    " +
-"    itemCodeInputText.val(itemSelect.getSelectedValue());\r\n\r\n        var tranTyp" +
-"e = transactionTypeSelect.getSelectedValue();\r\n        var storeName = storeSele" +
-"ct.getSelectedText();\r\n        var itemCode = itemCodeInputText.val();\r\n        " +
-"var itemName = itemSelect.getSelectedText();\r\n        var unitName = unitSelect." +
-"getSelectedText();\r\n        var quantity = parseInt(quantityInputText.val() || 0" +
-");\r\n\r\n        if (transactionTypeSelect.length) {\r\n            if (window.isNull" +
-"OrWhiteSpace(tranType) || tranType === \"Select\") {\r\n                window.makeD" +
-"irty(transactionTypeSelect);\r\n                return;\r\n            };\r\n        }" +
-";\r\n\r\n        if (window.isNullOrWhiteSpace(storeName) || storeName === \"Select\")" +
-" {\r\n            window.makeDirty(storeSelect);\r\n            return;\r\n        };\r" +
-"\n\r\n        if (window.isNullOrWhiteSpace(itemCode)) {\r\n            window.makeDi" +
-"rty(itemCodeInputText);\r\n            return;\r\n        };\r\n\r\n        if (window.i" +
-"sNullOrWhiteSpace(itemName) || itemName === \"Select\") {\r\n            window.make" +
-"Dirty(itemSelect);\r\n            return;\r\n        };\r\n\r\n        if (window.isNull" +
-"OrWhiteSpace(unitName) || unitName === \"Select\") {\r\n            window.makeDirty" +
-"(unitSelect);\r\n            return;\r\n        };\r\n\r\n        if (quantity <= 0) {\r\n" +
-"            window.makeDirty(quantityInputText);\r\n            return;\r\n        }" +
-";\r\n\r\n        window.removeDirty(transactionTypeSelect);\r\n        window.removeDi" +
-"rty(storeSelect);\r\n        window.removeDirty(itemCodeInputText);\r\n        windo" +
-"w.removeDirty(itemSelect);\r\n        window.removeDirty(unitSelect);\r\n        win" +
-"dow.removeDirty(quantityInputText);\r\n\r\n        appendToTable(tranType, storeName" +
-", itemCode, itemName, unitName, quantity);\r\n        itemCodeInputText.val(\"\");\r\n" +
-"        quantityInputText.val(\"\");\r\n\r\n        if (transactionTypeSelect.length) " +
-"{\r\n            transactionTypeSelect.focus();\r\n            return;\r\n        };\r\n" +
-"\r\n        storeSelect.attr(\"disabled\", \"disabled\");\r\n        itemCodeInputText.f" +
-"ocus();\r\n    };\r\n\r\n    function appendToTable(tranType, storeName, itemCode, ite" +
-"mName, unitName, quantity) {\r\n        var rows = transferGridView.find(\"tbody tr" +
-":not(:last-child)\");\r\n        var match = false;\r\n        var html;\r\n\r\n        i" +
-"f (transactionTypeSelect.length) {\r\n            rows.each(function () {\r\n       " +
-"         var row = $(this);\r\n                if (window.getColumnText(row, 0) !=" +
-"= tranType &&\r\n                    window.getColumnText(row, 1) === storeName &&" +
-"\r\n                    window.getColumnText(row, 2) === itemCode) {\r\n            " +
-"        $.notify(\"Duplicate entry\");\r\n\r\n                    window.makeDirty(ite" +
-"mSelect);\r\n                    match = true;\r\n                };\r\n\r\n            " +
-"    if (window.getColumnText(row, 0) === tranType &&\r\n                    window" +
-".getColumnText(row, 1) === storeName &&\r\n                    window.getColumnTex" +
-"t(row, 2) === itemCode &&\r\n                    window.getColumnText(row, 4) === " +
-"unitName) {\r\n                    window.setColumnText(row, 5, window.getFormatte" +
-"dNumber(window.parseFloat2(window.getColumnText(row, 5)) + quantity));\r\n\r\n      " +
-"              window.addDanger(row);\r\n                    match = true;\r\n       " +
-"             return;\r\n                }\r\n            });\r\n\r\n            if (!mat" +
-"ch) {\r\n                html = \"<tr class=\'grid2-row\'><td>\" + tranType + \"</td><t" +
-"d>\" + storeName + \"</td><td>\" + itemCode + \"</td><td>\" + itemName + \"</td><td>\" " +
-"+ unitName + \"</td><td class=\'text-right\'>\" + getFormattedNumber(quantity) + \"</" +
-"td>\"\r\n                    + \"</td><td><a class=\'pointer\' onclick=\'removeRow($(th" +
-"is));\'><i class=\'ui delete icon\'></i></a><a class=\'pointer\' onclick=\'toggleDange" +
-"r($(this));\'><i class=\'ui pointer check mark icon\'></a></i><a class=\'pointer\' on" +
-"click=\'toggleSuccess($(this));\'><i class=\'ui pointer thumbs up icon\'></i></a></t" +
-"d></tr>\";\r\n                transferGridView.find(\"tr:last\").before(html);\r\n     " +
-"       };\r\n\r\n            return;\r\n        };\r\n\r\n        rows.each(function () {\r" +
-"\n            var row = $(this);\r\n            if (window.getColumnText(row, 0) ==" +
-"= storeName &&\r\n                window.getColumnText(row, 1) === itemCode) {\r\n  " +
-"              $.notify(\"Duplicate Entry\");\r\n\r\n                window.makeDirty(i" +
-"temSelect);\r\n                match = true;\r\n            };\r\n\r\n            if (wi" +
-"ndow.getColumnText(row, 0) === storeName &&\r\n                window.getColumnTex" +
-"t(row, 1) === itemCode &&\r\n                window.getColumnText(row, 3) === unit" +
-"Name) {\r\n                window.setColumnText(row, 4, window.getFormattedNumber(" +
-"window.parseFloat2(window.getColumnText(row, 4)) + quantity));\r\n\r\n              " +
-"  window.addDanger(row);\r\n                match = true;\r\n                return;" +
-"\r\n            }\r\n        });\r\n\r\n        if (!match) {\r\n            html = \"<tr c" +
-"lass=\'grid2-row\'><td>\" + storeName + \"</td><td>\" + itemCode + \"</td><td>\" + item" +
-"Name + \"</td><td>\" + unitName + \"</td><td class=\'text-right\'>\" + getFormattedNum" +
-"ber(quantity) + \"</td>\"\r\n                + \"</td><td><a class=\'pointer\' onclick=" +
-"\'removeRow($(this));\'><i class=\'ui delete icon\'></i></a><a class=\'pointer\' oncli" +
-"ck=\'toggleDanger($(this));\'><i class=\'ui pointer check mark icon\'></a></i><a cla" +
-"ss=\'pointer\' onclick=\'toggleSuccess($(this));\'><i class=\'ui pointer thumbs up ic" +
-"on\'></i></a></td></tr>\";\r\n            transferGridView.find(\"tr:last\").before(ht" +
-"ml);\r\n        };\r\n    };\r\n\r\n    saveButton.click(function () {\r\n        function" +
-" request(model) {\r\n            var url = \"/dashboard/inventory/tasks/inventory-t" +
-"ransfers\";\r\n            var data = JSON.stringify(model);\r\n            return wi" +
-"ndow.getAjaxRequest(url, \"POST\", data);\r\n        };\r\n\r\n        function getModel" +
-"() {\r\n            function getDetails() {\r\n                var model = [];\r\n    " +
-"            var rows = $(\"#TransferGridView tbody tr:not(:last-child)\");\r\n\r\n    " +
-"            $.each(rows, function() {\r\n                    var row = $(this);\r\n " +
-"                   var transferType = row.find(\"td:nth-child(1)\").html();\r\n     " +
-"               var storeName = row.find(\"td:nth-child(2)\").html();\r\n            " +
-"        var itemCode = row.find(\"td:nth-child(3)\").html();\r\n                    " +
-"var itemName = row.find(\"td:nth-child(4)\").html();\r\n                    var unit" +
-"Name = row.find(\"td:nth-child(5)\").html();\r\n                    var quantity = w" +
-"indow.parseFloat2(row.find(\"td:nth-child(6)\").html());\r\n\r\n                    mo" +
-"del.push({\r\n                        ItemCode: itemCode,\r\n                       " +
-" ItemName: itemName,\r\n                        Quantity: quantity,\r\n             " +
-"           StoreName: storeName,\r\n                        TransferTypeEnum: tran" +
-"sferType,\r\n                        UnitName: unitName\r\n                    });\r\n" +
-"                });\r\n\r\n                return model;\r\n            };\r\n\r\n        " +
-"    var valueDate = window.parseLocalizedDate($(\"#ValueDateTextBox\").val());\r\n  " +
-"          var bookDate = window.parseLocalizedDate($(\"#BookDateTextBox\").val());" +
-"\r\n            var referenceNumber = $(\"#ReferenceNumberInputText\").val();\r\n     " +
-"       var statementReference = $(\"#StatementReferenceTextArea\").val();\r\n       " +
-"     var details = getDetails();\r\n\r\n            if (!window.isDate(valueDate)) {" +
-"\r\n                window.makeDirty($(\"#ValueDateTextBox\"));\r\n                err" +
-"orLabel.html(\"Invalid date!\");\r\n                return false;\r\n            };\r\n\r" +
-"\n            if (!window.isDate(bookDate)) {\r\n                window.makeDirty($" +
-"(\"#BookDateTextBox\"));\r\n                errorLabel.html(\"Invalid date!\");\r\n     " +
-"           return false;\r\n            };\r\n\r\n            if (!details || details." +
-"length === 0) {\r\n                errorLabel.html(\"Nothing to transfer!\");\r\n     " +
-"           return false;\r\n            };\r\n\r\n            return {\r\n              " +
-"  ValueDate: valueDate,\r\n                BookDate: bookDate,\r\n                Re" +
-"ferenceNumber: referenceNumber,\r\n                StatementReference: statementRe" +
-"ference,\r\n                Details: details\r\n            };\r\n        };\r\n\r\n      " +
-"  \r\n\r\n        errorLabel.html(\"\");\r\n\r\n        if (transferGridView.find(\"tr\").le" +
-"ngth === 2) {\r\n            errorLabel.html(\"Gridview is empty!\");\r\n            r" +
-"eturn false;\r\n        };\r\n\r\n        var model = getModel();\r\n        var ajax = " +
-"request(model);\r\n\r\n        ajax.success(function(response) {\r\n            var ur" +
+"    itemCodeInputText.val(itemSelect.getSelectedValue());\r\n\r\n        const tranT" +
+"ype = transactionTypeSelect.getSelectedValue();\r\n        const storeName = store" +
+"Select.getSelectedText();\r\n        const itemCode = itemCodeInputText.val();\r\n  " +
+"      const itemName = itemSelect.getSelectedText();\r\n        const unitName = u" +
+"nitSelect.getSelectedText();\r\n        const quantity = parseInt(quantityInputTex" +
+"t.val() || 0);\r\n\r\n        if (transactionTypeSelect.length) {\r\n            if (w" +
+"indow.isNullOrWhiteSpace(tranType) || tranType === \"Select\") {\r\n                " +
+"window.makeDirty(transactionTypeSelect);\r\n                return;\r\n            }" +
+";\r\n        };\r\n\r\n        if (window.isNullOrWhiteSpace(storeName) || storeName =" +
+"== \"Select\") {\r\n            window.makeDirty(storeSelect);\r\n            return;\r" +
+"\n        };\r\n\r\n        if (window.isNullOrWhiteSpace(itemCode)) {\r\n            w" +
+"indow.makeDirty(itemCodeInputText);\r\n            return;\r\n        };\r\n\r\n        " +
+"if (window.isNullOrWhiteSpace(itemName) || itemName === \"Select\") {\r\n           " +
+" window.makeDirty(itemSelect);\r\n            return;\r\n        };\r\n\r\n        if (w" +
+"indow.isNullOrWhiteSpace(unitName) || unitName === \"Select\") {\r\n            wind" +
+"ow.makeDirty(unitSelect);\r\n            return;\r\n        };\r\n\r\n        if (quanti" +
+"ty <= 0) {\r\n            window.makeDirty(quantityInputText);\r\n            return" +
+";\r\n        };\r\n\r\n        window.removeDirty(transactionTypeSelect);\r\n        win" +
+"dow.removeDirty(storeSelect);\r\n        window.removeDirty(itemCodeInputText);\r\n " +
+"       window.removeDirty(itemSelect);\r\n        window.removeDirty(unitSelect);\r" +
+"\n        window.removeDirty(quantityInputText);\r\n\r\n        appendToTable(tranTyp" +
+"e, storeName, itemCode, itemName, unitName, quantity);\r\n        itemCodeInputTex" +
+"t.val(\"\");\r\n        quantityInputText.val(\"\");\r\n\r\n        if (transactionTypeSel" +
+"ect.length) {\r\n            transactionTypeSelect.focus();\r\n            return;\r\n" +
+"        };\r\n\r\n        storeSelect.attr(\"disabled\", \"disabled\");\r\n        itemCod" +
+"eInputText.focus();\r\n    };\r\n\r\n    function appendToTable(tranType, storeName, i" +
+"temCode, itemName, unitName, quantity) {\r\n        const rows = transferGridView." +
+"find(\"tbody tr:not(:last-child)\");\r\n        var match = false;\r\n        var html" +
+";\r\n\r\n        if (transactionTypeSelect.length) {\r\n            rows.each(function" +
+" () {\r\n                const row = $(this);\r\n                if (window.getColum" +
+"nText(row, 0) !== tranType &&\r\n                    window.getColumnText(row, 1) " +
+"=== storeName &&\r\n                    window.getColumnText(row, 2) === itemCode)" +
+" {\r\n                    window.displayMessage(\"Duplicate entry\");\r\n\r\n           " +
+"         window.makeDirty(itemSelect);\r\n                    match = true;\r\n     " +
+"           };\r\n\r\n                if (window.getColumnText(row, 0) === tranType &" +
+"&\r\n                    window.getColumnText(row, 1) === storeName &&\r\n          " +
+"          window.getColumnText(row, 2) === itemCode &&\r\n                    wind" +
+"ow.getColumnText(row, 4) === unitName) {\r\n                    window.setColumnTe" +
+"xt(row, 5, window.getFormattedNumber(window.parseFloat2(window.getColumnText(row" +
+", 5)) + quantity));\r\n\r\n                    window.addDanger(row);\r\n             " +
+"       match = true;\r\n                    return;\r\n                }\r\n          " +
+"  });\r\n\r\n            if (!match) {\r\n                html = \"<tr class=\'grid2-row" +
+"\'><td>\" + tranType + \"</td><td>\" + storeName + \"</td><td>\" + itemCode + \"</td><t" +
+"d>\" + itemName + \"</td><td>\" + unitName + \"</td><td class=\'text-right\'>\" + getFo" +
+"rmattedNumber(quantity) + \"</td>\"\r\n                    + \"</td><td><a class=\'poi" +
+"nter\' onclick=\'removeRow($(this));\'><i class=\'ui delete icon\'></i></a><a class=\'" +
+"pointer\' onclick=\'toggleDanger($(this));\'><i class=\'ui pointer check mark icon\'>" +
+"</a></i><a class=\'pointer\' onclick=\'toggleSuccess($(this));\'><i class=\'ui pointe" +
+"r thumbs up icon\'></i></a></td></tr>\";\r\n                transferGridView.find(\"t" +
+"r:last\").before(html);\r\n            };\r\n\r\n            return;\r\n        };\r\n\r\n   " +
+"     rows.each(function () {\r\n            const row = $(this);\r\n            if (" +
+"window.getColumnText(row, 0) === storeName &&\r\n                window.getColumnT" +
+"ext(row, 1) === itemCode) {\r\n                window.displayMessage(\"Duplicate En" +
+"try\");\r\n\r\n                window.makeDirty(itemSelect);\r\n                match =" +
+" true;\r\n            };\r\n\r\n            if (window.getColumnText(row, 0) === store" +
+"Name &&\r\n                window.getColumnText(row, 1) === itemCode &&\r\n         " +
+"       window.getColumnText(row, 3) === unitName) {\r\n                window.setC" +
+"olumnText(row, 4, window.getFormattedNumber(window.parseFloat2(window.getColumnT" +
+"ext(row, 4)) + quantity));\r\n\r\n                window.addDanger(row);\r\n          " +
+"      match = true;\r\n                return;\r\n            }\r\n        });\r\n\r\n    " +
+"    if (!match) {\r\n            html = \"<tr class=\'grid2-row\'><td>\" + storeName +" +
+" \"</td><td>\" + itemCode + \"</td><td>\" + itemName + \"</td><td>\" + unitName + \"</t" +
+"d><td class=\'text-right\'>\" + getFormattedNumber(quantity) + \"</td>\"\r\n           " +
+"     + \"</td><td><a class=\'pointer\' onclick=\'removeRow($(this));\'><i class=\'ui d" +
+"elete icon\'></i></a><a class=\'pointer\' onclick=\'toggleDanger($(this));\'><i class" +
+"=\'ui pointer check mark icon\'></a></i><a class=\'pointer\' onclick=\'toggleSuccess(" +
+"$(this));\'><i class=\'ui pointer thumbs up icon\'></i></a></td></tr>\";\r\n          " +
+"  transferGridView.find(\"tr:last\").before(html);\r\n        };\r\n    };\r\n\r\n    save" +
+"Button.click(function () {\r\n        function request(model) {\r\n            const" +
+" url = \"/dashboard/inventory/tasks/inventory-transfers\";\r\n            const data" +
+" = JSON.stringify(model);\r\n            return window.getAjaxRequest(url, \"POST\"," +
+" data);\r\n        };\r\n\r\n        function getModel() {\r\n            function getDe" +
+"tails() {\r\n                var model = [];\r\n                const rows = $(\"#Tra" +
+"nsferGridView tbody tr:not(:last-child)\");\r\n\r\n                $.each(rows, funct" +
+"ion() {\r\n                    const row = $(this);\r\n                    const tra" +
+"nsferType = row.find(\"td:nth-child(1)\").html();\r\n                    const store" +
+"Name = row.find(\"td:nth-child(2)\").html();\r\n                    const itemCode =" +
+" row.find(\"td:nth-child(3)\").html();\r\n                    const itemName = row.f" +
+"ind(\"td:nth-child(4)\").html();\r\n                    const unitName = row.find(\"t" +
+"d:nth-child(5)\").html();\r\n                    const quantity = window.parseFloat" +
+"2(row.find(\"td:nth-child(6)\").html());\r\n\r\n                    model.push({\r\n    " +
+"                    ItemCode: itemCode,\r\n                        ItemName: itemN" +
+"ame,\r\n                        Quantity: quantity,\r\n                        Store" +
+"Name: storeName,\r\n                        TransferTypeEnum: transferType,\r\n     " +
+"                   UnitName: unitName\r\n                    });\r\n                " +
+"});\r\n\r\n                return model;\r\n            };\r\n\r\n            const valueD" +
+"ate = window.parseLocalizedDate($(\"#ValueDateTextBox\").val());\r\n            cons" +
+"t bookDate = window.parseLocalizedDate($(\"#BookDateTextBox\").val());\r\n          " +
+"  const referenceNumber = $(\"#ReferenceNumberInputText\").val();\r\n            con" +
+"st statementReference = $(\"#StatementReferenceTextArea\").val();\r\n            con" +
+"st details = getDetails();\r\n\r\n            if (!window.isDate(valueDate)) {\r\n    " +
+"            window.makeDirty($(\"#ValueDateTextBox\"));\r\n                errorLabe" +
+"l.html(\"Invalid date!\");\r\n                return false;\r\n            };\r\n\r\n     " +
+"       if (!window.isDate(bookDate)) {\r\n                window.makeDirty($(\"#Boo" +
+"kDateTextBox\"));\r\n                errorLabel.html(\"Invalid date!\");\r\n           " +
+"     return false;\r\n            };\r\n\r\n            if (!details || details.length" +
+" === 0) {\r\n                errorLabel.html(\"Nothing to transfer!\");\r\n           " +
+"     return false;\r\n            };\r\n\r\n            return {\r\n                Valu" +
+"eDate: valueDate,\r\n                BookDate: bookDate,\r\n                Referenc" +
+"eNumber: referenceNumber,\r\n                StatementReference: statementReferenc" +
+"e,\r\n                Details: details\r\n            };\r\n        };\r\n\r\n        \r\n\r\n" +
+"        errorLabel.html(\"\");\r\n\r\n        if (transferGridView.find(\"tr\").length =" +
+"== 2) {\r\n            errorLabel.html(\"Gridview is empty!\");\r\n            return " +
+"false;\r\n        };\r\n\r\n        const model = getModel();\r\n        const ajax = re" +
+"quest(model);\r\n\r\n        ajax.success(function(response) {\r\n            const ur" +
 "l = \"/dashboard/inventory/tasks/transfers/checklist/\" + response;\r\n            d" +
 "ocument.location = url;\r\n        });\r\n\r\n        ajax.fail(function (xhr) {\r\n    " +
 "        window.logAjaxErrorMessage(xhr);\r\n        });\r\n    });\r\n\r\n    itemSelect" +
@@ -433,41 +433,30 @@ WriteLiteral(">\r\n</div>\r\n\r\n<script>\r\n    var addButton = $(\"#AddButton\
 "Text.val());\r\n        };\r\n    });\r\n\r\n    function loadStores() {\r\n        window" +
 ".displayFieldBinder(storeSelect, \"/api/forms/inventory/stores/display-fields\");\r" +
 "\n    };\r\n\r\n\r\n    function loadItems() {\r\n        function request() {\r\n         " +
-"   var url = \"/dashboard/inventory/items/stockable\";\r\n            return window." +
-"getAjaxRequest(url);\r\n        };\r\n\r\n        var ajax = request();\r\n        ajax." +
-"success(function (response) {\r\n            var options = \"<option>Select</option" +
-">\";\r\n\r\n            $.each(response, function () {\r\n                var option = " +
-"\"<option value=\'{key}\'>{value}</option>\";\r\n                option = option.repla" +
-"ce(\"{key}\", this.ItemCode);\r\n                option = option.replace(\"{value}\", " +
-"this.ItemName);\r\n\r\n                options += option;\r\n            });\r\n\r\n      " +
-"      itemSelect.html(options);\r\n        });\r\n    };\r\n\r\n    function loadUnits()" +
-" {\r\n        function request(itemCode) {\r\n            var url = \"/dashboard/inve" +
-"ntory/get-associated-units/{*itemCode}\";\r\n            url = url.replace(\"{*itemC" +
-"ode}\", itemCode);\r\n\r\n            return window.getAjaxRequest(url);\r\n        };\r" +
-"\n\r\n        var itemCode = itemCodeInputText.val();\r\n        var ajax = request(i" +
-"temCode);\r\n        ajax.success(function (response) {\r\n            var options =" +
-" \"<option>Select</option>\";\r\n\r\n            $.each(response, function () {\r\n     " +
-"           var option = \"<option value=\'{key}\'>{value}</option>\";\r\n             " +
-"   option = option.replace(\"{key}\", this.UnitId);\r\n                option = opti" +
-"on.replace(\"{value}\", this.UnitName);\r\n\r\n                options += option;\r\n   " +
-"         });\r\n\r\n            unitSelect.html(options);\r\n        });\r\n    };\r\n\r\n  " +
-"  function removeLoaderInstance() {\r\n        removeLoader(transferGridView);\r\n  " +
-"  };\r\n\r\n    //Check if ItemPopup window has updated the hidden field.\r\n    funct" +
-"ion ajaxDataBindCallBack(targetControl) {\r\n        if (targetControl.is(itemSele" +
-"ct)) {\r\n            var itemId = parseInt(itemIdHidden.val() || 0);\r\n\r\n         " +
-"   itemIdHidden.val(\"\");\r\n\r\n            if (itemId > 0) {\r\n                var t" +
-"argetControls = $([]);\r\n                targetControls.push(itemCodeInputText);\r" +
-"\n                targetControls.push(itemSelect);\r\n\r\n                url = itemI" +
-"dQuerySericeUrl;\r\n                data = appendParameter(\"\", \"itemId\", itemId);\r" +
-"\n                data = getData(data);\r\n\r\n                ajaxUpdateVal(url, dat" +
-"a, targetControls);\r\n            }\r\n        };\r\n    };\r\n\r\n    shortcut.add(\"F4\"," +
-" function () {\r\n        url = itemPopupUrl;\r\n        showWindow(url);\r\n    });\r\n" +
-"\r\n    shortcut.add(\"CTRL+ENTER\", function () {\r\n        addButton.trigger(\'click" +
-"\');\r\n    });\r\n\r\n    //$(\"select\").dropdown();\r\n    window.overridePath = \"/dashb" +
-"oard/inventory/tasks/inventory-transfers\";\r\n\r\n    var visible = false;\r\n\r\n    $(" +
-"document).ajaxStop(function () {\r\n        setTimeout(function () {\r\n            " +
-"if (!visible) {\r\n                visible = true;\r\n\r\n                $(\".page.seg" +
-"ment\").fadeIn(300);\r\n            };\r\n        }, 200);\r\n    });\r\n</script>");
+"   const url = \"/dashboard/inventory/items/stockable\";\r\n            return windo" +
+"w.getAjaxRequest(url);\r\n        };\r\n\r\n        const ajax = request();\r\n        a" +
+"jax.success(function (response) {\r\n            var options = \"<option>Select</op" +
+"tion>\";\r\n\r\n            $.each(response, function () {\r\n                var optio" +
+"n = \"<option value=\'{key}\'>{value}</option>\";\r\n                option = option.r" +
+"eplace(\"{key}\", this.ItemCode);\r\n                option = option.replace(\"{value" +
+"}\", this.ItemName);\r\n\r\n                options += option;\r\n            });\r\n\r\n  " +
+"          itemSelect.html(options);\r\n        });\r\n    };\r\n\r\n    function loadUni" +
+"ts() {\r\n        function request(itemCode) {\r\n            var url = \"/dashboard/" +
+"inventory/get-associated-units/{*itemCode}\";\r\n            url = url.replace(\"{*i" +
+"temCode}\", itemCode);\r\n\r\n            return window.getAjaxRequest(url);\r\n       " +
+" };\r\n\r\n        const itemCode = itemCodeInputText.val();\r\n        const ajax = r" +
+"equest(itemCode);\r\n        ajax.success(function (response) {\r\n            var o" +
+"ptions = \"<option>Select</option>\";\r\n\r\n            $.each(response, function () " +
+"{\r\n                var option = \"<option value=\'{key}\'>{value}</option>\";\r\n     " +
+"           option = option.replace(\"{key}\", this.UnitId);\r\n                optio" +
+"n = option.replace(\"{value}\", this.UnitName);\r\n\r\n                options += opti" +
+"on;\r\n            });\r\n\r\n            unitSelect.html(options);\r\n        });\r\n    " +
+"};\r\n\r\n    shortcut.add(\"CTRL+ENTER\", function () {\r\n        addButton.trigger(\'c" +
+"lick\');\r\n    });\r\n\r\n    //$(\"select\").dropdown();\r\n    window.overridePath = \"/d" +
+"ashboard/inventory/tasks/inventory-transfers\";\r\n\r\n    var visible = false;\r\n\r\n  " +
+"  $(document).ajaxStop(function () {\r\n        setTimeout(function () {\r\n        " +
+"    if (!visible) {\r\n                visible = true;\r\n\r\n                $(\".page" +
+".segment\").fadeIn(300);\r\n            };\r\n        }, 200);\r\n    });\r\n</script>");
 
         }
     }

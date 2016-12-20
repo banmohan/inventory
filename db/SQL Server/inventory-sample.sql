@@ -1,5 +1,4 @@
 ﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/99.sample-data/inventory.sample.sql --<--<--
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.sample-data/inventory.sample.sql --<--<--
 INSERT INTO inventory.brands(brand_code, brand_name)
 SELECT 'DEF', 'Default';
 
@@ -85,7 +84,7 @@ SELECT 'CHLS',     'Chocolates',                        NULL,            finance
 
 
 INSERT INTO inventory.store_types(store_type_code,store_type_name)
-SELECT 'D', 'down'                              UNION ALL
+SELECT 'GD', 'Godown'                              UNION ALL
 SELECT 'SAL', 'Sales Center'                        UNION ALL
 SELECT 'WAR', 'Warehouse'                           UNION ALL
 SELECT 'PRO', 'Production';
@@ -94,11 +93,11 @@ SELECT 'PRO', 'Production';
 
 INSERT INTO inventory.stores(office_id, store_code, store_name, city, store_type_id, allow_sales, default_cash_account_id, default_cash_repository_id, default_account_id_for_checks)
 SELECT 1, 'STORE-1', 'Store 1',     'Office', inventory.get_store_type_id_by_store_type_code('SAL'), 1, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')    UNION ALL
-SELECT 1, 'DOW-1', 'down 1',    'Office', inventory.get_store_type_id_by_store_type_code('D'), 0, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')   UNION ALL
+SELECT 1, 'GODOW-1', 'Godown 1',    'Office', inventory.get_store_type_id_by_store_type_code('GD'), 0, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')   UNION ALL
 SELECT 1, 'STORE-2', 'Store 2',     'Office', inventory.get_store_type_id_by_store_type_code('SAL'), 1, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')    UNION ALL
-SELECT 1, 'DOW-2', 'down 2',    'Office', inventory.get_store_type_id_by_store_type_code('D'), 0, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')   UNION ALL
+SELECT 1, 'GODOW-2', 'Godown 2',    'Office', inventory.get_store_type_id_by_store_type_code('GD'), 0, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')   UNION ALL
 SELECT 1, 'STORE-3', 'Store 3',     'Office', inventory.get_store_type_id_by_store_type_code('SAL'), 1, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500')    UNION ALL
-SELECT 1, 'DOW-3', 'down 3',    'Office', inventory.get_store_type_id_by_store_type_code('D'), 0, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500');
+SELECT 1, 'GODOW-3', 'Godown 3',    'Office', inventory.get_store_type_id_by_store_type_code('GD'), 0, finance.get_account_id_by_account_number('10200'), finance.get_cash_repository_id_by_cash_repository_code('CAC'), finance.get_account_id_by_account_number('10500');
 
 INSERT INTO inventory.counters(counter_code, counter_name, store_id)
 SELECT 'COU-1', 'Counter 1', inventory.get_store_id_by_store_code('STORE-1') UNION ALL

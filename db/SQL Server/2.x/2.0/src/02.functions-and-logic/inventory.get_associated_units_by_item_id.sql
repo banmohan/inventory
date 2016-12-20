@@ -19,8 +19,16 @@ BEGIN
     WHERE inventory.items.item_id = @item_id
     AND inventory.items.deleted = 0;
 
-    INSERT INTO @result
-    SELECT * FROM inventory.get_associated_units(@unit_id);
+    INSERT INTO @result(unit_id)
+    SELECT * FROM inventory.get_associated_unit_list(@unit_id);
+
+	UPDATE @result
+	SET 
+		unit_code = inventory.units.unit_code,
+		unit_name = inventory.units.unit_name
+	FROM @result AS result
+	INNER JOIN inventory.units
+	ON result.unit_id = inventory.units.unit_id;
 
     RETURN;
 END;
@@ -49,8 +57,16 @@ BEGIN
     WHERE LOWER(item_code) = LOWER(@item_code)
     AND inventory.items.deleted = 0;
 
-    INSERT INTO @result
-    SELECT * FROM inventory.get_associated_units(@unit_id);
+    INSERT INTO @result(unit_id)
+    SELECT * FROM inventory.get_associated_unit_list(@unit_id);
+
+	UPDATE @result
+	SET 
+		unit_code = inventory.units.unit_code,
+		unit_name = inventory.units.unit_name
+	FROM @result AS result
+	INNER JOIN inventory.units
+	ON result.unit_id = inventory.units.unit_id;
 
     RETURN;
 END;

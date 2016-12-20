@@ -12,17 +12,18 @@ CREATE PROCEDURE inventory.post_opening_inventory
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.opening_stock_type READONLY
+    @details                                inventory.opening_stock_type READONLY,
+	@transaction_master_id					bigint OUTPUT
 )
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
     DECLARE @book_name                      national character varying(1000) = 'Opening Inventory';
-    DECLARE @transaction_master_id          bigint;
-    DECLARE @checkout_id                bigint;
+    DECLARE @checkout_id					bigint;
     DECLARE @tran_counter                   integer;
-    DECLARE @transaction_code national character varying(50);
+    DECLARE @transaction_code				national character varying(50);
 
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
@@ -91,9 +92,9 @@ BEGIN
     SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, checkout_id, transaction_master_id, posted_by, office_id)
-    SELECT @book_name, @value_date, @book_date, @checkout_id, @transaction_master_id, @user_id, @office_id;
-    SET @transaction_master_id = SCOPE_IDENTITY();
+    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, transaction_master_id, posted_by, office_id)
+    SELECT @book_name, @value_date, @book_date, @transaction_master_id, @user_id, @office_id;
+    SET @checkout_id = SCOPE_IDENTITY();
 
 
     INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
@@ -103,24 +104,5 @@ BEGIN
     EXECUTE finance.auto_verify @transaction_master_id, @office_id;    
     SELECT @transaction_master_id;
 END;
-
-
-
--- 
--- SELECT * FROM inventory.post_opening_inventory
--- (
---     2,
---     2,
---     5,
---     '1-1-2020',
---     '1-1-2020',
---     '3424',
---     'ASDF',
---     ARRAY[
---          ROW(1, 1, 1, 1,180000),
---          ROW(1, 2, 1, 1,130000),
---          ROW(1, 3, 1, 1,110000)]);
--- 
-
 
 GO

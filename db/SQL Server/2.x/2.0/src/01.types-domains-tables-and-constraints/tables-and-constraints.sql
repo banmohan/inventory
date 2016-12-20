@@ -13,7 +13,7 @@ CREATE TABLE inventory.units
     unit_name                               national character varying(500) NOT NULL,    
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE TABLE inventory.compound_units
@@ -225,7 +225,7 @@ CREATE TABLE inventory.stores
 (
     store_id                                integer IDENTITY PRIMARY KEY,
     store_code                              national character varying(24) NOT NULL,
-    store_name                              national character varying(100) NOT NULL,
+    store_name                              national character varying(500) NOT NULL,
     store_type_id                           integer NOT NULL REFERENCES inventory.store_types,
     office_id                                integer NOT NULL REFERENCES core.offices,
     default_account_id_for_checks           integer NOT NULL REFERENCES finance.accounts,
@@ -461,9 +461,9 @@ CREATE TYPE inventory.transfer_type
 AS TABLE
 (
     tran_type       national character varying(2),
-    store_name      national character varying(50),
-    item_code       national character varying(12),
-    unit_name       national character varying(50),
+    store_name      national character varying(500),
+    item_code       national character varying(24),
+    unit_name       national character varying(500),
     quantity        decimal(30, 6),
     rate            decimal(30, 6)
 );
@@ -472,8 +472,8 @@ CREATE TYPE inventory.adjustment_type
 AS TABLE
 (
     tran_type       national character varying(2),
-    item_code       national character varying(12),
-    unit_name       national character varying(50),
+    item_code       national character varying(24),
+    unit_name       national character varying(500),
     quantity        decimal(30, 6)
 );
 

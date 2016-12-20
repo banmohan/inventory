@@ -37,12 +37,12 @@ BEGIN
     (
         tran_type       national character varying(2),
         store_id        integer,
-        store_name      national character varying(50),
+        store_name      national character varying(500),
         item_id         integer,
-        item_code       national character varying(12),
+        item_code       national character varying(24),
         unit_id         integer,
         base_unit_id    integer,
-        unit_name       national character varying(50),
+        unit_name       national character varying(500),
         quantity        public.decimal_strict,
         base_quantity   public.decimal_strict,                
         price           money_strict
