@@ -76,7 +76,7 @@
         balance,
         statement_reference
         FROM inventory.get_account_statement
-        (@From::date, @To::date, @UserId::integer, @ItemId::integer, @StoreId::integer)
+        (@From, @To, @UserId, @ItemId, @StoreId)
         ORDER BY id;
       </Query>
       <Parameters>
@@ -86,8 +86,8 @@
         <Parameter Name="@ItemId" FieldLabel="Select Item" Type="int" PopulateFrom="/api/forms/inventory/items/display-fields" KeyField="Key" ValueField="Value" />
         <Parameter Name="@StoreId" FieldLabel="Store" Type="int" PopulateFrom="/api/forms/inventory/stores/display-fields" KeyField="Key" ValueField="Value" Optional="true" />
       </Parameters>
-      <RunningTotalTextColumnIndex>3</RunningTotalTextColumnIndex>
-      <RunningTotalFieldIndices>4, 5</RunningTotalFieldIndices>
+      <RunningTotalTextColumnIndex>4</RunningTotalTextColumnIndex>
+      <RunningTotalFieldIndices>5, 6</RunningTotalFieldIndices>
     </DataSource>
   </DataSources>
 </FrapidReport>

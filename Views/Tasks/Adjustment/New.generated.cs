@@ -39,7 +39,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -252,99 +251,99 @@ WriteLiteral(">Back</a>\r\n            </div>\r\n\r\n        </div>\r\n        <
 "ldBinder($(\"#StoreSelect\"), \"/api/forms/inventory/stores/display-fields\", true);" +
 "\r\n            };\r\n\r\n            loadStores();\r\n\r\n            function displayClo" +
 "singInventory(model) {\r\n                function getCell(text) {\r\n              " +
-"      var cell = $(\"<td />\");\r\n                    cell.html(text);\r\n\r\n         " +
-"           return cell;\r\n                };\r\n\r\n                var tabIndex = 0;" +
-"\r\n                var totalRows = model.length;\r\n\r\n                $.each(model," +
-" function () {\r\n                    var row = $(\"<tr />\");\r\n                    " +
-"tabIndex++;\r\n\r\n                    row.append(getCell(this.ItemId));\r\n          " +
-"          row.append(getCell(this.ItemCode));\r\n                    row.append(ge" +
-"tCell(this.ItemName));\r\n                    row.append(getCell(this.UnitId));\r\n " +
-"                   row.append(getCell(this.UnitName));\r\n                    row." +
-"append(getCell(this.Quantity));\r\n\r\n                    row.append(getCell(\"<inpu" +
-"t type=\'text\' tabindex=\'\" + tabIndex + \"\' class=\'integer actual\' />\"));\r\n       " +
-"             row.append(getCell(\"<input type=\'text\' tabindex=\'\" + (tabIndex + to" +
-"talRows) + \"\' class=\'integer difference\' />\"));\r\n\r\n\r\n                    closing" +
-"InventoryGrid.append(row);\r\n                });\r\n            };\r\n\r\n            f" +
-"unction initializeCalculator() {\r\n                $(\"input.actual\").blur(functio" +
-"n () {\r\n                    var quantity = window.parseInt2($(this).parent().par" +
-"ent().find(\"td:nth-last-child(3)\").html());\r\n                    var actual = ($" +
-"(this).val());\r\n\r\n                    if (window.isNullOrWhiteSpace(actual)) {\r\n" +
-"                        $(this).val(quantity);\r\n                        actual =" +
-" quantity;\r\n                    }\r\n\r\n                    if (window.parseInt2(ac" +
-"tual) > quantity) {\r\n                        window.makeDirty($(this).parent());" +
-"\r\n                        return;\r\n                    };\r\n\r\n                   " +
-" window.removeDirty($(this).parent());\r\n\r\n                    $(this).parent().p" +
-"arent().find(\"td:nth-last-child(1) input\").val(quantity - actual);\r\n            " +
-"    });\r\n\r\n                $(\"input.difference\").blur(function () {\r\n           " +
-"         var quantity = window.parseInt2($(this).parent().parent().find(\"td:nth-" +
-"last-child(3)\").html());\r\n                    var difference = window.parseInt2(" +
-"$(this).val());\r\n\r\n                    if (difference > quantity) {\r\n           " +
-"             window.makeDirty($(this).parent());\r\n                        return" +
-";\r\n                    };\r\n\r\n                    window.removeDirty($(this).pare" +
-"nt());\r\n\r\n                    $(this).parent().parent().find(\"td:nth-last-child(" +
-"2) input\").val(quantity - difference);\r\n                });\r\n            };\r\n\r\n " +
-"           $(\"#ShowButton\").unbind(\"click\").bind(\"click\", function () {\r\n       " +
-"         function request(storeId) {\r\n                    var url = \"/dashboard/" +
-"inventory/tasks/inventory-adjustments/closing/{storeId}\";\r\n                    u" +
-"rl = url.replace(\"{storeId}\", storeId);\r\n                    return window.getAj" +
-"axRequest(url);\r\n                };\r\n\r\n                var storeId = parseInt(st" +
-"oreSelect.val());\r\n\r\n                if (!storeId) {\r\n                    window" +
-".displayMessage(\"Please select a store!\");\r\n                    return;\r\n       " +
-"         };\r\n\r\n                var ajax = request(storeId);\r\n\r\n                a" +
-"jax.success(function (response) {\r\n                    displayClosingInventory(r" +
-"esponse);\r\n                    initializeCalculator();\r\n                });\r\n\r\n " +
-"               ajax.fail(function (xhr) {\r\n                    alert(JSON.string" +
-"ify(xhr));\r\n                });\r\n            });\r\n        </script>\r\n        <sc" +
-"ript");
+"      const cell = $(\"<td />\");\r\n                    cell.html(text);\r\n\r\n       " +
+"             return cell;\r\n                };\r\n\r\n                var tabIndex = " +
+"0;\r\n                var totalRows = model.length;\r\n\r\n                $.each(mode" +
+"l, function () {\r\n                    const row = $(\"<tr />\");\r\n                " +
+"    tabIndex++;\r\n\r\n                    row.append(getCell(this.ItemId));\r\n      " +
+"              row.append(getCell(this.ItemCode));\r\n                    row.appen" +
+"d(getCell(this.ItemName));\r\n                    row.append(getCell(this.UnitId))" +
+";\r\n                    row.append(getCell(this.UnitName));\r\n                    " +
+"row.append(getCell(this.Quantity));\r\n\r\n                    row.append(getCell(\"<" +
+"input type=\'text\' tabindex=\'\" + tabIndex + \"\' class=\'integer actual\' />\"));\r\n   " +
+"                 row.append(getCell(\"<input type=\'text\' tabindex=\'\" + (tabIndex " +
+"+ totalRows) + \"\' class=\'integer difference\' />\"));\r\n\r\n\r\n                    clo" +
+"singInventoryGrid.append(row);\r\n                });\r\n            };\r\n\r\n         " +
+"   function initializeCalculator() {\r\n                $(\"input.actual\").blur(fun" +
+"ction () {\r\n                    const quantity = window.parseInt2($(this).parent" +
+"().parent().find(\"td:nth-last-child(3)\").html());\r\n                    var actua" +
+"l = ($(this).val());\r\n\r\n                    if (window.isNullOrWhiteSpace(actual" +
+")) {\r\n                        $(this).val(quantity);\r\n                        ac" +
+"tual = quantity;\r\n                    }\r\n\r\n                    if (window.parseI" +
+"nt2(actual) > quantity) {\r\n                        window.makeDirty($(this).pare" +
+"nt());\r\n                        return;\r\n                    };\r\n\r\n             " +
+"       window.removeDirty($(this).parent());\r\n\r\n                    $(this).pare" +
+"nt().parent().find(\"td:nth-last-child(1) input\").val(quantity - actual);\r\n      " +
+"          });\r\n\r\n                $(\"input.difference\").blur(function () {\r\n     " +
+"               const quantity = window.parseInt2($(this).parent().parent().find(" +
+"\"td:nth-last-child(3)\").html());\r\n                    const difference = window." +
+"parseInt2($(this).val());\r\n\r\n                    if (difference > quantity) {\r\n " +
+"                       window.makeDirty($(this).parent());\r\n                    " +
+"    return;\r\n                    };\r\n\r\n                    window.removeDirty($(" +
+"this).parent());\r\n\r\n                    $(this).parent().parent().find(\"td:nth-l" +
+"ast-child(2) input\").val(quantity - difference);\r\n                });\r\n         " +
+"   };\r\n\r\n            $(\"#ShowButton\").unbind(\"click\").bind(\"click\", function () " +
+"{\r\n                function request(storeId) {\r\n                    var url = \"/" +
+"dashboard/inventory/tasks/inventory-adjustments/closing/{storeId}\";\r\n           " +
+"         url = url.replace(\"{storeId}\", storeId);\r\n                    return wi" +
+"ndow.getAjaxRequest(url);\r\n                };\r\n\r\n                const storeId =" +
+" parseInt(storeSelect.val());\r\n\r\n                if (!storeId) {\r\n              " +
+"      window.displayMessage(\"Please select a store!\");\r\n                    retu" +
+"rn;\r\n                };\r\n\r\n                const ajax = request(storeId);\r\n\r\n   " +
+"             ajax.success(function (response) {\r\n                    displayClos" +
+"ingInventory(response);\r\n                    initializeCalculator();\r\n          " +
+"      });\r\n\r\n                ajax.fail(function (xhr) {\r\n                    ale" +
+"rt(JSON.stringify(xhr));\r\n                });\r\n            });\r\n        </script" +
+">\r\n        <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
 WriteLiteral(">\r\n            saveButton.click(function () {\r\n                function request(m" +
-"odel) {\r\n                    var url = \"/dashboard/inventory/tasks/inventory-adj" +
-"ustments\";\r\n                    var data = JSON.stringify(model);\r\n\r\n           " +
-"         alert(data);\r\n\r\n                    return window.getAjaxRequest(url, \"" +
-"POST\", data);\r\n                };\r\n\r\n                function getModel() {\r\n    " +
-"                function getDetails() {\r\n                        var model = [];" +
-"\r\n\r\n                        closingInventoryGrid.find(\"tbody tr\").each(function " +
-"() {\r\n                            var itemCode = $(this).find(\"td:nth-child(2)\")" +
-".html();\r\n                            var quantity = window.parseInt2($(this).fi" +
-"nd(\"td:nth-child(8)\").find(\"input\").val());\r\n                            var uni" +
-"tName = $(this).find(\"td:nth-child(5)\").html();\r\n\r\n                            i" +
-"f (quantity) {\r\n                                model.push(\r\n                   " +
-"                 {\r\n                                        TransactionType: \"Cr" +
-"\",\r\n                                        ItemCode: itemCode,\r\n               " +
-"                         Quantity: quantity,\r\n                                  " +
-"      UnitName: unitName\r\n                                    }\r\n               " +
-"                 );\r\n                            };\r\n                        });" +
-"\r\n\r\n                        return model;\r\n                    };\r\n\r\n           " +
-"         var storeId = parseInt(storeSelect.val());\r\n                    var val" +
-"ueDate = window.parseLocalizedDate(valueDateInputText.val());\r\n                 " +
-"   var bookDate = window.parseLocalizedDate(bookDateInputText.val());\r\n         " +
-"           var referenceNumber = referenceNumberInputText.val();\r\n              " +
-"      var statementReference = statementReferenceTextArea.val();\r\n\r\n            " +
-"        if (!storeId) {\r\n                        window.makeDirty(storeSelect);\r" +
-"\n                        errorLabel.html(\"Invalid store!\");\r\n                   " +
-"     return null;\r\n                    };\r\n\r\n                    if (!window.isD" +
-"ate(valueDate)) {\r\n                        window.makeDirty(valueDateInputText);" +
-"\r\n                        errorLabel.html(\"Invalid date!\");\r\n                   " +
-"     return null;\r\n                    };\r\n\r\n                    if (!window.isD" +
-"ate(bookDate)) {\r\n                        window.makeDirty(bookDateInputText);\r\n" +
-"                        errorLabel.html(\"Invalid date!\");\r\n                     " +
-"   return null;\r\n                    };\r\n\r\n\r\n                    return {\r\n     " +
-"                   StoreId: storeId,\r\n                        ValueDate: valueDa" +
-"te,\r\n                        BookDate: bookDate,\r\n                        Refere" +
-"nceNumber: referenceNumber,\r\n                        StatementReference: stateme" +
-"ntReference,\r\n                        Details: getDetails()\r\n                   " +
-" };\r\n                };\r\n\r\n                var model = getModel();\r\n            " +
-"    if (!model) {\r\n                    return;\r\n                };\r\n\r\n          " +
-"      var ajax = request(model);\r\n\r\n                ajax.success(function(respon" +
-"se) {\r\n                    var tranId = response;\r\n\r\n                    if (tra" +
-"nId) {\r\n                        window.location = \"/dashboard/inventory/tasks/ad" +
-"justments/checklist/\" + tranId;\r\n                    };\r\n                });\r\n\r\n" +
-"                ajax.fail(function (xhr) {\r\n                    alert(JSON.strin" +
-"gify(xhr));\r\n                });\r\n            });\r\n\r\n            window.override" +
-"Path = \"/dashboard/inventory/tasks/inventory-adjustments\";\r\n        </script>\r\n\r" +
-"\n    </div>\r\n</div>");
+"odel) {\r\n                    const url = \"/dashboard/inventory/tasks/inventory-a" +
+"djustments\";\r\n                    const data = JSON.stringify(model);\r\n\r\n       " +
+"             return window.getAjaxRequest(url, \"POST\", data);\r\n                }" +
+";\r\n\r\n                function getModel() {\r\n                    function getDeta" +
+"ils() {\r\n                        var model = [];\r\n\r\n                        clos" +
+"ingInventoryGrid.find(\"tbody tr\").each(function () {\r\n                          " +
+"  const itemCode = $(this).find(\"td:nth-child(2)\").html();\r\n                    " +
+"        const quantity = window.parseInt2($(this).find(\"td:nth-child(8)\").find(\"" +
+"input\").val());\r\n                            const unitName = $(this).find(\"td:n" +
+"th-child(5)\").html();\r\n\r\n                            if (quantity) {\r\n          " +
+"                      model.push(\r\n                                    {\r\n      " +
+"                                  TransactionType: \"Cr\",\r\n                      " +
+"                  ItemCode: itemCode,\r\n                                        Q" +
+"uantity: quantity,\r\n                                        UnitName: unitName\r\n" +
+"                                    }\r\n                                );\r\n     " +
+"                       };\r\n                        });\r\n\r\n                      " +
+"  return model;\r\n                    };\r\n\r\n                    const storeId = p" +
+"arseInt(storeSelect.val());\r\n                    const valueDate = window.parseL" +
+"ocalizedDate(valueDateInputText.val());\r\n                    const bookDate = wi" +
+"ndow.parseLocalizedDate(bookDateInputText.val());\r\n                    const ref" +
+"erenceNumber = referenceNumberInputText.val();\r\n                    const statem" +
+"entReference = statementReferenceTextArea.val();\r\n\r\n                    if (!sto" +
+"reId) {\r\n                        window.makeDirty(storeSelect);\r\n               " +
+"         errorLabel.html(\"Invalid store!\");\r\n                        return null" +
+";\r\n                    };\r\n\r\n                    if (!window.isDate(valueDate)) " +
+"{\r\n                        window.makeDirty(valueDateInputText);\r\n              " +
+"          errorLabel.html(\"Invalid date!\");\r\n                        return null" +
+";\r\n                    };\r\n\r\n                    if (!window.isDate(bookDate)) {" +
+"\r\n                        window.makeDirty(bookDateInputText);\r\n                " +
+"        errorLabel.html(\"Invalid date!\");\r\n                        return null;\r" +
+"\n                    };\r\n\r\n\r\n                    return {\r\n                     " +
+"   StoreId: storeId,\r\n                        ValueDate: valueDate,\r\n           " +
+"             BookDate: bookDate,\r\n                        ReferenceNumber: refer" +
+"enceNumber,\r\n                        StatementReference: statementReference,\r\n  " +
+"                      Details: getDetails()\r\n                    };\r\n           " +
+"     };\r\n\r\n                const model = getModel();\r\n                if (!model" +
+") {\r\n                    return;\r\n                };\r\n\r\n                const aj" +
+"ax = request(model);\r\n\r\n                ajax.success(function(response) {\r\n     " +
+"               const tranId = response;\r\n\r\n                    if (tranId) {\r\n  " +
+"                      window.location = \"/dashboard/inventory/tasks/adjustments/" +
+"checklist/\" + tranId;\r\n                    };\r\n                });\r\n\r\n          " +
+"      ajax.fail(function (xhr) {\r\n                    alert(JSON.stringify(xhr))" +
+";\r\n                });\r\n            });\r\n\r\n            window.overridePath = \"/d" +
+"ashboard/inventory/tasks/inventory-adjustments\";\r\n        </script>\r\n\r\n    </div" +
+">\r\n</div>");
 
         }
     }

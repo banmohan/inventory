@@ -65,14 +65,15 @@ BEGIN
         temp_closing_stock.unit_id, 
         temp_closing_stock.unit_name, 
         temp_closing_stock.quantity
-    FROM temp_closing_stock
-    ORDER BY item_id;
+    FROM @temp_closing_stock AS temp_closing_stock
+    ORDER BY temp_closing_stock.item_id;
 
     RETURN;
 END;
 
 
---SELECT * FROM inventory.list_closing_stock(1);
-
 GO
+
+
+--SELECT * FROM inventory.list_closing_stock(1)
 

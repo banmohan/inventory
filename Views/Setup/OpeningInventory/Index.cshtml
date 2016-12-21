@@ -125,7 +125,7 @@
     function displayTable(target, model) {
         target.find("tbody").html("");
         function getCell(text) {
-            var cell = $("<td />");
+            const cell = $("<td />");
 
             cell.text(text || "");
 
@@ -133,12 +133,12 @@
         };
 
         function getActionCell(tranId) {
-            var cell = $("<td />");
+            const cell = $("<td />");
 
-            var checklistAnchor = $("<a title='Checklist Window'><i class='list icon'></i></a>");
+            const checklistAnchor = $("<a title='Checklist Window'><i class='list icon'></i></a>");
             checklistAnchor.attr("href", "/dashboard/inventory/setup/opening-inventory/checklist/" + tranId);
 
-            var inventoryAdviceAnchor = $("<a title='View Opening Inventory Advice'><i class='zoom icon'></i></a>");
+            const inventoryAdviceAnchor = $("<a title='View Opening Inventory Advice'><i class='zoom icon'></i></a>");
             inventoryAdviceAnchor.attr("href", "javascript:void(0);");
             inventoryAdviceAnchor.attr("onclick", "showOpeningAdvice(" + tranId + ");");
 
@@ -149,10 +149,10 @@
         };
 
         function getSelectionCell() {
-            var cell = $("<td />");
-            var checkbox = $("<div class='ui toggle checkbox'/>");
-            var input = $("<input type='checkbox' />");
-            var label = $("<label />");
+            const cell = $("<td />");
+            const checkbox = $("<div class='ui toggle checkbox'/>");
+            const input = $("<input type='checkbox' />");
+            const label = $("<label />");
 
             checkbox.append(input);
             checkbox.append(label);
@@ -163,9 +163,9 @@
         };
 
         $.each(model, function () {
-            var item = this;
+            const item = this;
 
-            var row = $("<tr />");
+            const row = $("<tr />");
 
             row.append(getActionCell(item.TransactionMasterId));
             row.append(getSelectionCell(item.TransactionMasterId));
@@ -187,21 +187,21 @@
     };
     function processQuery() {
         function getModel() {
-            var model = window.serializeForm($("#Annotation"));
+            const model = window.serializeForm($("#Annotation"));
             model.Book = "Opening Inventory";
             return model;
         };
 
         function displayGrid(target) {
             function request(model) {
-                var url = "/dashboard/finance/tasks/journal/view";
-                var data = JSON.stringify(model);
+                const url = "/dashboard/finance/tasks/journal/view";
+                const data = JSON.stringify(model);
                 return window.getAjaxRequest(url, "POST", data);
             };
 
-            var model = getModel();
+            const model = getModel();
 
-            var ajax = request(model);
+            const ajax = request(model);
 
             ajax.success(function (response) {
                 displayTable(target, response);
@@ -213,7 +213,7 @@
             });
         };
 
-        var view = $("#InventoryView").addClass("loading");
+        const view = $("#InventoryView").addClass("loading");
 
         displayGrid(view);
     };

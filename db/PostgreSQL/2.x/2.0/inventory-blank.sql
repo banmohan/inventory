@@ -754,6 +754,7 @@ RETURNS TABLE
     id                      integer,
     value_date              date,
     book_date               date,
+    store_name              text,
     tran_code               text,
     statement_reference     text,
     debit                   numeric(30, 6),
@@ -778,6 +779,7 @@ BEGIN
         id                      SERIAL,
         value_date              date,
         book_date               date,
+        store_name              text,
         tran_code               text,
         statement_reference     text,
         debit                   numeric(30, 6),
@@ -793,9 +795,11 @@ BEGIN
         verification_status     integer
     ) ON COMMIT DROP;
 
-    INSERT INTO temp_account_statement(value_date, statement_reference, debit, item_id)
+    INSERT INTO temp_account_statement(value_date, book_date, store_name, statement_reference, debit, item_id)
     SELECT 
         _value_date_from, 
+        _value_date_from, 
+        '',
         'Opening Balance',
         SUM
         (
@@ -812,7 +816,7 @@ BEGIN
     ON inventory.checkouts.transaction_master_id = finance.transaction_master.transaction_master_id
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date < _value_date_from
-    AND inventory.checkout_details.store_id = _store_id
+    AND (_store_id IS NULL OR inventory.checkout_details.store_id = _store_id)
     AND inventory.checkout_details.item_id = _item_id;
 
     DELETE FROM temp_account_statement
@@ -824,10 +828,11 @@ BEGIN
     credit = 0
     WHERE temp_account_statement.credit < 0;
 
-    INSERT INTO temp_account_statement(value_date, book_date, tran_code, statement_reference, debit, credit, book, item_id, posted_on, posted_by, approved_by, verification_status)
+    INSERT INTO temp_account_statement(value_date, book_date, store_name, tran_code, statement_reference, debit, credit, book, item_id, posted_on, posted_by, approved_by, verification_status)
     SELECT
         finance.transaction_master.value_date,
         finance.transaction_master.book_date,
+        inventory.get_store_name_by_store_id(inventory.checkout_details.store_id),
         finance.transaction_master.transaction_code,
         finance.transaction_master.statement_reference,
         CASE inventory.checkout_details.transaction_type
@@ -850,7 +855,7 @@ BEGIN
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date >= _value_date_from
     AND finance.transaction_master.value_date <= _value_date_to
-    AND inventory.checkout_details.store_id = _store_id 
+    AND (_store_id IS NULL OR inventory.checkout_details.store_id = _store_id)
     AND inventory.checkout_details.item_id = _item_id
     ORDER BY 
         finance.transaction_master.value_date,

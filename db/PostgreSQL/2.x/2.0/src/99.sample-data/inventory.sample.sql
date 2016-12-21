@@ -1,5 +1,4 @@
-﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.sample-data/inventory.sample.sql --<--<--
-INSERT INTO inventory.brands(brand_code, brand_name)
+﻿INSERT INTO inventory.brands(brand_code, brand_name)
 SELECT 'DEF', 'Default';
 
 INSERT INTO inventory.units(unit_code, unit_name)

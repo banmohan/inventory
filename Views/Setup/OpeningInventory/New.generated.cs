@@ -570,9 +570,9 @@ WriteLiteral(@"    <script>
         .on(""contextmenu"",
             function (e) {
                 e.preventDefault();
-                var el = $(this);
-                var defaultMenu = el.find("".info.block, .number.block"");
-                var contextMenu = el.find("".context.menu"");
+                const el = $(this);
+                const defaultMenu = el.find("".info.block, .number.block"");
+                const contextMenu = el.find("".context.menu"");
 
                 defaultMenu.toggle();
                 contextMenu.toggle();
@@ -623,203 +623,205 @@ WriteLiteral(@"    <script>
             #line default
             #line hidden
 WriteLiteral("    <script>\r\n    var products = [];\r\n    var metaUnits = [];\r\n\r\n    function fet" +
-"chUnits() {\r\n        function request() {\r\n            var url = \"/api/forms/inv" +
-"entory/units/all\";\r\n            return window.getAjaxRequest(url);\r\n        };\r\n" +
-"\r\n        var ajax = request();\r\n\r\n        ajax.success(function (response) {\r\n " +
-"           window.metaUnits = response;\r\n        });\r\n    };\r\n\r\n    function fet" +
-"chProducts() {\r\n        function request() {\r\n            var url = \"/dashboard/" +
-"inventory/items/stockable/view\";\r\n            return window.getAjaxRequest(url);" +
-"\r\n        };\r\n\r\n        var ajax = request();\r\n\r\n        ajax.success(function (" +
-"response) {\r\n            window.products = response;\r\n            $(document).tr" +
-"igger(\"itemFetched\");\r\n        });\r\n    };\r\n\r\n    $(\".search.panel input\").keyup" +
-"(function () {\r\n        var el = $(this);\r\n        var term = el.val();\r\n\r\n     " +
-"   var categoryEl = $(\".category.list .selected.category\");\r\n        var categor" +
-"y = \"\";\r\n\r\n        if (categoryEl.length) {\r\n            category = categoryEl.t" +
-"ext();\r\n        };\r\n\r\n        displayProducts(category, term);\r\n\r\n        initia" +
-"lizeClickAndAction();\r\n    });\r\n\r\n    $(\".search.panel input\").keydown(function " +
-"(e) {\r\n        if (e.keyCode === 13) {\r\n            var item = $(\".item.list .it" +
-"em:first\");\r\n\r\n            if (item.length) {\r\n                item.trigger(\"cli" +
-"ck\");\r\n            };\r\n        };\r\n    });\r\n\r\n    window.fetchUnits();\r\n    wind" +
-"ow.fetchProducts();\r\n\r\n    setTimeout(function () {\r\n        window.fetchProduct" +
-"s();\r\n    }, 120000);\r\n\r\n    function removeItem(el) {\r\n        var confirmed = " +
-"confirm(\"Are you sure?\");\r\n\r\n        if (!confirmed) {\r\n            return;\r\n   " +
-"     };\r\n\r\n        el = $(el);\r\n        var container = el.parent().parent();\r\n " +
-"       container.remove();\r\n        window.updateTotal();\r\n    };\r\n\r\n    $(docum" +
-"ent).on(\"itemFetched\", function () {\r\n        $(\"#POSDimmer\").removeClass(\"activ" +
-"e\");\r\n        displayProducts();\r\n        displayCategories();\r\n        initiali" +
-"zeClickAndAction();\r\n    });\r\n\r\n\r\n    function initializeClickAndAction() {\r\n   " +
-"     $(\"#POSItemList .item\").unbind(\"click\").bind(\"click\", function () {\r\n      " +
-"      var el = $(this);\r\n            var costPrice = el.attr(\"data-cost-price\");" +
-"\r\n            var photo = el.attr(\"data-photo\");\r\n\r\n            var barCode = el" +
-".attr(\"data-barcode\");\r\n            var brand = el.attr(\"data-brand\");\r\n        " +
-"    var unitId = el.attr(\"data-unit-id\");\r\n            var validUnits = el.attr(" +
-"\"data-valid-units\");\r\n            var itemGroup = el.attr(\"data-item-group\");\r\n " +
-"           var itemName = el.attr(\"data-item-name\");\r\n            var itemCode =" +
-" el.attr(\"data-item-code\");\r\n            var itemId = el.attr(\"data-item-id\");\r\n" +
-"            var price = parseFloat(costPrice || 0);\r\n\r\n            if (!price) {" +
-"\r\n                alert(\"Cannot add item because the price is zero.\");\r\n        " +
-"        return;\r\n            };\r\n\r\n\r\n\r\n            var targetEl = $(\"#OpeningIte" +
-"ms\");\r\n            var selector = \"pos-\" + itemId;\r\n            var existingEl =" +
-" $(\"#\" + selector);\r\n\r\n            if (existingEl.length) {\r\n                var" +
-" existingQuantitySpan = existingEl.find(\"span.quantity\");\r\n                var e" +
-"xistingQuantityInput = existingEl.find(\"input.quantity\");\r\n\r\n                var" +
-" quantity = parseInt(existingQuantitySpan.text() || 0);\r\n                quantit" +
-"y++;\r\n\r\n                existingQuantitySpan.text(quantity);\r\n                ex" +
-"istingQuantityInput.val(quantity).trigger(\"keyup\");\r\n\r\n                window.up" +
-"dateTotal();\r\n                return;\r\n            };\r\n\r\n            var templat" +
-"e = itemTemplate;\r\n\r\n            template = template.replace(/{ItemId}/g, itemId" +
-");\r\n            template = template.replace(/{CostPrice}/g, costPrice);\r\n       " +
-"     template = template.replace(/{Photo}/g, photo);\r\n            template = tem" +
-"plate.replace(/{BarCode}/g, barCode);\r\n            template = template.replace(/" +
-"{BrandName}/g, brand);\r\n            template = template.replace(/{ItemGroupName}" +
-"/g, itemGroup);\r\n            template = template.replace(/{ItemName}/g, itemName" +
-");\r\n            template = template.replace(/{ItemCode}/g, itemCode);\r\n         " +
-"   template = template.replace(/{Price}/g, price);\r\n            template = templ" +
-"ate.replace(/{UnitId}/g, unitId);\r\n            template = template.replace(/{Val" +
-"idUnits}/g, validUnits);\r\n\r\n            var item = $(template);\r\n            var" +
-" quantityInput = item.find(\"input.quantity\");\r\n            var priceInput = item" +
-".find(\"input.price\");\r\n            var unitSelect = item.find(\"select.unit\");\r\n\r" +
-"\n            function loadUnits(el, defaultUnitId, validUnits) {\r\n              " +
-"  el.html(\"\");\r\n\r\n                var units = window.Enumerable.From(window.meta" +
-"Units)\r\n                    .Where(function (x) {\r\n                        retur" +
-"n validUnits.indexOf(x.UnitId.toString()) > -1;\r\n                    }).ToArray(" +
-");\r\n\r\n                $.each(units, function () {\r\n                    var unit " +
-"= this;\r\n\r\n                    var option = $(\"<option/ >\");\r\n                  " +
-"  option.attr(\"value\", unit.UnitId);\r\n                    option.html(unit.UnitN" +
-"ame);\r\n\r\n                    if (defaultUnitId === unit.UnitId) {\r\n             " +
-"           option.attr(\"selected\", \"\");\r\n                    };\r\n\r\n             " +
-"       option.appendTo(el);\r\n                });\r\n\r\n            };\r\n\r\n          " +
-"  loadUnits(unitSelect, unitId, validUnits.split(\',\'));\r\n\r\n            function " +
-"updateItemTotal(el) {\r\n                var quantityEl = el.find(\"input.quantity\"" +
-");\r\n\r\n                var quantity = parseInt(quantityEl.val() || 0);\r\n         " +
-"       var price = parseFloat(el.find(\"input.price\").val());\r\n                //" +
-"var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n                var amoun" +
-"t = (price * quantity).toFixed(2);\r\n\r\n                el.find(\"span.quantity\").h" +
-"tml(quantity);\r\n                el.find(\"span.amount\").html(amount);\r\n\r\n        " +
-"        window.updateTotal();\r\n\r\n            };\r\n\r\n            quantityInput.on(" +
-"\"keyup\", function () {\r\n                var el = $(this);\r\n                var p" +
-"arentInfo = el.parent().parent();\r\n                updateItemTotal(parentInfo);\r" +
-"\n            });\r\n\r\n            priceInput.on(\"keyup\", function () {\r\n          " +
-"      var el = $(this);\r\n                var parentInfo = el.parent().parent();\r" +
-"\n                updateItemTotal(parentInfo);\r\n            });\r\n\r\n\r\n            " +
-"function getPrice(el) {\r\n                function request(itemId, unitId) {\r\n   " +
-"                 var url = \"/dashboard/inventory/items/cost-price/{itemId}/{unit" +
-"Id}\";\r\n                    url = url.replace(\"{itemId}\", itemId);\r\n             " +
-"       url = url.replace(\"{unitId}\", unitId);\r\n\r\n                    return wind" +
-"ow.getAjaxRequest(url);\r\n                };\r\n\r\n                var itemId = el.a" +
-"ttr(\"data-item-id\");\r\n                var unitId = el.val();\r\n\r\n                " +
-"$(\".pos.opening.segment\").addClass(\"loading\");\r\n                var ajax = reque" +
-"st(itemId, unitId);\r\n\r\n                ajax.success(function (response) {\r\n     " +
-"               $(\".pos.opening.segment\").removeClass(\"loading\");\r\n              " +
-"      var priceInput = el.parent().parent().parent().find(\"input.price\");\r\n     " +
-"               priceInput.val(response).trigger(\"keyup\");\r\n                });\r\n" +
-"\r\n                ajax.fail(function (xr) {\r\n                    $(\".pos.opening" +
-".segment\").removeClass(\"loading\");\r\n                    console.log(window.getAj" +
-"axErrorMessage(xhr));\r\n                });\r\n            };\r\n\r\n            unitSe" +
-"lect.on(\"change\", function () {\r\n                getPrice($(this));\r\n           " +
-" });\r\n\r\n            item.on(\"contextmenu\", function (e) {\r\n                e.pre" +
-"ventDefault();\r\n                var el = $(this);\r\n                var inputEl =" +
-" el.find(\".number.block input\");\r\n                var buttonEl = el.find(\".numbe" +
-"r.block button\");\r\n\r\n                inputEl.toggle();\r\n                buttonEl" +
-".toggle();\r\n            });\r\n\r\n            item.appendTo(targetEl);\r\n           " +
-" quantityInput.trigger(\"keyup\");\r\n            window.updateTotal();\r\n        });" +
-"\r\n    };\r\n\r\n    function updateTotal() {\r\n        var candidates = $(\"#OpeningIt" +
-"ems div.item\");\r\n        var amountEl = $(\"#SummaryItems div.amount .money\");\r\n\r" +
-"\n        var totalPrice = 0;\r\n        //var totalQuantity = 0;\r\n\r\n        $.each" +
-"(candidates, function () {\r\n            var el = $(this);\r\n            var quant" +
-"ityEl = el.find(\"input.quantity\");\r\n\r\n            var quantity = parseInt(quanti" +
-"tyEl.val() || 0);\r\n            var price = parseFloat(el.find(\"input.price\").val" +
-"());\r\n            //var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n     " +
-"       var amount = price * quantity;\r\n            totalPrice += amount;\r\n      " +
-"      //totalQuantity += quantity;\r\n        });\r\n\r\n        totalPrice = parseFlo" +
-"at(totalPrice.toFixed(2));\r\n\r\n        amountEl.html(totalPrice);\r\n    };\r\n\r\n    " +
-"function displayCategories() {\r\n        var categories = window.Enumerable.From(" +
-"products).Distinct(function (x) { return x.ItemGroupName }).Select(function (x) " +
-"{ return x.ItemGroupName }).ToArray();\r\n        var targetEl = $(\".cat.filter\");" +
-"\r\n        $(\".category.list\").find(\".category\").remove();\r\n\r\n        targetEl.un" +
-"bind(\"click\").bind(\"click\", function () {\r\n            displayProducts();\r\n     " +
-"       $(\".category\").removeClass(\"selected\");\r\n            targetEl.hide();\r\n  " +
-"          initializeClickAndAction();\r\n        });\r\n\r\n        $.each(categories," +
-" function () {\r\n            var category = $(\"<div class=\'category\' />\");\r\n     " +
-"       category.html(this);\r\n\r\n            category.unbind(\"click\").bind(\"click\"" +
-", function () {\r\n                $(\".search.panel input\").val(\"\");\r\n            " +
-"    var el = $(this);\r\n                var name = el.text();\r\n\r\n                " +
-"if (name) {\r\n                    displayProducts(name);\r\n                    $(\"" +
-".category\").removeClass(\"selected\");\r\n                    el.addClass(\"selected\"" +
-");\r\n\r\n                    targetEl.show();\r\n                } else {\r\n          " +
-"          targetEl.hide();\r\n                };\r\n\r\n                initializeClic" +
-"kAndAction();\r\n            });\r\n\r\n            targetEl.before(category);\r\n      " +
-"  });\r\n    };\r\n\r\n    function displayProducts(category, searchQuery) {\r\n        " +
-"var target = $(\"#POSItemList\");\r\n\r\n        var groupItems;\r\n\r\n        if (!categ" +
-"ory && !searchQuery) {\r\n            groupItems = products;\r\n        } else {\r\n  " +
-"          if (category && searchQuery) {\r\n                groupItems = window.En" +
-"umerable\r\n                    .From(products)\r\n                    .Where(functi" +
-"on (x) {\r\n                        return x.ItemGroupName.toLowerCase() === categ" +
-"ory.toString().toLowerCase()\r\n                            && x.ItemName.toLowerC" +
-"ase().indexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray()" +
-";\r\n            } else if (!category && searchQuery) {\r\n                groupItem" +
-"s = window.Enumerable\r\n                    .From(products)\r\n                    " +
-".Where(function (x) {\r\n                        return x.ItemName.toLowerCase().i" +
-"ndexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray();\r\n    " +
-"        } else {\r\n                groupItems = window.Enumerable\r\n              " +
-"      .From(products)\r\n                    .Where(function (x) {\r\n              " +
-"          return x.ItemGroupName.toLowerCase() === category.toString().toLowerCa" +
-"se();\r\n                    }).ToArray();\r\n            };\r\n        };\r\n\r\n        " +
-"target.html(\"\").hide();\r\n\r\n        $.each(groupItems, function () {\r\n           " +
-" var product = this;\r\n\r\n            var item = $(\"<div class=\'item\' />\");\r\n     " +
-"       item.attr(\"data-item-id\", product.ItemId);\r\n            item.attr(\"data-i" +
-"tem-code\", product.ItemCode);\r\n            item.attr(\"data-item-name\", product.I" +
-"temName);\r\n            item.attr(\"data-item-group\", product.ItemGroupName);\r\n   " +
-"         item.attr(\"data-brand\", product.BrandName);\r\n            item.attr(\"dat" +
-"a-unit-id\", product.UnitId);\r\n            item.attr(\"data-valid-units\", product." +
-"ValidUnits);\r\n            item.attr(\"data-barcode\", product.Barcode);\r\n         " +
-"   item.attr(\"data-photo\", product.Photo);\r\n            item.attr(\"data-cost-pri" +
-"ce\", product.CostPrice);\r\n\r\n            if (product.HotItem) {\r\n                " +
-"item.addClass(\"hot\");\r\n            };\r\n\r\n            var info = $(\"<div class=\'i" +
-"nfo\' />\");\r\n\r\n            var price = $(\"<div class=\'price\' />\");\r\n            p" +
-"rice.html(product.CostPrice);\r\n\r\n            price.appendTo(info);\r\n\r\n\r\n        " +
-"    var photo = $(\"<div class=\'photo\' />\");\r\n            var img = $(\"<img />\");" +
-"\r\n            img.attr(\"src\", product.Photo + \"?Height=200&Width=200\");\r\n\r\n     " +
-"       img.appendTo(photo);\r\n            photo.appendTo(info);\r\n\r\n            va" +
-"r name = $(\"<div class=\'name\' />\");\r\n            name.html(product.ItemName);\r\n\r" +
-"\n            name.appendTo(info);\r\n\r\n            info.appendTo(item);\r\n         " +
-"   item.appendTo(target);\r\n        });\r\n\r\n        if (searchQuery) {\r\n          " +
-"  target.show();\r\n            return;\r\n        };\r\n\r\n        target.fadeIn(500);" +
-"\r\n    };\r\n\r\n    </script>\r\n");
+"chUnits() {\r\n        function request() {\r\n            const url = \"/api/forms/i" +
+"nventory/units/all\";\r\n            return window.getAjaxRequest(url);\r\n        };" +
+"\r\n\r\n        const ajax = request();\r\n\r\n        ajax.success(function (response) " +
+"{\r\n            window.metaUnits = response;\r\n        });\r\n    };\r\n\r\n    function" +
+" fetchProducts() {\r\n        function request() {\r\n            const url = \"/dash" +
+"board/inventory/items/stockable/view\";\r\n            return window.getAjaxRequest" +
+"(url);\r\n        };\r\n\r\n        const ajax = request();\r\n\r\n        ajax.success(fu" +
+"nction (response) {\r\n            window.products = response;\r\n            $(docu" +
+"ment).trigger(\"itemFetched\");\r\n        });\r\n    };\r\n\r\n    $(\".search.panel input" +
+"\").keyup(function () {\r\n        const el = $(this);\r\n        const term = el.val" +
+"();\r\n\r\n        const categoryEl = $(\".category.list .selected.category\");\r\n     " +
+"   var category = \"\";\r\n\r\n        if (categoryEl.length) {\r\n            category " +
+"= categoryEl.text();\r\n        };\r\n\r\n        displayProducts(category, term);\r\n\r\n" +
+"        initializeClickAndAction();\r\n    });\r\n\r\n    $(\".search.panel input\").key" +
+"down(function (e) {\r\n        if (e.keyCode === 13) {\r\n            const item = $" +
+"(\".item.list .item:first\");\r\n\r\n            if (item.length) {\r\n                i" +
+"tem.trigger(\"click\");\r\n            };\r\n        };\r\n    });\r\n\r\n    window.fetchUn" +
+"its();\r\n    window.fetchProducts();\r\n\r\n    setTimeout(function () {\r\n        win" +
+"dow.fetchProducts();\r\n    }, 120000);\r\n\r\n    function removeItem(el) {\r\n        " +
+"const confirmed = confirm(\"Are you sure?\");\r\n\r\n        if (!confirmed) {\r\n      " +
+"      return;\r\n        };\r\n\r\n        el = $(el);\r\n        const container = el.p" +
+"arent().parent();\r\n        container.remove();\r\n        window.updateTotal();\r\n " +
+"   };\r\n\r\n    $(document).on(\"itemFetched\", function () {\r\n        $(\"#POSDimmer\"" +
+").removeClass(\"active\");\r\n        displayProducts();\r\n        displayCategories(" +
+");\r\n        initializeClickAndAction();\r\n    });\r\n\r\n\r\n    function initializeCli" +
+"ckAndAction() {\r\n        $(\"#POSItemList .item\").unbind(\"click\").bind(\"click\", f" +
+"unction () {\r\n            var el = $(this);\r\n            var costPrice = el.attr" +
+"(\"data-cost-price\");\r\n            var photo = el.attr(\"data-photo\");\r\n\r\n        " +
+"    var barCode = el.attr(\"data-barcode\");\r\n            var brand = el.attr(\"dat" +
+"a-brand\");\r\n            var unitId = el.attr(\"data-unit-id\");\r\n            var v" +
+"alidUnits = el.attr(\"data-valid-units\");\r\n            var itemGroup = el.attr(\"d" +
+"ata-item-group\");\r\n            var itemName = el.attr(\"data-item-name\");\r\n      " +
+"      var itemCode = el.attr(\"data-item-code\");\r\n            var itemId = el.att" +
+"r(\"data-item-id\");\r\n            var price = parseFloat(costPrice || 0);\r\n\r\n     " +
+"       if (!price) {\r\n                alert(\"Cannot add item because the price i" +
+"s zero.\");\r\n                return;\r\n            };\r\n\r\n\r\n\r\n            var targe" +
+"tEl = $(\"#OpeningItems\");\r\n            var selector = \"pos-\" + itemId;\r\n        " +
+"    var existingEl = $(\"#\" + selector);\r\n\r\n            if (existingEl.length) {\r" +
+"\n                var existingQuantitySpan = existingEl.find(\"span.quantity\");\r\n " +
+"               var existingQuantityInput = existingEl.find(\"input.quantity\");\r\n\r" +
+"\n                var quantity = parseInt(existingQuantitySpan.text() || 0);\r\n   " +
+"             quantity++;\r\n\r\n                existingQuantitySpan.text(quantity);" +
+"\r\n                existingQuantityInput.val(quantity).trigger(\"keyup\");\r\n\r\n     " +
+"           window.updateTotal();\r\n                return;\r\n            };\r\n\r\n   " +
+"         var template = itemTemplate;\r\n\r\n            template = template.replace" +
+"(/{ItemId}/g, itemId);\r\n            template = template.replace(/{CostPrice}/g, " +
+"costPrice);\r\n            template = template.replace(/{Photo}/g, photo);\r\n      " +
+"      template = template.replace(/{BarCode}/g, barCode);\r\n            template " +
+"= template.replace(/{BrandName}/g, brand);\r\n            template = template.repl" +
+"ace(/{ItemGroupName}/g, itemGroup);\r\n            template = template.replace(/{I" +
+"temName}/g, itemName);\r\n            template = template.replace(/{ItemCode}/g, i" +
+"temCode);\r\n            template = template.replace(/{Price}/g, price);\r\n        " +
+"    template = template.replace(/{UnitId}/g, unitId);\r\n            template = te" +
+"mplate.replace(/{ValidUnits}/g, validUnits);\r\n\r\n            var item = $(templat" +
+"e);\r\n            var quantityInput = item.find(\"input.quantity\");\r\n            v" +
+"ar priceInput = item.find(\"input.price\");\r\n            var unitSelect = item.fin" +
+"d(\"select.unit\");\r\n\r\n            function loadUnits(el, defaultUnitId, validUnit" +
+"s) {\r\n                el.html(\"\");\r\n\r\n                const units = window.Enume" +
+"rable.From(window.metaUnits)\r\n                    .Where(function (x) {\r\n       " +
+"                 return validUnits.indexOf(x.UnitId.toString()) > -1;\r\n         " +
+"           }).ToArray();\r\n\r\n                $.each(units, function () {\r\n       " +
+"             const unit = this;\r\n\r\n                    const option = $(\"<option" +
+"/ >\");\r\n                    option.attr(\"value\", unit.UnitId);\r\n                " +
+"    option.html(unit.UnitName);\r\n\r\n                    if (defaultUnitId === uni" +
+"t.UnitId) {\r\n                        option.attr(\"selected\", \"\");\r\n             " +
+"       };\r\n\r\n                    option.appendTo(el);\r\n                });\r\n\r\n  " +
+"          };\r\n\r\n            loadUnits(unitSelect, unitId, validUnits.split(\',\'))" +
+";\r\n\r\n            function updateItemTotal(el) {\r\n                const quantityE" +
+"l = el.find(\"input.quantity\");\r\n\r\n                const quantity = parseInt(quan" +
+"tityEl.val() || 0);\r\n                const price = parseFloat(el.find(\"input.pri" +
+"ce\").val());\r\n                //var price = parseFloat(el.attr(\"data-price\") || " +
+"0);\r\n\r\n                const amount = (price * quantity).toFixed(2);\r\n\r\n        " +
+"        el.find(\"span.quantity\").html(quantity);\r\n                el.find(\"span." +
+"amount\").html(amount);\r\n\r\n                window.updateTotal();\r\n\r\n            }" +
+";\r\n\r\n            quantityInput.on(\"keyup\", function () {\r\n                const " +
+"el = $(this);\r\n                const parentInfo = el.parent().parent();\r\n       " +
+"         updateItemTotal(parentInfo);\r\n            });\r\n\r\n            priceInput" +
+".on(\"keyup\", function () {\r\n                const el = $(this);\r\n               " +
+" const parentInfo = el.parent().parent();\r\n                updateItemTotal(paren" +
+"tInfo);\r\n            });\r\n\r\n\r\n            function getPrice(el) {\r\n             " +
+"   function request(itemId, unitId) {\r\n                    var url = \"/dashboard" +
+"/inventory/items/cost-price/{itemId}/{unitId}\";\r\n                    url = url.r" +
+"eplace(\"{itemId}\", itemId);\r\n                    url = url.replace(\"{unitId}\", u" +
+"nitId);\r\n\r\n                    return window.getAjaxRequest(url);\r\n             " +
+"   };\r\n\r\n                const itemId = el.attr(\"data-item-id\");\r\n              " +
+"  const unitId = el.val();\r\n\r\n                $(\".pos.opening.segment\").addClass" +
+"(\"loading\");\r\n                const ajax = request(itemId, unitId);\r\n\r\n         " +
+"       ajax.success(function (response) {\r\n                    $(\".pos.opening.s" +
+"egment\").removeClass(\"loading\");\r\n                    const priceInput = el.pare" +
+"nt().parent().parent().find(\"input.price\");\r\n                    priceInput.val(" +
+"response).trigger(\"keyup\");\r\n                });\r\n\r\n                ajax.fail(fu" +
+"nction (xr) {\r\n                    $(\".pos.opening.segment\").removeClass(\"loadin" +
+"g\");\r\n                    console.log(window.getAjaxErrorMessage(xhr));\r\n       " +
+"         });\r\n            };\r\n\r\n            unitSelect.on(\"change\", function () " +
+"{\r\n                getPrice($(this));\r\n            });\r\n\r\n            item.on(\"c" +
+"ontextmenu\", function (e) {\r\n                e.preventDefault();\r\n              " +
+"  const el = $(this);\r\n                const inputEl = el.find(\".number.block in" +
+"put\");\r\n                const buttonEl = el.find(\".number.block button\");\r\n\r\n   " +
+"             inputEl.toggle();\r\n                buttonEl.toggle();\r\n            " +
+"});\r\n\r\n            item.appendTo(targetEl);\r\n            quantityInput.trigger(\"" +
+"keyup\");\r\n            window.updateTotal();\r\n        });\r\n    };\r\n\r\n    function" +
+" updateTotal() {\r\n        const candidates = $(\"#OpeningItems div.item\");\r\n     " +
+"   const amountEl = $(\"#SummaryItems div.amount .money\");\r\n\r\n        var totalPr" +
+"ice = 0;\r\n        //var totalQuantity = 0;\r\n\r\n        $.each(candidates, functio" +
+"n () {\r\n            const el = $(this);\r\n            const quantityEl = el.find(" +
+"\"input.quantity\");\r\n\r\n            const quantity = parseInt(quantityEl.val() || " +
+"0);\r\n            const price = parseFloat(el.find(\"input.price\").val());\r\n      " +
+"      //var price = parseFloat(el.attr(\"data-price\") || 0);\r\n\r\n            const" +
+" amount = price * quantity;\r\n            totalPrice += amount;\r\n            //to" +
+"talQuantity += quantity;\r\n        });\r\n\r\n        totalPrice = parseFloat(totalPr" +
+"ice.toFixed(2));\r\n\r\n        amountEl.html(totalPrice);\r\n    };\r\n\r\n    function d" +
+"isplayCategories() {\r\n        const categories = window.Enumerable.From(products" +
+").Distinct(function (x) { return x.ItemGroupName }).Select(function (x) { return" +
+" x.ItemGroupName }).ToArray();\r\n        var targetEl = $(\".cat.filter\");\r\n      " +
+"  $(\".category.list\").find(\".category\").remove();\r\n\r\n        targetEl.unbind(\"cl" +
+"ick\").bind(\"click\", function () {\r\n            displayProducts();\r\n            $" +
+"(\".category\").removeClass(\"selected\");\r\n            targetEl.hide();\r\n          " +
+"  initializeClickAndAction();\r\n        });\r\n\r\n        $.each(categories, functio" +
+"n () {\r\n            const category = $(\"<div class=\'category\' />\");\r\n           " +
+" category.html(this);\r\n\r\n            category.unbind(\"click\").bind(\"click\", func" +
+"tion () {\r\n                $(\".search.panel input\").val(\"\");\r\n                co" +
+"nst el = $(this);\r\n                const name = el.text();\r\n\r\n                if" +
+" (name) {\r\n                    displayProducts(name);\r\n                    $(\".c" +
+"ategory\").removeClass(\"selected\");\r\n                    el.addClass(\"selected\");" +
+"\r\n\r\n                    targetEl.show();\r\n                } else {\r\n            " +
+"        targetEl.hide();\r\n                };\r\n\r\n                initializeClickA" +
+"ndAction();\r\n            });\r\n\r\n            targetEl.before(category);\r\n        " +
+"});\r\n    };\r\n\r\n    function displayProducts(category, searchQuery) {\r\n        va" +
+"r target = $(\"#POSItemList\");\r\n\r\n        var groupItems;\r\n\r\n        if (!categor" +
+"y && !searchQuery) {\r\n            groupItems = products;\r\n        } else {\r\n    " +
+"        if (category && searchQuery) {\r\n                groupItems = window.Enum" +
+"erable\r\n                    .From(products)\r\n                    .Where(function" +
+" (x) {\r\n                        return x.ItemGroupName.toLowerCase() === categor" +
+"y.toString().toLowerCase()\r\n                            && x.ItemName.toLowerCas" +
+"e().indexOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray();\r" +
+"\n            } else if (!category && searchQuery) {\r\n                groupItems " +
+"= window.Enumerable\r\n                    .From(products)\r\n                    .W" +
+"here(function (x) {\r\n                        return x.ItemName.toLowerCase().ind" +
+"exOf(searchQuery.toLowerCase()) > -1;\r\n                    }).ToArray();\r\n      " +
+"      } else {\r\n                groupItems = window.Enumerable\r\n                " +
+"    .From(products)\r\n                    .Where(function (x) {\r\n                " +
+"        return x.ItemGroupName.toLowerCase() === category.toString().toLowerCase" +
+"();\r\n                    }).ToArray();\r\n            };\r\n        };\r\n\r\n        ta" +
+"rget.html(\"\").hide();\r\n\r\n        $.each(groupItems, function () {\r\n            c" +
+"onst product = this;\r\n\r\n            const item = $(\"<div class=\'item\' />\");\r\n   " +
+"         item.attr(\"data-item-id\", product.ItemId);\r\n            item.attr(\"data" +
+"-item-code\", product.ItemCode);\r\n            item.attr(\"data-item-name\", product" +
+".ItemName);\r\n            item.attr(\"data-item-group\", product.ItemGroupName);\r\n " +
+"           item.attr(\"data-brand\", product.BrandName);\r\n            item.attr(\"d" +
+"ata-unit-id\", product.UnitId);\r\n            item.attr(\"data-valid-units\", produc" +
+"t.ValidUnits);\r\n            item.attr(\"data-barcode\", product.Barcode);\r\n       " +
+"     item.attr(\"data-photo\", product.Photo);\r\n            item.attr(\"data-cost-p" +
+"rice\", product.CostPrice);\r\n\r\n            if (product.HotItem) {\r\n              " +
+"  item.addClass(\"hot\");\r\n            };\r\n\r\n            const info = $(\"<div clas" +
+"s=\'info\' />\");\r\n\r\n            const price = $(\"<div class=\'price\' />\");\r\n       " +
+"     price.html(product.CostPrice);\r\n\r\n            price.appendTo(info);\r\n\r\n\r\n  " +
+"          const photo = $(\"<div class=\'photo\' />\");\r\n            const img = $(\"" +
+"<img />\");\r\n            img.attr(\"src\", product.Photo + \"?Height=200&Width=200\")" +
+";\r\n\r\n            img.appendTo(photo);\r\n            photo.appendTo(info);\r\n\r\n    " +
+"        const name = $(\"<div class=\'name\' />\");\r\n            name.html(product.I" +
+"temName);\r\n\r\n            name.appendTo(info);\r\n\r\n            info.appendTo(item)" +
+";\r\n            item.appendTo(target);\r\n        });\r\n\r\n        if (searchQuery) {" +
+"\r\n            target.show();\r\n            return;\r\n        };\r\n\r\n        target." +
+"fadeIn(500);\r\n    };\r\n\r\n    </script>\r\n");
 
 WriteLiteral("    <script>\r\n    $(\"#CheckoutButton\").unbind(\"click\").bind(\"click\", function () " +
-"{\r\n\r\n        function request(model) {\r\n            var url = \"/dashboard/invent" +
-"ory/setup/opening-inventory/new\";\r\n            var data = JSON.stringify(model);" +
-"\r\n            return window.getAjaxRequest(url, \"POST\", data);\r\n        };\r\n\r\n  " +
-"      function getModel() {\r\n            function getDetails() {\r\n              " +
-"  var items = $(\"#OpeningItems .item\");\r\n                var model = [];\r\n\r\n    " +
-"            $.each(items, function () {\r\n                    var el = $(this);\r\n" +
-"                    var itemId = parseInt(el.attr(\"data-item-id\"));\r\n           " +
-"         var quantity = parseInt(el.find(\"input.quantity\").val());\r\n            " +
-"        var unitId = parseInt(el.find(\"select.unit\").val());\r\n                  " +
-"  var price = parseFloat(el.find(\"input.price\").val() || 0);\r\n\r\n                " +
-"    model.push({\r\n                        StoreId: $(\"#StoreSelect\").val(),\r\n   " +
-"                     ItemId: itemId,\r\n                        Quantity: quantity" +
-",\r\n                        UnitId: unitId,\r\n                        Price: price" +
-"\r\n                    });\r\n                });\r\n\r\n                return model;\r" +
-"\n            };\r\n\r\n            var valueDate = $(\"#ValueDateInputDate\").datepick" +
-"er(\"getDate\");\r\n            var bookDate = $(\"#BookDateInputDate\").datepicker(\"g" +
-"etDate\");\r\n            var referenceNumber = $(\"#ReferenceNumberInputText\").val(" +
-");\r\n            var statementReference = $(\"#StatementReferenceInputText\").val()" +
-";\r\n            var storeId = $(\"#StoreSelect\").val();\r\n            var details =" +
-" getDetails();\r\n\r\n            return {\r\n                ValueDate: valueDate,\r\n " +
-"               BookDate: bookDate,\r\n                ReferenceNumber: referenceNu" +
-"mber,\r\n                StatementReference: statementReference,\r\n                " +
-"Details: details\r\n            };\r\n        };\r\n\r\n        var model = getModel();\r" +
-"\n\r\n        if (!model.Details.length) {\r\n            window.displayMessage(\"Plea" +
-"se select an item.\");\r\n            return;\r\n        };\r\n\r\n        var confirmed " +
-"= confirm(\"Are you sure\");\r\n\r\n        if (!confirmed) {\r\n            return;\r\n  " +
-"      };\r\n\r\n\r\n        $(\"#CheckoutButton\").addClass(\"loading\");\r\n\r\n        var a" +
-"jax = request(model);\r\n\r\n        ajax.success(function (response) {\r\n           " +
-" var id = response;\r\n            document.location = \"/dashboard/inventory/setup" +
-"/opening-inventory/checklist/\" + id;\r\n        });\r\n\r\n        ajax.fail(function " +
-"(xhr) {\r\n            $(\"#CheckoutButton\").removeClass(\"loading\");\r\n            a" +
-"lert(JSON.stringify(xhr));\r\n        });\r\n    });\r\n    </script>\r\n");
+"{\r\n\r\n        function request(model) {\r\n            const url = \"/dashboard/inve" +
+"ntory/setup/opening-inventory/new\";\r\n            const data = JSON.stringify(mod" +
+"el);\r\n            return window.getAjaxRequest(url, \"POST\", data);\r\n        };\r\n" +
+"\r\n        function getModel() {\r\n            function getDetails() {\r\n          " +
+"      const items = $(\"#OpeningItems .item\");\r\n                var model = [];\r\n" +
+"\r\n                $.each(items, function () {\r\n                    const el = $(" +
+"this);\r\n                    const itemId = parseInt(el.attr(\"data-item-id\"));\r\n " +
+"                   const quantity = parseInt(el.find(\"input.quantity\").val());\r\n" +
+"                    const unitId = parseInt(el.find(\"select.unit\").val());\r\n    " +
+"                const price = parseFloat(el.find(\"input.price\").val() || 0);\r\n\r\n" +
+"                    model.push({\r\n                        StoreId: $(\"#StoreSele" +
+"ct\").val(),\r\n                        ItemId: itemId,\r\n                        Qu" +
+"antity: quantity,\r\n                        UnitId: unitId,\r\n                    " +
+"    Price: price\r\n                    });\r\n                });\r\n\r\n              " +
+"  return model;\r\n            };\r\n\r\n            const valueDate = $(\"#ValueDateIn" +
+"putDate\").datepicker(\"getDate\");\r\n            const bookDate = $(\"#BookDateInput" +
+"Date\").datepicker(\"getDate\");\r\n            const referenceNumber = $(\"#Reference" +
+"NumberInputText\").val();\r\n            const statementReference = $(\"#StatementRe" +
+"ferenceInputText\").val();\r\n            const storeId = $(\"#StoreSelect\").val();\r" +
+"\n            const details = getDetails();\r\n\r\n            return {\r\n            " +
+"    ValueDate: valueDate,\r\n                BookDate: bookDate,\r\n                " +
+"ReferenceNumber: referenceNumber,\r\n                StatementReference: statement" +
+"Reference,\r\n                Details: details\r\n            };\r\n        };\r\n\r\n    " +
+"    const model = getModel();\r\n\r\n        if (!model.Details.length) {\r\n         " +
+"   window.displayMessage(\"Please select an item.\");\r\n            return;\r\n      " +
+"  };\r\n\r\n        const confirmed = confirm(\"Are you sure\");\r\n\r\n        if (!confi" +
+"rmed) {\r\n            return;\r\n        };\r\n\r\n\r\n        $(\"#CheckoutButton\").addCl" +
+"ass(\"loading\");\r\n\r\n        const ajax = request(model);\r\n\r\n        ajax.success(" +
+"function (response) {\r\n            const id = response;\r\n            document.lo" +
+"cation = \"/dashboard/inventory/setup/opening-inventory/checklist/\" + id;\r\n      " +
+"  });\r\n\r\n        ajax.fail(function (xhr) {\r\n            $(\"#CheckoutButton\").re" +
+"moveClass(\"loading\");\r\n            alert(JSON.stringify(xhr));\r\n        });\r\n   " +
+" });\r\n    </script>\r\n");
 
             
             #line 1039 "..\..\Views\Setup\OpeningInventory\New.cshtml"
@@ -856,7 +858,7 @@ WriteLiteral(@"    <script>
             return window.getAjaxRequest(url);
         };
 
-        var ajax = request();
+        const ajax = request();
 
         ajax.success(function (response) {
             var options = """";

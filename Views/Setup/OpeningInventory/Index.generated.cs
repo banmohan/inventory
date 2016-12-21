@@ -33,7 +33,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -56,11 +55,7 @@ namespace ASP
             #line default
             #line hidden
 WriteLiteral("\r\n<style>\r\n    .modal iframe {\r\n        width: 100%;\r\n        border: none;\r\n    " +
-"    height: 700px;\r\n    }\r\n</style>\r\n<script");
-
-WriteLiteral(" src=\"/Scripts/frapid/utilities/form.js\"");
-
-WriteLiteral("></script>\r\n<div");
+"    height: 700px;\r\n    }\r\n</style>\r\n<div");
 
 WriteLiteral(" class=\"ui attached page segment\"");
 
@@ -412,54 +407,54 @@ WriteLiteral(" class=\"close icon\"");
 
 WriteLiteral("></i>\r\n    <iframe></iframe>\r\n</div>\r\n<script>\r\n    function displayTable(target," +
 " model) {\r\n        target.find(\"tbody\").html(\"\");\r\n        function getCell(text" +
-") {\r\n            var cell = $(\"<td />\");\r\n\r\n            cell.text(text || \"\");\r\n" +
-"\r\n            return cell;\r\n        };\r\n\r\n        function getActionCell(tranId)" +
-" {\r\n            var cell = $(\"<td />\");\r\n\r\n            var checklistAnchor = $(\"" +
-"<a title=\'Checklist Window\'><i class=\'list icon\'></i></a>\");\r\n            checkl" +
-"istAnchor.attr(\"href\", \"/dashboard/inventory/setup/opening-inventory/checklist/\"" +
-" + tranId);\r\n\r\n            var inventoryAdviceAnchor = $(\"<a title=\'View Opening" +
-" Inventory Advice\'><i class=\'zoom icon\'></i></a>\");\r\n            inventoryAdvice" +
-"Anchor.attr(\"href\", \"javascript:void(0);\");\r\n            inventoryAdviceAnchor.a" +
-"ttr(\"onclick\", \"showOpeningAdvice(\" + tranId + \");\");\r\n\r\n\r\n            cell.appe" +
-"nd(checklistAnchor);\r\n            cell.append(inventoryAdviceAnchor);\r\n         " +
-"   return cell;\r\n        };\r\n\r\n        function getSelectionCell() {\r\n          " +
-"  var cell = $(\"<td />\");\r\n            var checkbox = $(\"<div class=\'ui toggle c" +
-"heckbox\'/>\");\r\n            var input = $(\"<input type=\'checkbox\' />\");\r\n        " +
-"    var label = $(\"<label />\");\r\n\r\n            checkbox.append(input);\r\n        " +
-"    checkbox.append(label);\r\n\r\n            cell.append(checkbox);\r\n\r\n           " +
-" return cell;\r\n        };\r\n\r\n        $.each(model, function () {\r\n            va" +
-"r item = this;\r\n\r\n            var row = $(\"<tr />\");\r\n\r\n            row.append(g" +
-"etActionCell(item.TransactionMasterId));\r\n            row.append(getSelectionCel" +
-"l(item.TransactionMasterId));\r\n            row.append(getCell(item.TransactionMa" +
-"sterId));\r\n            row.append(getCell(item.TransactionCode));\r\n            r" +
-"ow.append(getCell(item.ValueDate));\r\n            row.append(getCell(item.BookDat" +
-"e));\r\n            row.append(getCell(item.ReferenceNumber));\r\n            row.ap" +
-"pend(getCell(item.StatementReference));\r\n            row.append(getCell(item.Pos" +
-"tedBy));\r\n            row.append(getCell(item.Office));\r\n            row.append(" +
-"getCell(item.Status));\r\n            row.append(getCell(item.VerifiedBy));\r\n     " +
-"       row.append(getCell(item.VerifiedOn));\r\n            row.append(getCell(ite" +
-"m.Reason));\r\n\r\n            target.find(\"tbody\").append(row);\r\n        });\r\n    }" +
-";\r\n    function processQuery() {\r\n        function getModel() {\r\n            var" +
-" model = window.serializeForm($(\"#Annotation\"));\r\n            model.Book = \"Open" +
-"ing Inventory\";\r\n            return model;\r\n        };\r\n\r\n        function displ" +
-"ayGrid(target) {\r\n            function request(model) {\r\n                var url" +
-" = \"/dashboard/finance/tasks/journal/view\";\r\n                var data = JSON.str" +
-"ingify(model);\r\n                return window.getAjaxRequest(url, \"POST\", data);" +
-"\r\n            };\r\n\r\n            var model = getModel();\r\n\r\n            var ajax " +
-"= request(model);\r\n\r\n            ajax.success(function (response) {\r\n           " +
-"     displayTable(target, response);\r\n                target.removeClass(\"loadin" +
-"g\");\r\n            });\r\n\r\n            ajax.fail(function (xhr) {\r\n               " +
-" alert(JSON.stringify(xhr));\r\n            });\r\n        };\r\n\r\n        var view = " +
-"$(\"#InventoryView\").addClass(\"loading\");\r\n\r\n        displayGrid(view);\r\n    };\r\n" +
-"\r\n    $(\"#ShowButton\").unbind(\"click\").bind(\"click\", function () {\r\n        proc" +
-"essQuery();\r\n    });\r\n\r\n    loadDatepicker();\r\n\r\n    \r\n    function showOpeningA" +
-"dvice(tranId) {\r\n        $(\".advice.modal iframe\").attr(\"src\", \"/dashboard/repor" +
-"ts/source/Areas/MixERP.Inventory/Reports/Opening.xml?transaction_master_id=\" + t" +
-"ranId);\r\n\r\n        setTimeout(function () {\r\n            $(\".advice.modal\")\r\n   " +
-"             .modal(\'setting\', \'transition\', \'horizontal flip\')\r\n               " +
-" .modal({\r\n                    blurring: true\r\n                })\r\n             " +
-"   .modal(\"show\");\r\n\r\n        }, 300);\r\n    };\r\n    setTimeout(function () {\r\n  " +
-"      processQuery();\r\n    }, 1000);\r\n</script>");
+") {\r\n            const cell = $(\"<td />\");\r\n\r\n            cell.text(text || \"\");" +
+"\r\n\r\n            return cell;\r\n        };\r\n\r\n        function getActionCell(tranI" +
+"d) {\r\n            const cell = $(\"<td />\");\r\n\r\n            const checklistAnchor" +
+" = $(\"<a title=\'Checklist Window\'><i class=\'list icon\'></i></a>\");\r\n            " +
+"checklistAnchor.attr(\"href\", \"/dashboard/inventory/setup/opening-inventory/check" +
+"list/\" + tranId);\r\n\r\n            const inventoryAdviceAnchor = $(\"<a title=\'View" +
+" Opening Inventory Advice\'><i class=\'zoom icon\'></i></a>\");\r\n            invento" +
+"ryAdviceAnchor.attr(\"href\", \"javascript:void(0);\");\r\n            inventoryAdvice" +
+"Anchor.attr(\"onclick\", \"showOpeningAdvice(\" + tranId + \");\");\r\n\r\n\r\n            c" +
+"ell.append(checklistAnchor);\r\n            cell.append(inventoryAdviceAnchor);\r\n " +
+"           return cell;\r\n        };\r\n\r\n        function getSelectionCell() {\r\n  " +
+"          const cell = $(\"<td />\");\r\n            const checkbox = $(\"<div class=" +
+"\'ui toggle checkbox\'/>\");\r\n            const input = $(\"<input type=\'checkbox\' /" +
+">\");\r\n            const label = $(\"<label />\");\r\n\r\n            checkbox.append(i" +
+"nput);\r\n            checkbox.append(label);\r\n\r\n            cell.append(checkbox)" +
+";\r\n\r\n            return cell;\r\n        };\r\n\r\n        $.each(model, function () {" +
+"\r\n            const item = this;\r\n\r\n            const row = $(\"<tr />\");\r\n\r\n    " +
+"        row.append(getActionCell(item.TransactionMasterId));\r\n            row.ap" +
+"pend(getSelectionCell(item.TransactionMasterId));\r\n            row.append(getCel" +
+"l(item.TransactionMasterId));\r\n            row.append(getCell(item.TransactionCo" +
+"de));\r\n            row.append(getCell(item.ValueDate));\r\n            row.append(" +
+"getCell(item.BookDate));\r\n            row.append(getCell(item.ReferenceNumber));" +
+"\r\n            row.append(getCell(item.StatementReference));\r\n            row.app" +
+"end(getCell(item.PostedBy));\r\n            row.append(getCell(item.Office));\r\n   " +
+"         row.append(getCell(item.Status));\r\n            row.append(getCell(item." +
+"VerifiedBy));\r\n            row.append(getCell(item.VerifiedOn));\r\n            ro" +
+"w.append(getCell(item.Reason));\r\n\r\n            target.find(\"tbody\").append(row);" +
+"\r\n        });\r\n    };\r\n    function processQuery() {\r\n        function getModel(" +
+") {\r\n            const model = window.serializeForm($(\"#Annotation\"));\r\n        " +
+"    model.Book = \"Opening Inventory\";\r\n            return model;\r\n        };\r\n\r\n" +
+"        function displayGrid(target) {\r\n            function request(model) {\r\n " +
+"               const url = \"/dashboard/finance/tasks/journal/view\";\r\n           " +
+"     const data = JSON.stringify(model);\r\n                return window.getAjaxR" +
+"equest(url, \"POST\", data);\r\n            };\r\n\r\n            const model = getModel" +
+"();\r\n\r\n            const ajax = request(model);\r\n\r\n            ajax.success(func" +
+"tion (response) {\r\n                displayTable(target, response);\r\n            " +
+"    target.removeClass(\"loading\");\r\n            });\r\n\r\n            ajax.fail(fun" +
+"ction (xhr) {\r\n                alert(JSON.stringify(xhr));\r\n            });\r\n   " +
+"     };\r\n\r\n        const view = $(\"#InventoryView\").addClass(\"loading\");\r\n\r\n    " +
+"    displayGrid(view);\r\n    };\r\n\r\n    $(\"#ShowButton\").unbind(\"click\").bind(\"cli" +
+"ck\", function () {\r\n        processQuery();\r\n    });\r\n\r\n    loadDatepicker();\r\n\r" +
+"\n    \r\n    function showOpeningAdvice(tranId) {\r\n        $(\".advice.modal iframe" +
+"\").attr(\"src\", \"/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Opening" +
+".xml?transaction_master_id=\" + tranId);\r\n\r\n        setTimeout(function () {\r\n   " +
+"         $(\".advice.modal\")\r\n                .modal(\'setting\', \'transition\', \'ho" +
+"rizontal flip\')\r\n                .modal({\r\n                    blurring: true\r\n " +
+"               })\r\n                .modal(\"show\");\r\n\r\n        }, 300);\r\n    };\r\n" +
+"    setTimeout(function () {\r\n        processQuery();\r\n    }, 1000);\r\n</script>");
 
         }
     }

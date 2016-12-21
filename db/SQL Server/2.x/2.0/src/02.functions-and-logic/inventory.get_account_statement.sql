@@ -13,17 +13,18 @@ CREATE FUNCTION inventory.get_account_statement
 )
 RETURNS @result TABLE
 (
-    id                      integer,
+    id                      integer IDENTITY,
     value_date              date,
     book_date               date,
-    tran_code national character varying(50),
+	store_name				national character varying(500),
+    tran_code				national character varying(50),
     statement_reference     national character varying(2000),
     debit                   numeric(30, 6),
     credit                  numeric(30, 6),
     balance                 numeric(30, 6),
     book                    national character varying(50),
     item_id                 integer,
-    item_code national character varying(50),
+    item_code				national character varying(50),
     item_name               national character varying(1000),
     posted_on               DATETIMEOFFSET,
     posted_by               national character varying(1000),
@@ -32,9 +33,11 @@ RETURNS @result TABLE
 )
 AS
 BEGIN
-    INSERT INTO @result(value_date, statement_reference, debit, item_id)
+    INSERT INTO @result(value_date, book_date, store_name, statement_reference, debit, item_id)
     SELECT 
         @value_date_from, 
+        @value_date_from, 
+		'',
         'Opening Balance',
         SUM
         (
@@ -51,7 +54,7 @@ BEGIN
     ON inventory.checkouts.transaction_master_id = finance.transaction_master.transaction_master_id
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date < @value_date_from
-    AND inventory.checkout_details.store_id = @store_id
+    AND (@store_id IS NULL OR inventory.checkout_details.store_id = @store_id)
     AND inventory.checkout_details.item_id = @item_id;
 
     DELETE FROM @result
@@ -63,10 +66,11 @@ BEGIN
     credit = 0
     WHERE credit < 0;
 
-    INSERT INTO @result(value_date, book_date, tran_code, statement_reference, debit, credit, book, item_id, posted_on, posted_by, approved_by, verification_status)
+    INSERT INTO @result(value_date, book_date, store_name, tran_code, statement_reference, debit, credit, book, item_id, posted_on, posted_by, approved_by, verification_status)
     SELECT
         finance.transaction_master.value_date,
         finance.transaction_master.book_date,
+		inventory.get_store_name_by_store_id(inventory.checkout_details.store_id),
         finance.transaction_master.transaction_code,
         finance.transaction_master.statement_reference,
         CASE inventory.checkout_details.transaction_type
@@ -89,27 +93,22 @@ BEGIN
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date >= @value_date_from
     AND finance.transaction_master.value_date <= @value_date_to
-    AND inventory.checkout_details.store_id = @store_id 
+    AND (@store_id IS NULL OR inventory.checkout_details.store_id = @store_id)
     AND inventory.checkout_details.item_id = @item_id
     ORDER BY 
         finance.transaction_master.value_date,
         finance.transaction_master.last_verified_on;
     
-    UPDATE @result
+    UPDATE result
     SET balance = c.balance
-    FROM
+    FROM @result AS result
+	INNER JOIN
     (
-        SELECT
-            temp_account_statement.id, 
-            SUM(COALESCE(c.debit, 0)) 
-            - 
-            SUM(COALESCE(c.credit,0)) As balance
-        FROM @result AS temp_account_statement
-        LEFT JOIN temp_account_statement AS c 
-            ON (c.id <= temp_account_statement.id)
-        GROUP BY temp_account_statement.id
+		SELECT id, 
+		  balance = SUM(COALESCE(c.debit, 0) - COALESCE(c.credit, 0)) OVER (ORDER BY id)
+		FROM @result AS c
     ) AS c
-    WHERE id = c.id;
+    ON result.id = c.id;
 
     UPDATE @result 
     SET
@@ -121,14 +120,5 @@ BEGIN
 
     RETURN;        
 END;
-
-
-
-
-
---SELECT * FROM inventory.get_account_statement('1-1-2010', '1-1-2020', 2, 1, 1);
-
-
-
 
 GO

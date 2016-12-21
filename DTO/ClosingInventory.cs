@@ -7,6 +7,6 @@
         public string ItemName { get; set; }
         public int UnitId { get; set; }
         public string UnitName { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
     }
 }

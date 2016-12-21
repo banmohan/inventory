@@ -33,7 +33,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -56,11 +55,7 @@ namespace ASP
             #line default
             #line hidden
 WriteLiteral("\r\n<style>\r\n    .modal iframe {\r\n        width: 100%;\r\n        border: none;\r\n    " +
-"    height: 700px;\r\n    }\r\n</style>\r\n<script");
-
-WriteLiteral(" src=\"/Scripts/frapid/utilities/form.js\"");
-
-WriteLiteral("></script>\r\n<div");
+"    height: 700px;\r\n    }\r\n</style>\r\n<div");
 
 WriteLiteral(" class=\"ui attached page segment\"");
 
@@ -487,104 +482,104 @@ WriteLiteral(" class=\"close icon\"");
 
 WriteLiteral("></i>\r\n    <iframe></iframe>\r\n</div>\r\n\r\n<script>\r\n    function displayTable(targe" +
 "t, model) {\r\n        target.find(\"tbody\").html(\"\");\r\n\r\n        function getCell(" +
-"text) {\r\n            var cell = $(\"<td />\");\r\n\r\n            cell.text(text || \"\"" +
-");\r\n\r\n            return cell;\r\n        };\r\n\r\n        function getActionCell(tra" +
-"nId) {\r\n            var cell = $(\"<td />\");\r\n\r\n            var checklistAnchor =" +
-" $(\"<a title=\'Checklist Window\'><i class=\'list icon\'></i></a>\");\r\n            ch" +
-"ecklistAnchor.attr(\"href\", \"/dashboard/inventory/setup/opening-inventory/checkli" +
-"st/\" + tranId);\r\n\r\n            var inventoryAdviceAnchor = $(\"<a title=\'View Ope" +
-"ning Inventory Advice\'><i class=\'zoom icon\'></i></a>\");\r\n            inventoryAd" +
-"viceAnchor.attr(\"href\", \"javascript:void(0);\");\r\n            inventoryAdviceAnch" +
-"or.attr(\"onclick\", \"showOpeningAdvice(\" + tranId + \");\");\r\n\r\n\r\n            cell." +
-"append(checklistAnchor);\r\n            cell.append(inventoryAdviceAnchor);\r\n     " +
-"       return cell;\r\n        };\r\n\r\n        function getSelectionCell() {\r\n      " +
-"      var cell = $(\"<td />\");\r\n            var checkbox = $(\"<div class=\'ui togg" +
-"le checkbox\'/>\");\r\n            var input = $(\"<input type=\'checkbox\' />\");\r\n    " +
-"        var label = $(\"<label />\");\r\n\r\n            checkbox.append(input);\r\n    " +
-"        checkbox.append(label);\r\n\r\n            cell.append(checkbox);\r\n\r\n       " +
-"     return cell;\r\n        };\r\n\r\n        $.each(model,\r\n            function() {" +
-"\r\n                var item = this;\r\n\r\n                var row = $(\"<tr />\");\r\n\r\n" +
-"                row.append(getActionCell(item.TransactionMasterId));\r\n          " +
-"      row.append(getSelectionCell());\r\n                row.append(getCell(item.T" +
-"ransactionMasterId));\r\n                row.append(getCell(item.TransactionCode))" +
-";\r\n                row.append(getCell(item.Book));\r\n                row.append(g" +
-"etCell(item.ValueDate));\r\n                row.append(getCell(item.BookDate));\r\n " +
-"               row.append(getCell(item.ReferenceNumber));\r\n                row.a" +
-"ppend(getCell(item.StatementReference));\r\n                row.append(getCell(ite" +
-"m.PostedBy));\r\n                row.append(getCell(item.Office));\r\n              " +
-"  row.append(getCell(item.Status));\r\n                row.append(getCell(item.Ver" +
-"ifiedBy));\r\n                row.append(getCell(item.VerifiedOn));\r\n             " +
-"   row.append(getCell(item.Reason));\r\n\r\n                target.find(\"tbody\").app" +
-"end(row);\r\n            });\r\n    };\r\n\r\n    function processQuery() {\r\n        fun" +
-"ction getModel() {\r\n            var model = window.serializeForm($(\"#Annotation\"" +
-"));\r\n            model.Book = \"Opening Inventory\";\r\n\r\n            return model;\r" +
-"\n        };\r\n\r\n        function displayGrid(target) {\r\n            function requ" +
-"est(model) {\r\n                var url = \"/dashboard/finance/tasks/journal/view\";" +
-"\r\n                var data = JSON.stringify(model);\r\n                return wind" +
-"ow.getAjaxRequest(url, \"POST\", data);\r\n            };\r\n\r\n            var model =" +
-" getModel();\r\n\r\n            var ajax = request(model);\r\n\r\n            ajax.succe" +
-"ss(function(response) {\r\n                displayTable(target, response);\r\n      " +
-"          target.removeClass(\"loading\");\r\n            });\r\n\r\n            ajax.fa" +
-"il(function(xhr) {\r\n                alert(JSON.stringify(xhr));\r\n            });" +
-"\r\n        };\r\n\r\n        var view = $(\"#JournalView\").addClass(\"loading\");\r\n\r\n   " +
-"     displayGrid(view);\r\n    };\r\n\r\n    $(\"#ShowButton\")\r\n        .unbind(\"click\"" +
-")\r\n        .bind(\"click\",\r\n            function() {\r\n                processQuer" +
-"y();\r\n            });\r\n\r\n    setTimeout(function () {\r\n        processQuery();\r\n" +
-"    }, 1000);\r\n</script>\r\n\r\n<script>\r\n    var reasonTextArea = $(\"#ReasonTextAre" +
-"a\");\r\n    var journalView = $(\"#JournalView\");\r\n    var modal = $(\"#ActionModal\"" +
-");\r\n    var verifyButton = $(\"#VerifyButton\");\r\n    var tranId;\r\n    var approve" +
-";\r\n\r\n    function getSelectedItem() {\r\n        var selected = journalView.find(\"" +
-"input:checked\").first();\r\n        \r\n        if (selected.length) {\r\n            " +
-"var row = selected.parent().parent().parent();\r\n            var id = row.find(\"t" +
-"d:nth-child(3)\").html();\r\n            return parseInt(id);\r\n        };\r\n\r\n      " +
-"  return 0;\r\n    };\r\n\r\n    function showModal() {\r\n        var header = modal.fi" +
-"nd(\".ui.massive.header\");\r\n        var subheader = modal.find(\".ui.dividing.head" +
-"er\");\r\n\r\n        header.html(\"Reject Transaction\");\r\n        subheader.html(wind" +
-"ow.stringFormat(\"TranId: #{0}\", tranId));\r\n        header.removeClass(\"green\").a" +
-"ddClass(\"red\");\r\n\r\n        if (approve) {\r\n            header.html(\"Approve Tran" +
-"saction\");\r\n            header.removeClass(\"red\").addClass(\"green\");\r\n        };" +
-"\r\n\r\n        modal.modal(\'setting\', \'closable\', false).modal(\'show\');\r\n    };\r\n\r\n" +
-"    $(\"#VerificationApproveButton\").click(function () {\r\n        tranId = getSel" +
-"ectedItem();\r\n\r\n        if (tranId) {\r\n            approve = true;\r\n            " +
-"showModal();\r\n        };\r\n    });\r\n\r\n    $(\"#VerificationRejectButton\").click(fu" +
-"nction () {\r\n        tranId = getSelectedItem();\r\n\r\n        if (tranId) {\r\n     " +
-"       approve = false;\r\n            showModal();\r\n        };\r\n    });\r\n\r\n    fu" +
-"nction removeRow(index, callback) {\r\n        journalView.find(\"tr\").eq(index + 1" +
-").addClass(\"negative\").fadeOut(500, function () {\r\n            $(this).remove();" +
-"\r\n\r\n            if (typeof (callback) === \"function\") {\r\n                callbac" +
-"k();\r\n            };\r\n        });\r\n    };\r\n\r\n    function hideModal() {\r\n       " +
-" modal.modal(\"hide\");\r\n    };\r\n\r\n    verifyButton.click(function () {\r\n        f" +
-"unction getModel() {\r\n            var reason = reasonTextArea.val();\r\n\r\n        " +
-"    return {\r\n                TranId: tranId,\r\n                Reason: reason\r\n " +
-"           };\r\n        };\r\n\r\n        function request(model, type) {\r\n          " +
-"  var url = \"/dashboard/inventory/setup/opening-inventory/verification/\" + type;" +
-"\r\n            var data = JSON.stringify(model);\r\n\r\n            return window.get" +
-"AjaxRequest(url, \"POST\", data);\r\n        }\r\n\r\n        var model = getModel();\r\n " +
-"       var type = approve ? \"approve\" : \"reject\";\r\n\r\n        var ajax = request(" +
-"model, type);\r\n\r\n        ajax.success(function (response) {\r\n            var cas" +
-"cadingTranId = parseFloat(response);\r\n\r\n            if (cascadingTranId) {\r\n    " +
-"            journalView.find(\"tr td:nth-child(3)\").each(function (i) {\r\n        " +
-"            var tranId = parseFloat($(this).text() || 0);\r\n\r\n                   " +
-" if (cascadingTranId === tranId) {\r\n                        removeRow(i);\r\n     " +
-"               };\r\n                });\r\n            };\r\n\r\n            journalVie" +
-"w.find(\"input:checked\").first().parent().parent().parent().remove();\r\n          " +
-"  hideModal();\r\n        });\r\n\r\n        ajax.fail(function (xhr) {\r\n            w" +
-"indow.logAjaxErrorMessage(xhr);\r\n        });\r\n\r\n        return false;\r\n    });\r\n" +
-"\r\n    $(document).keyup(function (e) {\r\n        if (e.ctrlKey) {\r\n            va" +
-"r rowNumber = e.keyCode - 47;\r\n\r\n            if (rowNumber < 10) {\r\n            " +
-"    journalView.find(\"tr\").eq(rowNumber).find(\"input\").trigger(\'click\');\r\n      " +
-"      };\r\n        };\r\n    });\r\n\r\n    shortcut.add(\"CTRL+K\", function () {\r\n     " +
-"   $(\"#ApproveButton\").trigger(\"click\");\r\n    });\r\n\r\n    shortcut.add(\"CTRL+RETU" +
-"RN\", function () {\r\n        if (modal.is(\":visible\")) {\r\n            verifyButto" +
-"n.trigger(\"click\");\r\n        };\r\n    });\r\n\r\n    shortcut.add(\"CTRL+SHIFT+K\", fun" +
-"ction () {\r\n        $(\"#VerificationRejectButton\").trigger(\"click\");\r\n    });\r\n\r" +
-"\n    function showPuchaseInvoice(tranId) {\r\n        $(\".advice.modal iframe\").at" +
-"tr(\"src\", \"/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Opening.xml?" +
-"transaction_master_id=\" + tranId);\r\n\r\n        setTimeout(function () {\r\n        " +
-"    $(\".advice.modal\")\r\n                .modal(\'setting\', \'transition\', \'horizon" +
-"tal flip\')\r\n                .modal({\r\n                    blurring: true\r\n      " +
-"          })\r\n                .modal(\"show\");\r\n\r\n        }, 300);\r\n    };\r\n</scr" +
-"ipt>");
+"text) {\r\n            const cell = $(\"<td />\");\r\n\r\n            cell.text(text || " +
+"\"\");\r\n\r\n            return cell;\r\n        };\r\n\r\n        function getActionCell(t" +
+"ranId) {\r\n            const cell = $(\"<td />\");\r\n\r\n            const checklistAn" +
+"chor = $(\"<a title=\'Checklist Window\'><i class=\'list icon\'></i></a>\");\r\n        " +
+"    checklistAnchor.attr(\"href\", \"/dashboard/inventory/setup/opening-inventory/c" +
+"hecklist/\" + tranId);\r\n\r\n            const inventoryAdviceAnchor = $(\"<a title=\'" +
+"View Opening Inventory Advice\'><i class=\'zoom icon\'></i></a>\");\r\n            inv" +
+"entoryAdviceAnchor.attr(\"href\", \"javascript:void(0);\");\r\n            inventoryAd" +
+"viceAnchor.attr(\"onclick\", \"showOpeningAdvice(\" + tranId + \");\");\r\n\r\n\r\n         " +
+"   cell.append(checklistAnchor);\r\n            cell.append(inventoryAdviceAnchor)" +
+";\r\n            return cell;\r\n        };\r\n\r\n        function getSelectionCell() {" +
+"\r\n            const cell = $(\"<td />\");\r\n            const checkbox = $(\"<div cl" +
+"ass=\'ui toggle checkbox\'/>\");\r\n            const input = $(\"<input type=\'checkbo" +
+"x\' />\");\r\n            const label = $(\"<label />\");\r\n\r\n            checkbox.appe" +
+"nd(input);\r\n            checkbox.append(label);\r\n\r\n            cell.append(check" +
+"box);\r\n\r\n            return cell;\r\n        };\r\n\r\n        $.each(model,\r\n        " +
+"    function() {\r\n                const item = this;\r\n\r\n                const ro" +
+"w = $(\"<tr />\");\r\n\r\n                row.append(getActionCell(item.TransactionMas" +
+"terId));\r\n                row.append(getSelectionCell());\r\n                row.a" +
+"ppend(getCell(item.TransactionMasterId));\r\n                row.append(getCell(it" +
+"em.TransactionCode));\r\n                row.append(getCell(item.Book));\r\n        " +
+"        row.append(getCell(item.ValueDate));\r\n                row.append(getCell" +
+"(item.BookDate));\r\n                row.append(getCell(item.ReferenceNumber));\r\n " +
+"               row.append(getCell(item.StatementReference));\r\n                ro" +
+"w.append(getCell(item.PostedBy));\r\n                row.append(getCell(item.Offic" +
+"e));\r\n                row.append(getCell(item.Status));\r\n                row.app" +
+"end(getCell(item.VerifiedBy));\r\n                row.append(getCell(item.Verified" +
+"On));\r\n                row.append(getCell(item.Reason));\r\n\r\n                targ" +
+"et.find(\"tbody\").append(row);\r\n            });\r\n    };\r\n\r\n    function processQu" +
+"ery() {\r\n        function getModel() {\r\n            const model = window.seriali" +
+"zeForm($(\"#Annotation\"));\r\n            model.Book = \"Opening Inventory\";\r\n\r\n    " +
+"        return model;\r\n        };\r\n\r\n        function displayGrid(target) {\r\n   " +
+"         function request(model) {\r\n                const url = \"/dashboard/fina" +
+"nce/tasks/journal/view\";\r\n                const data = JSON.stringify(model);\r\n " +
+"               return window.getAjaxRequest(url, \"POST\", data);\r\n            };\r" +
+"\n\r\n            const model = getModel();\r\n\r\n            const ajax = request(mod" +
+"el);\r\n\r\n            ajax.success(function(response) {\r\n                displayTa" +
+"ble(target, response);\r\n                target.removeClass(\"loading\");\r\n        " +
+"    });\r\n\r\n            ajax.fail(function(xhr) {\r\n                alert(JSON.str" +
+"ingify(xhr));\r\n            });\r\n        };\r\n\r\n        const view = $(\"#JournalVi" +
+"ew\").addClass(\"loading\");\r\n\r\n        displayGrid(view);\r\n    };\r\n\r\n    $(\"#ShowB" +
+"utton\")\r\n        .unbind(\"click\")\r\n        .bind(\"click\",\r\n            function(" +
+") {\r\n                processQuery();\r\n            });\r\n\r\n    setTimeout(function" +
+" () {\r\n        processQuery();\r\n    }, 1000);\r\n</script>\r\n\r\n<script>\r\n    var re" +
+"asonTextArea = $(\"#ReasonTextArea\");\r\n    var journalView = $(\"#JournalView\");\r\n" +
+"    var modal = $(\"#ActionModal\");\r\n    var verifyButton = $(\"#VerifyButton\");\r\n" +
+"    var tranId;\r\n    var approve;\r\n\r\n    function getSelectedItem() {\r\n        c" +
+"onst selected = journalView.find(\"input:checked\").first();\r\n        \r\n        if" +
+" (selected.length) {\r\n            const row = selected.parent().parent().parent(" +
+");\r\n            const id = row.find(\"td:nth-child(3)\").html();\r\n            retu" +
+"rn parseInt(id);\r\n        };\r\n\r\n        return 0;\r\n    };\r\n\r\n    function showMo" +
+"dal() {\r\n        const header = modal.find(\".ui.massive.header\");\r\n        const" +
+" subheader = modal.find(\".ui.dividing.header\");\r\n\r\n        header.html(\"Reject T" +
+"ransaction\");\r\n        subheader.html(window.stringFormat(\"TranId: #{0}\", tranId" +
+"));\r\n        header.removeClass(\"green\").addClass(\"red\");\r\n\r\n        if (approve" +
+") {\r\n            header.html(\"Approve Transaction\");\r\n            header.removeC" +
+"lass(\"red\").addClass(\"green\");\r\n        };\r\n\r\n        modal.modal(\'setting\', \'cl" +
+"osable\', false).modal(\'show\');\r\n    };\r\n\r\n    $(\"#VerificationApproveButton\").cl" +
+"ick(function () {\r\n        tranId = getSelectedItem();\r\n\r\n        if (tranId) {\r" +
+"\n            approve = true;\r\n            showModal();\r\n        };\r\n    });\r\n\r\n " +
+"   $(\"#VerificationRejectButton\").click(function () {\r\n        tranId = getSelec" +
+"tedItem();\r\n\r\n        if (tranId) {\r\n            approve = false;\r\n            s" +
+"howModal();\r\n        };\r\n    });\r\n\r\n    function removeRow(index, callback) {\r\n " +
+"       journalView.find(\"tr\").eq(index + 1).addClass(\"negative\").fadeOut(500, fu" +
+"nction () {\r\n            $(this).remove();\r\n\r\n            if (typeof (callback) " +
+"=== \"function\") {\r\n                callback();\r\n            };\r\n        });\r\n   " +
+" };\r\n\r\n    function hideModal() {\r\n        modal.modal(\"hide\");\r\n    };\r\n\r\n    v" +
+"erifyButton.click(function () {\r\n        function getModel() {\r\n            cons" +
+"t reason = reasonTextArea.val();\r\n\r\n            return {\r\n                TranId" +
+": tranId,\r\n                Reason: reason\r\n            };\r\n        };\r\n\r\n       " +
+" function request(model, type) {\r\n            const url = \"/dashboard/inventory/" +
+"setup/opening-inventory/verification/\" + type;\r\n            const data = JSON.st" +
+"ringify(model);\r\n\r\n            return window.getAjaxRequest(url, \"POST\", data);\r" +
+"\n        }\r\n\r\n        const model = getModel();\r\n        const type = approve ? " +
+"\"approve\" : \"reject\";\r\n\r\n        const ajax = request(model, type);\r\n\r\n        a" +
+"jax.success(function (response) {\r\n            var cascadingTranId = parseFloat(" +
+"response);\r\n\r\n            if (cascadingTranId) {\r\n                journalView.fi" +
+"nd(\"tr td:nth-child(3)\").each(function (i) {\r\n                    const tranId =" +
+" parseFloat($(this).text() || 0);\r\n\r\n                    if (cascadingTranId ===" +
+" tranId) {\r\n                        removeRow(i);\r\n                    };\r\n     " +
+"           });\r\n            };\r\n\r\n            journalView.find(\"input:checked\")." +
+"first().parent().parent().parent().remove();\r\n            hideModal();\r\n        " +
+"});\r\n\r\n        ajax.fail(function (xhr) {\r\n            window.logAjaxErrorMessag" +
+"e(xhr);\r\n        });\r\n\r\n        return false;\r\n    });\r\n\r\n    $(document).keyup(" +
+"function (e) {\r\n        if (e.ctrlKey) {\r\n            const rowNumber = e.keyCod" +
+"e - 47;\r\n\r\n            if (rowNumber < 10) {\r\n                journalView.find(\"" +
+"tr\").eq(rowNumber).find(\"input\").trigger(\'click\');\r\n            };\r\n        };\r\n" +
+"    });\r\n\r\n    shortcut.add(\"CTRL+K\", function () {\r\n        $(\"#ApproveButton\")" +
+".trigger(\"click\");\r\n    });\r\n\r\n    shortcut.add(\"CTRL+RETURN\", function () {\r\n  " +
+"      if (modal.is(\":visible\")) {\r\n            verifyButton.trigger(\"click\");\r\n " +
+"       };\r\n    });\r\n\r\n    shortcut.add(\"CTRL+SHIFT+K\", function () {\r\n        $(" +
+"\"#VerificationRejectButton\").trigger(\"click\");\r\n    });\r\n\r\n    function showPuch" +
+"aseInvoice(tranId) {\r\n        $(\".advice.modal iframe\").attr(\"src\", \"/dashboard/" +
+"reports/source/Areas/MixERP.Inventory/Reports/Opening.xml?transaction_master_id=" +
+"\" + tranId);\r\n\r\n        setTimeout(function () {\r\n            $(\".advice.modal\")" +
+"\r\n                .modal(\'setting\', \'transition\', \'horizontal flip\')\r\n          " +
+"      .modal({\r\n                    blurring: true\r\n                })\r\n        " +
+"        .modal(\"show\");\r\n\r\n        }, 300);\r\n    };\r\n</script>");
 
         }
     }

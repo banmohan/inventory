@@ -88,7 +88,7 @@
 
             function displayClosingInventory(model) {
                 function getCell(text) {
-                    var cell = $("<td />");
+                    const cell = $("<td />");
                     cell.html(text);
 
                     return cell;
@@ -98,7 +98,7 @@
                 var totalRows = model.length;
 
                 $.each(model, function () {
-                    var row = $("<tr />");
+                    const row = $("<tr />");
                     tabIndex++;
 
                     row.append(getCell(this.ItemId));
@@ -118,7 +118,7 @@
 
             function initializeCalculator() {
                 $("input.actual").blur(function () {
-                    var quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
+                    const quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
                     var actual = ($(this).val());
 
                     if (window.isNullOrWhiteSpace(actual)) {
@@ -137,8 +137,8 @@
                 });
 
                 $("input.difference").blur(function () {
-                    var quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
-                    var difference = window.parseInt2($(this).val());
+                    const quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
+                    const difference = window.parseInt2($(this).val());
 
                     if (difference > quantity) {
                         window.makeDirty($(this).parent());
@@ -158,14 +158,14 @@
                     return window.getAjaxRequest(url);
                 };
 
-                var storeId = parseInt(storeSelect.val());
+                const storeId = parseInt(storeSelect.val());
 
                 if (!storeId) {
                     window.displayMessage("Please select a store!");
                     return;
                 };
 
-                var ajax = request(storeId);
+                const ajax = request(storeId);
 
                 ajax.success(function (response) {
                     displayClosingInventory(response);
@@ -180,10 +180,8 @@
         <script type="text/javascript">
             saveButton.click(function () {
                 function request(model) {
-                    var url = "/dashboard/inventory/tasks/inventory-adjustments";
-                    var data = JSON.stringify(model);
-
-                    alert(data);
+                    const url = "/dashboard/inventory/tasks/inventory-adjustments";
+                    const data = JSON.stringify(model);
 
                     return window.getAjaxRequest(url, "POST", data);
                 };
@@ -193,9 +191,9 @@
                         var model = [];
 
                         closingInventoryGrid.find("tbody tr").each(function () {
-                            var itemCode = $(this).find("td:nth-child(2)").html();
-                            var quantity = window.parseInt2($(this).find("td:nth-child(8)").find("input").val());
-                            var unitName = $(this).find("td:nth-child(5)").html();
+                            const itemCode = $(this).find("td:nth-child(2)").html();
+                            const quantity = window.parseInt2($(this).find("td:nth-child(8)").find("input").val());
+                            const unitName = $(this).find("td:nth-child(5)").html();
 
                             if (quantity) {
                                 model.push(
@@ -212,11 +210,11 @@
                         return model;
                     };
 
-                    var storeId = parseInt(storeSelect.val());
-                    var valueDate = window.parseLocalizedDate(valueDateInputText.val());
-                    var bookDate = window.parseLocalizedDate(bookDateInputText.val());
-                    var referenceNumber = referenceNumberInputText.val();
-                    var statementReference = statementReferenceTextArea.val();
+                    const storeId = parseInt(storeSelect.val());
+                    const valueDate = window.parseLocalizedDate(valueDateInputText.val());
+                    const bookDate = window.parseLocalizedDate(bookDateInputText.val());
+                    const referenceNumber = referenceNumberInputText.val();
+                    const statementReference = statementReferenceTextArea.val();
 
                     if (!storeId) {
                         window.makeDirty(storeSelect);
@@ -247,15 +245,15 @@
                     };
                 };
 
-                var model = getModel();
+                const model = getModel();
                 if (!model) {
                     return;
                 };
 
-                var ajax = request(model);
+                const ajax = request(model);
 
                 ajax.success(function(response) {
-                    var tranId = response;
+                    const tranId = response;
 
                     if (tranId) {
                         window.location = "/dashboard/inventory/tasks/adjustments/checklist/" + tranId;
