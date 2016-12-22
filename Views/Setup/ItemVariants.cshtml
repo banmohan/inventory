@@ -52,11 +52,13 @@
                     <th>
                         <input type="text" id="ItemNameInputText" maxlength="100" data-localized-placeholder="Titles.ItemName" />
                     </th>
-                    <th class="right aligned">
-                        <input type="button" class="ui blue add button" data-localize="Titles.Add" onclick="addRow();" />
-                        <div class="ui buttons">
-                            <input type="button" class="ui olive save button" id="SaveButton" data-localize="Titles.Save" />
-                            <input type="button" class="ui purple save button" id="DeleteButton" data-localize="Titles.Delete" />
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <input type="button" class="ui basic blue add button" data-localize="Titles.Add" onclick="addRow();" />
+                        <div class="ui basic buttons">
+                            <input type="button" class="ui save button" id="SaveButton" data-localize="Titles.Save" />
+                            <input type="button" class="ui save button" id="DeleteButton" data-localize="Titles.Delete" />
                         </div>
                     </th>
                 </tr>
@@ -137,6 +139,7 @@
     $("#ItemSelect").change(function () {
         function request(itemId) {
             const url = "/api/forms/inventory/items/get-where/-1";
+
             const filters = [];
             filters.push(window.getAjaxColumnFilter("WHERE", "is_variant_of", "int", window.FilterConditions.IsEqualTo, itemId));
             const data = JSON.stringify(filters);
@@ -289,6 +292,7 @@
         function request(model) {
             const url = "/dashboard/inventory/setup/item-variants";
             const data = JSON.stringify(model);
+
             return window.getAjaxRequest(url, "POST", data);
         };
 
@@ -309,22 +313,50 @@
         };
 
 
-        const attributeIds = $(".attribute select").map(function () { return $(this).val(); }).get();
-        const variantIds = $(".variant select").map(function () { return $(this).val(); }).get();
+
+        const attributeIds = $(".attribute>select").map(function () { return window.parseInt($(this).val()); }).get();
+        const variantIds = $(".variant>select").map(function () { return window.parseInt($(this).val()); }).get();
+        const itemCode = $("#ItemCodeInputText").val();
+        const itemName = $("#ItemNameInputText").val();
+
+        window.removeDirty($("#ItemCodeInputText"));
+        window.removeDirty($("#ItemNameInputText"));
+
+
+        if (!attributeIds.length) {
+            window.displayMessage("Please select an attribute.");
+            return;
+        };
+
+        if (!itemCode) {
+            window.displayMessage("Please enter a code of the new item variant.");
+            window.makeDirty($("#ItemCodeInputText"));
+            return;
+        };
+
+
+        if (!itemName) {
+            window.displayMessage("Please enter a name for the new item variant.");
+            window.makeDirty($("#ItemNameInputText"));
+            return;
+        };
+
+
         var duplicate = getDuplicates(attributeIds);
 
         if (duplicate) {
             const item = window.Enumerable.From(attributes).Where(function (x) { return x.AttributeId.toString() === duplicate }).FirstOrDefault().AttributeName;
-            window.displayMessage(window.stringFormat("Cannot create a variant having multiple attributes.", item));
+
+            window.displayMessage(window.stringFormat("Cannot create this item because you must specify a single variant of \"{0}\" attribute.", item));
             return;
         };
 
         const model = {
             VariantOf: $("#ItemSelect").val(),
             ItemId: $("#VariantSelect").val() || null,
-            ItemCode: $("#ItemCodeInputText").val(),
-            ItemName: $("#ItemNameInputText").val(),
-            VariantIds: variantIds,
+            ItemCode: itemCode,
+            ItemName: itemName,
+            Variants: variantIds,
             UserId: window.userId
         };
 
@@ -344,6 +376,12 @@
             return window.getAjaxRequest(url, "DELETE");
         };
 
+        const confirmed = window.confirmAction();
+
+        if (!confirmed) {
+            return;
+        };
+
         const variantItemId = $("#VariantSelect").val();
 
         if (variantItemId) {
@@ -352,8 +390,10 @@
             ajax.success(function () {
                 cleanUp();
                 $("#ItemSelect").trigger("change");
+                window.displaySuccess();
             });
         };
     });
 
+    window.localize();
 </script>

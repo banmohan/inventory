@@ -697,7 +697,7 @@ CREATE FUNCTION inventory.create_item_variant
 RETURNS integer
 AS
 $$
-   DECLARE _variant_id      integer[] = _variants::integer[];
+   DECLARE _variant_ids     integer[] = _variants::integer[];
 BEGIN
 
     IF(COALESCE(_item_id, 0) = 0) THEN
@@ -710,23 +710,15 @@ BEGIN
             brand_id, 
             preferred_supplier_id, 
             lead_time_in_days, 
-            weight_in_grams, 
-            width_in_centimeters, 
-            height_in_centimeters, 
-            length_in_centimeters,
-            machinable,
-            preferred_shipping_mail_type_id,
-            shipping_package_shape_id,
             unit_id,
             hot_item,
             cost_price,
             selling_price,
             selling_price_includes_tax,
-            sales_tax_id,
             reorder_unit_id,
             reorder_level,
             reorder_quantity,
-            maintain_stock,
+            maintain_inventory,
             audit_user_id,
             photo,
             is_variant_of
@@ -739,23 +731,15 @@ BEGIN
                 brand_id, 
                 preferred_supplier_id, 
                 lead_time_in_days, 
-                weight_in_grams, 
-                width_in_centimeters, 
-                height_in_centimeters, 
-                length_in_centimeters,
-                machinable,
-                preferred_shipping_mail_type_id,
-                shipping_package_shape_id,
                 unit_id,
                 hot_item,
                 cost_price,
                 selling_price,
                 selling_price_includes_tax,
-                sales_tax_id,
                 reorder_unit_id,
                 reorder_level,
                 reorder_quantity,
-                maintain_stock,
+                maintain_inventory,
                 _user_id,
                 photo,
                 _variant_of
@@ -765,7 +749,7 @@ BEGIN
         INTO _item_id;
     END IF;
 
-    DELETE FROM core.item_variants
+    DELETE FROM inventory.item_variants
     WHERE item_id = _item_id
     AND variant_id NOT IN
     (
@@ -783,13 +767,13 @@ BEGIN
         SELECT variant_id FROM variants WHERE
         variant_id NOT IN
         (
-            SELECT core.item_variants.variant_id
-            FROM core.item_variants
+            SELECT inventory.item_variants.variant_id
+            FROM inventory.item_variants
             WHERE item_id = _item_id
         )
     )
     
-    INSERT INTO core.item_variants(item_id, variant_id, audit_user_id)
+    INSERT INTO inventory.item_variants(item_id, variant_id, audit_user_id)
     SELECT _item_id, variant_id, _user_id
     FROM new;
     
