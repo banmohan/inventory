@@ -2,9 +2,358 @@
 
 @{
     ViewBag.Title = "";
-    Layout = ViewBag.Layout;
+    Layout = ViewBag.InventoryLayoutPath;
 }
 
-<div class="ui error message container">
-    Please port this from MixERP.
+<div class="ui attached very relaxed padded segment">
+    <div class="item variant container">
+        <div class="ui huge grey header">
+            <span id="heading">
+                <span data-localize="Titles.ItemVariants"></span>
+            </span>
+        </div>
+        <div class="ui divider"></div>
+
+        <div class="ui form">
+            <div class="four fields">
+                <div class="field">
+                    <label data-localize="Titles.SelectItem"></label>
+                    <select id="ItemSelect" class="ui search dropdown"></select>
+                </div>
+                <div class="field">
+                    <label data-localize="Titles.SelectVariant"></label>
+                    <select id="VariantSelect" class="ui search dropdown"></select>
+                </div>
+                <div class="field">
+                    <label>&nbsp;</label>
+                    <input type="button" id="ShowButton" class="ui basic button" data-localize="Titles.Show" />
+                </div>
+            </div>
+        </div>
+
+        <table id="variant-table" class="ui small compact stackable form table">
+            <thead>
+                <tr>
+                    <th style="width: 300px;">
+                        <span data-localize="Titles.Attribute"></span>
+                    </th>
+                    <th style="width: 300px;">
+                        <span data-localize="Titles.Variant"></span>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <th>
+                        <input type="text" id="ItemCodeInputText" maxlength="12" data-localized-placeholder="Titles.ItemCode" />
+                    </th>
+                    <th>
+                        <input type="text" id="ItemNameInputText" maxlength="100" data-localized-placeholder="Titles.ItemName" />
+                    </th>
+                    <th class="right aligned">
+                        <input type="button" class="ui blue add button" data-localize="Titles.Add" onclick="addRow();" />
+                        <div class="ui buttons">
+                            <input type="button" class="ui olive save button" id="SaveButton" data-localize="Titles.Save" />
+                            <input type="button" class="ui purple save button" id="DeleteButton" data-localize="Titles.Delete" />
+                        </div>
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
 </div>
+
+
+<script>
+    var attributes;
+    var variants;
+    var rowTemplate =
+    `<tr>
+        <td>
+            <select class="ui search attribute fluid dropdown">{attributes}</select>
+        </td>
+        <td>
+            <select class="ui search variant fluid dropdown"></select>
+        </td>
+        <td>
+            <div class="ui basic buttons">
+                <input type="button" class="ui basic delete button" value="Delete" />
+            </div>
+        </td>
+    </tr>`;
+
+
+
+    function bindItems() {
+        const url = "/api/forms/inventory/items/display-fields";
+        const target = $("#ItemSelect");
+        window.ajaxDataBind(url, target, null, null, null, null, "Key", "Value");
+    };
+
+    function getAttributes() {
+        function request() {
+            const url = "/api/forms/inventory/attributes/all";
+            return window.getAjaxRequest(url);
+        };
+
+        const ajax = request();
+
+        ajax.success(function (response) {
+            attributes = response;
+        });
+    };
+
+    function getVariants() {
+        function request() {
+            const url = "/api/forms/inventory/variants/all";
+            return window.getAjaxRequest(url);
+        };
+
+        const ajax = request();
+
+        ajax.success(function (response) {
+            variants = response;
+        });
+    };
+
+
+    $(document).ready(function () {
+        bindItems();
+        getAttributes();
+        getVariants();
+
+        $("#ItemSelect").change(function () {
+            const el = $(this);
+            var heading = "Item Variants";
+            heading += " : " + el.getSelectedText();
+
+            $("#heading").html(heading);
+        });
+    });
+
+    $("#ItemSelect").change(function () {
+        function request(itemId) {
+            const url = "/api/forms/inventory/items/get-where/-1";
+            const filters = [];
+            filters.push(window.getAjaxColumnFilter("WHERE", "is_variant_of", "int", window.FilterConditions.IsEqualTo, itemId));
+            const data = JSON.stringify(filters);
+
+            return window.getAjaxRequest(url, "POST", data);
+        };
+
+        const itemId = $(this).val();
+        var target = $("#VariantSelect");
+        target.dropdown("set selected", "");
+        target.html("");
+
+        if (!itemId) {
+            return;
+        };
+
+        const ajax = request(itemId);
+
+        ajax.success(function (response) {
+            const placeholder = response.length ? "Select" : "None";
+            window.appendOption(target, "", placeholder);
+
+            $.each(response, function () {
+                const key = this["ItemId"];
+                const value = this["ItemCode"] + " (" + this["ItemName"] + ")";
+                window.appendOption(target, key, value);
+            });
+        });
+    });
+
+    function addRow(attributeId, variantId) {
+        function getAttributes() {
+            var attributeOptions = "<option val=''>" + "Select" + "</option>";
+
+            $.each(attributes, function () {
+                attributeOptions += "<option value='";
+                attributeOptions += this.AttributeId;
+                attributeOptions += "'";
+
+                if (this.AttributeId === attributeId) {
+                    attributeOptions += " selected";
+                };
+
+                attributeOptions += ">";
+                attributeOptions += this.AttributeCode;
+                attributeOptions += " (";
+                attributeOptions += this.AttributeName;
+                attributeOptions += ")";
+                attributeOptions += "</option>";
+            });
+            return attributeOptions;
+        };
+
+        function appendVariants(target, attributeId, variantId) {
+            target.dropdown("set selected", "");
+            target.html("");
+
+            const filtered = window.Enumerable.From(variants).Where(function (x) { return x.AttributeId.toString() === attributeId.toString() }).ToArray();
+
+            window.appendOption(target, "", "Select");
+
+            $.each(filtered, function () {
+                window.appendOption(target, this.VariantId, this.VariantName);
+            });
+
+            if (variantId) {
+                setTimeout(function () {
+                    target.dropdown("set selected", variantId);
+                }, 1);
+            };
+        };
+
+        var row = $(rowTemplate.replace("{attributes}", getAttributes()));
+
+        $("#variant-table tbody").append(row);
+        window.initalizeDropdowns();
+
+        row.find(".attribute select").change(function () {
+            const el = $(this);
+            const target = row.find(".variant select");
+            const val = el.val();
+
+            appendVariants(target, val);
+        });
+
+        if (variantId) {
+            var target = row.find(".variant select");
+            setTimeout(function () {
+                appendVariants(target, attributeId, variantId);
+            }, 1);
+        };
+
+        $("input.delete.button").unbind().click(function () {
+            const confirmed = window.confirmAction();
+            if (confirmed) {
+                $(this).closest("tr").remove();
+            };
+        });
+    };
+
+    function showItem(variantItemId) {
+        function request(itemId) {
+            const url = "/api/forms/inventory/items/" + itemId;
+            return window.getAjaxRequest(url);
+        };
+
+        const ajax = request(variantItemId);
+        ajax.success(function (response) {
+            $("#ItemCodeInputText").val(response.ItemCode);
+            $("#ItemNameInputText").val(response.ItemName);
+        });
+    };
+
+    function cleanUp() {
+        $("#variant-table tbody").html("");
+        $("#ItemCodeInputText").val("");
+        $("#ItemNameInputText").val("");
+    };
+
+    $("#ShowButton").click(function () {
+        function request(variantItemId) {
+            const url = "/api/forms/inventory/item-variants/get-where/-1";
+            const filters = [];
+            filters.push(window.getAjaxColumnFilter("WHERE", "item_id", "int", window.FilterConditions.IsEqualTo, variantItemId));
+            const data = JSON.stringify(filters);
+
+            return window.getAjaxRequest(url, "POST", data);
+        };
+
+        cleanUp();
+
+        const variantItemId = $("#VariantSelect").val();
+        if (!variantItemId) {
+            return;
+        };
+
+        showItem(variantItemId);
+        const ajax = request(variantItemId);
+
+        ajax.success(function (response) {
+            $.each(response, function () {
+                var variantId = this.VariantId;
+                const attributeId = window.Enumerable.From(variants).Where(function (x) { return x.VariantId === variantId }).FirstOrDefault().AttributeId;
+                addRow(attributeId, variantId);
+            });
+        });
+    });
+
+    $("#SaveButton").click(function () {
+        function request(model) {
+            const url = "/dashboard/inventory/setup/item-variants";
+            const data = JSON.stringify(model);
+            return window.getAjaxRequest(url, "POST", data);
+        };
+
+        function getDuplicates(items) {
+            const unique = [];
+
+            for (var i = 0, len = items.length; i < len; i++) {
+                const item = items[i];
+
+                if (unique.indexOf(item) > -1) {
+                    return item;
+                };
+
+                unique.push(item);
+            }
+
+            return null;
+        };
+
+
+        const attributeIds = $(".attribute select").map(function () { return $(this).val(); }).get();
+        const variantIds = $(".variant select").map(function () { return $(this).val(); }).get();
+        var duplicate = getDuplicates(attributeIds);
+
+        if (duplicate) {
+            const item = window.Enumerable.From(attributes).Where(function (x) { return x.AttributeId.toString() === duplicate }).FirstOrDefault().AttributeName;
+            window.displayMessage(window.stringFormat("Cannot create a variant having multiple attributes.", item));
+            return;
+        };
+
+        const model = {
+            VariantOf: $("#ItemSelect").val(),
+            ItemId: $("#VariantSelect").val() || null,
+            ItemCode: $("#ItemCodeInputText").val(),
+            ItemName: $("#ItemNameInputText").val(),
+            VariantIds: variantIds,
+            UserId: window.userId
+        };
+
+
+        const ajax = request(model);
+
+        ajax.success(function () {
+            window.displaySuccess();
+        });
+    });
+
+    $("#DeleteButton").click(function () {
+        function request(itemId) {
+            var url = "/dashboard/inventory/setup/item-variants/{itemId}";
+            url = url.replace("{itemId}", itemId);
+
+            return window.getAjaxRequest(url, "DELETE");
+        };
+
+        const variantItemId = $("#VariantSelect").val();
+
+        if (variantItemId) {
+            const ajax = request(variantItemId);
+
+            ajax.success(function () {
+                cleanUp();
+                $("#ItemSelect").trigger("change");
+            });
+        };
+    });
+
+</script>

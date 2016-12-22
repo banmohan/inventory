@@ -13,7 +13,7 @@ CREATE TABLE inventory.units
     unit_code                               national character varying(24) NOT NULL,
     unit_name                               national character varying(500) NOT NULL,    
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                 bit DEFAULT(0)
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE inventory.compound_units
     value                                   smallint NOT NULL DEFAULT(0) CHECk(value > 0),
     compare_unit_id                         integer NOT NULL REFERENCES inventory.units,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE inventory.supplier_types
     supplier_type_name                      national character varying(500) NOT NULL,
     account_id                                integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -75,7 +75,7 @@ CREATE TABLE inventory.suppliers
     contact_fax                             national character varying(100),
     photo                                   dbo.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -87,7 +87,7 @@ CREATE TABLE inventory.customer_types
     customer_type_name                      national character varying(500) NOT NULL,
     account_id                                integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -127,7 +127,7 @@ CREATE TABLE inventory.customers
     contact_fax                             national character varying(100),
     photo                                   dbo.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -147,7 +147,7 @@ CREATE TABLE inventory.item_groups
     cost_of_goods_sold_account_id           integer NOT NULL REFERENCES finance.accounts,    
     parent_item_group_id                    integer REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -157,7 +157,7 @@ CREATE TABLE inventory.brands
     brand_code                              national character varying(24) NOT NULL,
     brand_name                              national character varying(500) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -168,7 +168,7 @@ CREATE TABLE inventory.item_types
     item_type_name                          national character varying(50) NOT NULL,
     is_component                            bit NOT NULL DEFAULT(0),
     audit_user_id                           integer NULL REFERENCES account.users(user_id),
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -207,7 +207,7 @@ CREATE TABLE inventory.items
     allow_purchase                          bit NOT NULL DEFAULT(1),
     is_variant_of                           integer REFERENCES inventory.items,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                 bit DEFAULT(0)    
 );
 
@@ -218,7 +218,7 @@ CREATE TABLE inventory.store_types
     store_type_code                         national character varying(12) NOT NULL,
     store_type_name                         national character varying(50) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -243,7 +243,7 @@ CREATE TABLE inventory.stores
     cell                                    national character varying(50),
     allow_sales                             bit NOT NULL DEFAULT(1),    
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -254,7 +254,7 @@ CREATE TABLE inventory.counters
     counter_name                            national character varying(100) NOT NULL,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -293,7 +293,7 @@ CREATE TABLE inventory.shippers
     cst_number                              national character varying(50),
     account_id                              integer NOT NULL REFERENCES finance.accounts(account_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -304,7 +304,7 @@ CREATE TABLE inventory.checkouts
     value_date                                date NOT NULL,
     book_date                                date NOT NULL,
     transaction_master_id                    bigint NOT NULL REFERENCES finance.transaction_master,
-    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
+    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
     discount                                decimal(30, 6) DEFAULT(0),
     posted_by                               integer NOT NULL REFERENCES account.users,
@@ -315,7 +315,7 @@ CREATE TABLE inventory.checkouts
     cancellation_reason                        national character varying(1000),
     shipper_id                                integer REFERENCES inventory.shippers,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -339,7 +339,7 @@ CREATE TABLE inventory.checkout_details
     quantity                                decimal(30, 6) NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric(30, 6) NOT NULL,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE())
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE())
 );
 
 CREATE TABLE inventory.inventory_transfer_requests
@@ -349,7 +349,7 @@ CREATE TABLE inventory.inventory_transfer_requests
     user_id                                 integer NOT NULL REFERENCES account.users,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
     request_date                            date NOT NULL,
-    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
+    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     reference_number                        national character varying(24),
     statement_reference                     national character varying(2000),
     authorized                              bit NOT NULL DEFAULT(0),
@@ -369,7 +369,7 @@ CREATE TABLE inventory.inventory_transfer_requests
     delivered_on                            DATETIMEOFFSET,
     delivery_memo                           national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -393,11 +393,11 @@ CREATE TABLE inventory.inventory_transfer_deliveries
     user_id                                 integer NOT NULL REFERENCES account.users,
     destination_store_id                    integer NOT NULL REFERENCES inventory.stores,
     delivery_date                           date NOT NULL,
-    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
+    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     reference_number                        national character varying(24),
     statement_reference                     national character varying(2000),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -421,7 +421,7 @@ CREATE TABLE inventory.attributes
     attribute_code                          national character varying(12) NOT NULL UNIQUE,
     attribute_name                          national character varying(100) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -433,7 +433,7 @@ CREATE TABLE inventory.variants
     attribute_id                            integer NOT NULL REFERENCES inventory.attributes,
     attribute_value                         national character varying(200) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -443,7 +443,7 @@ CREATE TABLE inventory.item_variants
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     variant_id                              integer NOT NULL REFERENCES inventory.variants,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -685,6 +685,189 @@ BEGIN
 
     SET @factor = inventory.convert_unit(@base_unit_id, @unit_id);
     RETURN @credit * @factor;
+END;
+
+GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.create_item_variant.sql --<--<--
+IF OBJECT_ID('inventory.create_item_variant') IS NOT NULL
+DROP PROCEDURE inventory.create_item_variant;
+
+GO
+
+CREATE PROCEDURE inventory.create_item_variant
+(
+    @variant_of             integer,
+    @item_id                integer,
+    @item_code              national character varying(12),
+    @item_name              national character varying(100),
+    @variants               national character varying(MAX),
+    @user_id                integer,
+	@variant_id				integer OUTPUT
+)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SET XACT_ABORT ON;
+
+	DECLARE @variant_ids TABLE
+	(
+		variant_id			integer
+	);
+
+    BEGIN TRY
+        DECLARE @tran_count int = @@TRANCOUNT;
+        
+        IF(@tran_count= 0)
+        BEGIN
+            BEGIN TRANSACTION
+        END;
+
+    	INSERT INTO @variant_ids(variant_id)
+    	SELECT * FROM core.array_split(@variants);
+
+        IF(COALESCE(@item_id, 0) = 0)
+    	BEGIN
+            INSERT INTO inventory.items
+            (
+                item_code, 
+                item_name, 
+                item_group_id, 
+                item_type_id, 
+                brand_id, 
+                preferred_supplier_id, 
+                lead_time_in_days, 
+                unit_id,
+                hot_item,
+                cost_price,
+                selling_price,
+                selling_price_includes_tax,
+                reorder_unit_id,
+                reorder_level,
+                reorder_quantity,
+                maintain_inventory,
+                audit_user_id,
+                photo,
+                is_variant_of
+            )
+            SELECT
+                @item_code, 
+                @item_name, 
+                item_group_id, 
+                item_type_id, 
+                brand_id, 
+                preferred_supplier_id, 
+                lead_time_in_days, 
+                unit_id,
+                hot_item,
+                cost_price,
+                selling_price,
+                selling_price_includes_tax,
+                reorder_unit_id,
+                reorder_level,
+                reorder_quantity,
+                maintain_inventory,
+                @user_id,
+                photo,
+                @variant_of
+            FROM inventory.items
+            WHERE item_id = @variant_of;
+
+            SET @variant_id = SCOPE_IDENTITY();
+        END;
+
+        DELETE FROM inventory.item_variants
+        WHERE item_id = @variant_id
+        AND variant_id NOT IN
+        (
+            SELECT * FROM @variant_ids
+        );
+
+        WITH variants
+        AS
+        (
+            SELECT * FROM @variant_ids
+        ),
+        new
+        AS
+        (
+            SELECT variant_id FROM variants 
+    		WHERE variant_id NOT IN
+            (
+                SELECT inventory.item_variants.variant_id
+                FROM inventory.item_variants
+                WHERE item_id = @variant_id
+            )
+        )
+        
+        INSERT INTO inventory.item_variants(item_id, variant_id, audit_user_id)
+        SELECT @variant_id, variant_id, @user_id
+        FROM new;
+    
+                
+        IF(@tran_count = 0)
+        BEGIN
+            COMMIT TRANSACTION;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF(XACT_STATE() <> 0 AND @tran_count = 0) 
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+
+        DECLARE @ErrorMessage national character varying(4000)  = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity int                              = ERROR_SEVERITY();
+        DECLARE @ErrorState int                                 = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH;
+END;
+
+GO
+
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.delete_variant_item.sql --<--<--
+IF OBJECT_ID('inventory.delete_variant_item') IS NOT NULL
+DROP PROCEDURE inventory.delete_variant_item;
+
+GO
+
+CREATE PROCEDURE inventory.delete_variant_item(@item_id integer)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SET XACT_ABORT ON;
+
+	BEGIN TRY
+		DECLARE @tran_count int = @@TRANCOUNT;
+		
+		IF(@tran_count= 0)
+		BEGIN
+			BEGIN TRANSACTION
+		END;
+
+	    DELETE FROM inventory.item_variants WHERE item_id = @item_id;
+	    DELETE FROM inventory.items WHERE item_id = @item_id;
+
+		IF(@tran_count = 0)
+		BEGIN
+			COMMIT TRANSACTION;
+		END;
+	END TRY
+	BEGIN CATCH
+		IF(XACT_STATE() <> 0 AND @tran_count = 0) 
+		BEGIN
+			ROLLBACK TRANSACTION;
+		END;
+
+		DECLARE @ErrorMessage national character varying(4000)	= ERROR_MESSAGE();
+		DECLARE @ErrorSeverity int								= ERROR_SEVERITY();
+		DECLARE @ErrorState int									= ERROR_STATE();
+		RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+	END CATCH;
 END;
 
 GO
@@ -2693,7 +2876,6 @@ DROP PROCEDURE inventory.post_adjustment;
 
 GO
 
-
 CREATE PROCEDURE inventory.post_adjustment
 (
     @office_id                              integer,
@@ -2704,14 +2886,14 @@ CREATE PROCEDURE inventory.post_adjustment
     @book_date                              date,
     @reference_number                       national character varying(24),
     @statement_reference                    national character varying(2000),
-    @details                                inventory.adjustment_type READONLY
+    @details                                inventory.adjustment_type READONLY,
+    @transaction_master_id                  bigint OUTPUT
 )
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
-    DECLARE @transaction_master_id          bigint;
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Adjustment';
     DECLARE @is_periodic                    bit = inventory.is_periodic_inventory(@office_id);
@@ -2720,97 +2902,105 @@ BEGIN
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
 
-    SELECT
-        @can_post_transaction   = can_post_transaction,
-        @error_message          = error_message
-    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
-
-    IF(@can_post_transaction = 0)
-    BEGIN
-        RAISERROR(@error_message, 10, 1);
-        RETURN;
-    END;
-    
     DECLARE @temp_stock_details TABLE
     (
-        tran_type                       national character varying(2),
-        store_id                        integer,
-        item_id                         integer,
-        item_code                       national character varying(12),
-        unit_id                         integer,
-        base_unit_id                    integer,
-        unit_name                       national character varying(50),
-        quantity                        decimal(30, 6),
-        base_quantity                   decimal(30, 6),                
-        price                           decimal(30, 6),
-        cost_of_goods_sold              decimal(30, 6) DEFAULT(0),
-        inventory_account_id            integer,
-        cost_of_goods_sold_account_id   integer
-    ) 
-    ; 
+        tran_type                           national character varying(2),
+        store_id                            integer,
+        item_id                             integer,
+        item_code                           national character varying(12),
+        unit_id                             integer,
+        base_unit_id                        integer,
+        unit_name                           national character varying(50),
+        quantity                            decimal(30, 6),
+        base_quantity                       decimal(30, 6),                
+        price                               decimal(30, 6),
+        cost_of_goods_sold                  decimal(30, 6) DEFAULT(0),
+        inventory_account_id                integer,
+        cost_of_goods_sold_account_id       integer
+    ); 
 
     DECLARE @temp_transaction_details TABLE
     (
-        tran_type                   national character varying(2), 
-        account_id                  integer, 
-        statement_reference         national character varying(2000), 
-        cash_repository_id          integer, 
-        currency_code               national character varying(12), 
-        amount_in_currency          decimal(30, 6), 
-        local_currency_code         national character varying(12), 
-        er                          decimal(30, 6), 
-        amount_in_local_currency    decimal(30, 6)
-    ) ;
-
-    INSERT INTO @temp_stock_details(tran_type, store_id, item_code, unit_name, quantity)
-    SELECT tran_type, @store_id, item_code, unit_name, quantity 
-    FROM @details;
-
-    IF EXISTS
-    (
-        SELECT * FROM @temp_stock_details
-        WHERE tran_type = 'Dr'
-    )
-    BEGIN
-        RAISERROR('A stock adjustment entry can not contain debit item(s).', 10, 1);
-    END;
-
-    IF EXISTS
-    (
-        SELECT 1 FROM @temp_stock_details
-        GROUP BY item_code
-        HAVING COUNT(item_code) <> 1
-    )
-    BEGIN
-        RAISERROR('An item can appear only once in a store.', 10, 1);
-    END;
-
-    UPDATE @temp_stock_details 
-    SET 
-        item_id         = inventory.get_item_id_by_item_code(item_code),
-        unit_id         = inventory.get_unit_id_by_unit_name(unit_name);
-
-    IF EXISTS
-    (
-        SELECT * FROM @temp_stock_details
-        WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
-    )
-    BEGIN
-        RAISERROR('Invalid data supplied.', 10, 1);
-    END;
-
-    UPDATE @temp_stock_details 
-    SET
-        tran_type                       = 'Cr',
-        base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
-        base_unit_id                    = inventory.get_root_unit_id(unit_id),
-        price                           = inventory.get_item_cost_price(item_id, unit_id),
-        inventory_account_id            = inventory.get_inventory_account_id(item_id),
-        cost_of_goods_sold_account_id   = inventory.get_cost_of_goods_sold_account_id(item_id);
+        tran_type                           national character varying(2), 
+        account_id                          integer, 
+        statement_reference                 national character varying(2000), 
+        cash_repository_id                  integer, 
+        currency_code                       national character varying(12), 
+        amount_in_currency                  decimal(30, 6), 
+        local_currency_code                 national character varying(12), 
+        er                                  decimal(30, 6), 
+        amount_in_local_currency            decimal(30, 6)
+    );
 
 
-    IF EXISTS
-    (
+    BEGIN TRY
+        DECLARE @tran_count int = @@TRANCOUNT;
+        
+        IF(@tran_count= 0)
+        BEGIN
+            BEGIN TRANSACTION
+        END;
+
+        SELECT
+            @can_post_transaction   = can_post_transaction,
+            @error_message          = error_message
+        FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
+
+        IF(@can_post_transaction = 0)
+        BEGIN
+            RAISERROR(@error_message, 10, 1);
+            RETURN;
+        END;
+        
+        INSERT INTO @temp_stock_details(tran_type, store_id, item_code, unit_name, quantity)
+        SELECT tran_type, @store_id, item_code, unit_name, quantity 
+        FROM @details;
+
+        IF EXISTS
+        (
+            SELECT * FROM @temp_stock_details
+            WHERE tran_type = 'Dr'
+        )
+        BEGIN
+            RAISERROR('A stock adjustment entry can not contain debit item(s).', 10, 1);
+        END;
+
+        IF EXISTS
+        (
+            SELECT 1 FROM @temp_stock_details
+            GROUP BY item_code
+            HAVING COUNT(item_code) <> 1
+        )
+        BEGIN
+            RAISERROR('An item can appear only once in a store.', 10, 1);
+        END;
+
+        UPDATE @temp_stock_details 
+        SET 
+            item_id         = inventory.get_item_id_by_item_code(item_code),
+            unit_id         = inventory.get_unit_id_by_unit_name(unit_name);
+
+        IF EXISTS
+        (
+            SELECT * FROM @temp_stock_details
+            WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
+        )
+        BEGIN
+            RAISERROR('Invalid data supplied.', 10, 1);
+        END;
+
+        UPDATE @temp_stock_details 
+        SET
+            tran_type                       = 'Cr',
+            base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
+            base_unit_id                    = inventory.get_root_unit_id(unit_id),
+            price                           = inventory.get_item_cost_price(item_id, unit_id),
+            inventory_account_id            = inventory.get_inventory_account_id(item_id),
+            cost_of_goods_sold_account_id   = inventory.get_cost_of_goods_sold_account_id(item_id);
+
+
+        IF EXISTS
+        (
             SELECT 1
             FROM 
             inventory.stores
@@ -2821,103 +3011,105 @@ BEGIN
                 FROM @temp_stock_details
             )
             HAVING COUNT(DISTINCT inventory.stores.office_id) > 1
+        )
+        BEGIN
+            RAISERROR('Access is denied!\nA stock adjustment transaction cannot references multiple branches.', 10, 1);
+        END;
 
-    )
-    BEGIN
-        RAISERROR('Access is denied!\nA stock adjustment transaction cannot references multiple branches.', 10, 1);
-    END;
-
-    IF EXISTS
-    (
+        IF EXISTS
+        (
             SELECT 1
             FROM 
             @temp_stock_details
             WHERE tran_type = 'Cr'
             AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id)
-    )
-    BEGIN
-        RAISERROR('Negative stock is not allowed.', 10, 1);
-    END;
+        )
+        BEGIN
+            RAISERROR('Negative stock is not allowed.', 10, 1);
+        END;
 
-    --No accounting treatment is needed for periodic accounting system.
-    IF(@is_periodic = 0)
-    BEGIN
-        SET @default_currency_code  = core.get_currency_code_by_office_id(@office_id);
+        --No accounting treatment is needed for periodic accounting system.
+        IF(@is_periodic = 0)
+        BEGIN
+            SET @default_currency_code  = core.get_currency_code_by_office_id(@office_id);
 
-        UPDATE @temp_stock_details 
-        SET 
-            cost_of_goods_sold = inventory.get_cost_of_goods_sold(item_id, unit_id, store_id, quantity);
+            UPDATE @temp_stock_details 
+            SET 
+                cost_of_goods_sold = inventory.get_cost_of_goods_sold(item_id, unit_id, store_id, quantity);
+        
+            INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
+            SELECT 'Dr', cost_of_goods_sold_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
+            FROM @temp_stock_details
+            GROUP BY cost_of_goods_sold_account_id;
+
+            INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
+            SELECT 'Cr', inventory_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
+            FROM @temp_stock_details
+            GROUP BY inventory_account_id;
+        END;
+        
+        INSERT INTO finance.transaction_master
+        (
+            transaction_counter,
+            transaction_code,
+            book,
+            value_date,
+            book_date,
+            login_id,
+            user_id,
+            office_id,
+            reference_number,
+            statement_reference
+        )
+        SELECT
+            finance.get_new_transaction_counter(@value_date), 
+            finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
+            @book_name,
+            @value_date,
+            @book_date,
+            @login_id,
+            @user_id,
+            @office_id,
+            @reference_number,
+            @statement_reference;
+
+        SET @transaction_master_id = SCOPE_IDENTITY();
+
+        INSERT INTO finance.transaction_details(office_id, value_date, book_date, transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency)
+        SELECT @office_id, @value_date, @book_date, @transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency
+        FROM @temp_transaction_details
+        ORDER BY tran_type DESC;
+
+
+        INSERT INTO inventory.checkouts(transaction_master_id, value_date, book_date, transaction_book, posted_by, office_id)
+        SELECT @transaction_master_id, @value_date, @book_date, @book_name, @user_id, @office_id;
+
+        SET @checkout_id                = SCOPE_IDENTITY();
+
+
+        INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
+        SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
+        FROM @temp_stock_details;
+
+        EXECUTE finance.auto_verify @transaction_master_id, @office_id;
     
-        INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
-        SELECT 'Dr', cost_of_goods_sold_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
-        FROM @temp_stock_details
-        GROUP BY cost_of_goods_sold_account_id;
+        IF(@tran_count = 0)
+        BEGIN
+            COMMIT TRANSACTION;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF(XACT_STATE() <> 0 AND @tran_count = 0) 
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
 
-        INSERT INTO @temp_transaction_details(tran_type, account_id, statement_reference, currency_code, amount_in_currency, er, local_currency_code, amount_in_local_currency)
-        SELECT 'Cr', inventory_account_id, @statement_reference, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0)), 1, @default_currency_code, SUM(COALESCE(cost_of_goods_sold, 0))
-        FROM @temp_stock_details
-        GROUP BY inventory_account_id;
-    END;
-    
-    INSERT INTO finance.transaction_master
-    (
-        transaction_counter,
-        transaction_code,
-        book,
-        value_date,
-        book_date,
-        login_id,
-        user_id,
-        office_id,
-        reference_number,
-        statement_reference
-    )
-    SELECT
-        finance.get_new_transaction_counter(@value_date), 
-        finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
-        @book_name,
-        @value_date,
-        @book_date,
-        @login_id,
-        @user_id,
-        @office_id,
-        @reference_number,
-        @statement_reference;
-
-    SET @transaction_master_id = SCOPE_IDENTITY();
-
-    INSERT INTO finance.transaction_details(office_id, value_date, book_date, transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency)
-    SELECT @office_id, @value_date, @book_date, @transaction_master_id, tran_type, account_id, statement_reference, cash_repository_id, currency_code, amount_in_currency, local_currency_code, er, amount_in_local_currency
-    FROM @temp_transaction_details
-    ORDER BY tran_type DESC;
-
-
-
-    INSERT INTO inventory.checkouts(transaction_master_id, value_date, book_date, transaction_book, posted_by, office_id)
-    SELECT @transaction_master_id, @value_date, @book_date, @book_name, @user_id, @office_id;
-
-    SET @checkout_id                = SCOPE_IDENTITY();
-
-
-    INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
-    SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
-    FROM @temp_stock_details;
-
-    EXECUTE finance.auto_verify @transaction_master_id, @office_id;
-    
-    SELECT @transaction_master_id;
+        DECLARE @ErrorMessage national character varying(4000)  = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity int                              = ERROR_SEVERITY();
+        DECLARE @ErrorState int                                 = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH;
 END;
-
-
-
-
--- SELECT * FROM inventory.post_adjustment(1, 1, 1, 1, CAST(GETDATE() AS date), CAST(GETDATE() AS date), '22', 'Test', 
--- ARRAY[
--- ROW('Cr', 'RMBP', 'Piece', 1),
--- ROW('Cr', '11MBA', 'Piece', 1)
--- ]
--- );
-
 
 
 GO
@@ -2950,85 +3142,109 @@ BEGIN
     DECLARE @checkout_id					bigint;
     DECLARE @tran_counter                   integer;
     DECLARE @transaction_code				national character varying(50);
-
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
 
-    SELECT
-        @can_post_transaction   = can_post_transaction,
-        @error_message          = error_message
-    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
-
-    IF(@can_post_transaction = 0)
-    BEGIN
-        RAISERROR(@error_message, 10, 1);
-        RETURN;
-    END;
-    
     DECLARE @temp_stock_details TABLE
     (
-        id                              integer IDENTITY PRIMARY KEY,
-        tran_type                       national character varying(2),
-        store_id                        integer,
-        item_id                         integer, 
-        quantity                        decimal(30, 6),
-        unit_id                         integer,
-        base_quantity                   decimal(30, 6),
-        base_unit_id                    integer,                
-        price                           decimal(30, 6)
+        id                                  integer IDENTITY PRIMARY KEY,
+        tran_type                           national character varying(2),
+        store_id                            integer,
+        item_id                             integer, 
+        quantity                            decimal(30, 6),
+        unit_id                             integer,
+        base_quantity                       decimal(30, 6),
+        base_unit_id                        integer,                
+        price                               decimal(30, 6)
     ) ;
 
-    INSERT INTO @temp_stock_details(store_id, item_id, quantity, unit_id, price)
-    SELECT store_id, item_id, quantity, unit_id, price
-    FROM @details;
+    BEGIN TRY
+        DECLARE @tran_count int = @@TRANCOUNT;
+        
+        IF(@tran_count= 0)
+        BEGIN
+            BEGIN TRANSACTION
+        END;
+        
+        SELECT
+            @can_post_transaction   = can_post_transaction,
+            @error_message          = error_message
+        FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
 
-    UPDATE @temp_stock_details 
-    SET
-        tran_type                       = 'Dr',
-        base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
-        base_unit_id                    = inventory.get_root_unit_id(unit_id);
+        IF(@can_post_transaction = 0)
+        BEGIN
+            RAISERROR(@error_message, 10, 1);
+            RETURN;
+        END;
+        
 
-    IF EXISTS
-    (
-        SELECT * FROM @temp_stock_details
-        WHERE store_id IS NULL
-        OR item_id IS NULL
-        OR unit_id IS NULL
-    )
-    BEGIN
-        RAISERROR('Access is denied. Invalid values supplied.', 10, 1);
-    END;
+        INSERT INTO @temp_stock_details(store_id, item_id, quantity, unit_id, price)
+        SELECT store_id, item_id, quantity, unit_id, price
+        FROM @details;
 
-    IF EXISTS
-    (
-        SELECT TOP 1 0 FROM @temp_stock_details AS details
-        WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = 0
-    )
-    BEGIN
-        RAISERROR('Item/unit mismatch.', 10, 1);
-    END;
+        UPDATE @temp_stock_details 
+        SET
+            tran_type                       = 'Dr',
+            base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
+            base_unit_id                    = inventory.get_root_unit_id(unit_id);
 
-    
-    SET @tran_counter           = finance.get_new_transaction_counter(@value_date);
-    SET @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
+        IF EXISTS
+        (
+            SELECT * FROM @temp_stock_details
+            WHERE store_id IS NULL
+            OR item_id IS NULL
+            OR unit_id IS NULL
+        )
+        BEGIN
+            RAISERROR('Access is denied. Invalid values supplied.', 10, 1);
+        END;
+
+        IF EXISTS
+        (
+            SELECT TOP 1 0 FROM @temp_stock_details AS details
+            WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = 0
+        )
+        BEGIN
+            RAISERROR('Item/unit mismatch.', 10, 1);
+        END;
+
+        
+        SET @tran_counter           = finance.get_new_transaction_counter(@value_date);
+        SET @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
 
 
-    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
-    SELECT @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
-    SET @transaction_master_id = SCOPE_IDENTITY();
+        INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
+        SELECT @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
+        SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, transaction_master_id, posted_by, office_id)
-    SELECT @book_name, @value_date, @book_date, @transaction_master_id, @user_id, @office_id;
-    SET @checkout_id = SCOPE_IDENTITY();
+        INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, transaction_master_id, posted_by, office_id)
+        SELECT @book_name, @value_date, @book_date, @transaction_master_id, @user_id, @office_id;
+        SET @checkout_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
-    SELECT @value_date, @book_date, @checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
-    FROM @temp_stock_details;
-    
-    EXECUTE finance.auto_verify @transaction_master_id, @office_id;    
-    SELECT @transaction_master_id;
+        INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
+        SELECT @value_date, @book_date, @checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
+        FROM @temp_stock_details;
+        
+        EXECUTE finance.auto_verify @transaction_master_id, @office_id;    
+
+        IF(@tran_count = 0)
+        BEGIN
+            COMMIT TRANSACTION;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF(XACT_STATE() <> 0 AND @tran_count = 0) 
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+
+        DECLARE @ErrorMessage national character varying(4000)  = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity int                              = ERROR_SEVERITY();
+        DECLARE @ErrorState int                                 = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH;
 END;
 
 GO
@@ -3039,7 +3255,6 @@ IF OBJECT_ID('inventory.post_transfer') IS NOT NULL
 DROP PROCEDURE inventory.post_transfer;
 
 GO
-
 
 CREATE PROCEDURE inventory.post_transfer
 (
@@ -3060,88 +3275,96 @@ BEGIN
 
     DECLARE @checkout_id                    bigint;
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
-
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
 
-    SELECT
-        @can_post_transaction   = can_post_transaction,
-        @error_message          = error_message
-    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
-
-    IF(@can_post_transaction = 0)
-    BEGIN
-        RAISERROR(@error_message, 10, 1);
-        RETURN;
-    END;
-
     DECLARE @temp_stock_details TABLE
     (
-        tran_type       national character varying(2),
-        store_id        integer,
-        store_name      national character varying(500),
-        item_id         integer,
-        item_code       national character varying(24),
-        unit_id         integer,
-        base_unit_id    integer,
-        unit_name       national character varying(500),
-        quantity        decimal(30, 6),
-        base_quantity   decimal(30, 6),                
-        price           decimal(30, 6)
-    ) 
-    ; 
+        tran_type                           national character varying(2),
+        store_id                            integer,
+        store_name                          national character varying(500),
+        item_id                             integer,
+        item_code                           national character varying(24),
+        unit_id                             integer,
+        base_unit_id                        integer,
+        unit_name                           national character varying(500),
+        quantity                            decimal(30, 6),
+        base_quantity                       decimal(30, 6),                
+        price                               decimal(30, 6)
+    ); 
 
-    INSERT INTO @temp_stock_details(tran_type, store_name, item_code, unit_name, quantity, price)
-    SELECT tran_type, store_name, item_code, unit_name, quantity, rate * quantity
-    FROM @details;
+    BEGIN TRY
+        DECLARE @tran_count int = @@TRANCOUNT;
+        
+        IF(@tran_count= 0)
+        BEGIN
+            BEGIN TRANSACTION
+        END;
+        
+        SELECT
+            @can_post_transaction               = can_post_transaction,
+            @error_message                      = error_message
+        FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
 
-    IF EXISTS
-    (
-        SELECT 1 FROM @temp_stock_details
-        GROUP BY item_code, store_name
-        HAVING COUNT(item_code) <> 1
-    )
-    BEGIN
-        RAISERROR('An item can appear only once in a store.', 10, 1);
-    END;
-
-    UPDATE @temp_stock_details SET 
-    item_id         = inventory.get_item_id_by_item_code(item_code),
-    unit_id         = inventory.get_unit_id_by_unit_name(unit_name),
-    store_id        = inventory.get_store_id_by_store_name(store_name);
-
-    IF EXISTS
-    (
-        SELECT * FROM @temp_stock_details
-        WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
-    )
-    BEGIN
-        RAISERROR('Invalid data supplied.', 10, 1);
-    END;
-
-    UPDATE @temp_stock_details 
-    SET
-        base_unit_id    = inventory.get_root_unit_id(unit_id),
-        base_quantity   = inventory.get_base_quantity_by_unit_id(unit_id, quantity);
-
-    UPDATE @temp_stock_details 
-    SET
-        price           = inventory.get_item_cost_price(item_id, unit_id)
-    WHERE price IS NULL;
-
-    IF EXISTS
-    (
-        SELECT item_code FROM @temp_stock_details
-        GROUP BY item_code
-        HAVING SUM(CASE WHEN tran_type='Dr' THEN base_quantity ELSE base_quantity *-1 END) <> 0
-    )
-    BEGIN
-        RAISERROR('Referencing sides are not equal.', 10, 1);
-    END;
+        IF(@can_post_transaction = 0)
+        BEGIN
+            RAISERROR(@error_message, 10, 1);
+            RETURN;
+        END;
 
 
-    IF EXISTS
-    (
+        INSERT INTO @temp_stock_details(tran_type, store_name, item_code, unit_name, quantity, price)
+        SELECT tran_type, store_name, item_code, unit_name, quantity, rate * quantity
+        FROM @details;
+
+        IF EXISTS
+        (
+            SELECT 1 FROM @temp_stock_details
+            GROUP BY item_code, store_name
+            HAVING COUNT(item_code) <> 1
+        )
+        BEGIN
+            RAISERROR('An item can appear only once in a store.', 10, 1);
+        END;
+
+        UPDATE @temp_stock_details 
+        SET 
+            item_id         = inventory.get_item_id_by_item_code(item_code),
+            unit_id         = inventory.get_unit_id_by_unit_name(unit_name),
+            store_id        = inventory.get_store_id_by_store_name(store_name);
+
+        IF EXISTS
+        (
+            SELECT * FROM @temp_stock_details
+            WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
+        )
+        BEGIN
+            RAISERROR('Invalid data supplied.', 10, 1);
+        END;
+
+        UPDATE @temp_stock_details 
+        SET
+            base_unit_id    = inventory.get_root_unit_id(unit_id),
+            base_quantity   = inventory.get_base_quantity_by_unit_id(unit_id, quantity);
+
+        UPDATE @temp_stock_details 
+        SET
+            price           = inventory.get_item_cost_price(item_id, unit_id)
+        WHERE price IS NULL;
+
+        IF EXISTS
+        (
+            SELECT item_code FROM @temp_stock_details
+            GROUP BY item_code
+            HAVING SUM(CASE WHEN tran_type='Dr' THEN base_quantity ELSE base_quantity *-1 END) <> 0
+        )
+        BEGIN
+            RAISERROR('Referencing sides are not equal.', 10, 1);
+        END;
+
+
+        IF EXISTS
+        (
             SELECT 1
             FROM 
             inventory.stores
@@ -3152,51 +3375,66 @@ BEGIN
                 FROM @temp_stock_details
             )
             HAVING COUNT(DISTINCT inventory.stores.office_id) > 1
+        )
+        BEGIN
+            RAISERROR('Access is denied!\nA stock journal transaction cannot references multiple branches.', 10, 1);
+        END;
 
-    )
-    BEGIN
-        RAISERROR('Access is denied!\nA stock journal transaction cannot references multiple branches.', 10, 1);
-    END;
-
-    IF EXISTS
-    (
+        IF EXISTS
+        (
             SELECT 1
             FROM 
             @temp_stock_details
             WHERE tran_type = 'Cr'
             AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id)
-    )
-    BEGIN
-        RAISERROR('Negative stock is not allowed.', 10, 1);
-    END;
+        )
+        BEGIN
+            RAISERROR('Negative stock is not allowed.', 10, 1);
+        END;
 
-    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
-    SELECT
-        finance.get_new_transaction_counter(@value_date), 
-        finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
-        @book_name,
-        @value_date,
-        @book_date,
-        @login_id,
-        @user_id,
-        @office_id,
-        @reference_number,
-        @statement_reference;
+        INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
+        SELECT
+            finance.get_new_transaction_counter(@value_date), 
+            finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id),
+            @book_name,
+            @value_date,
+            @book_date,
+            @login_id,
+            @user_id,
+            @office_id,
+            @reference_number,
+            @statement_reference;
 
-    SET @transaction_master_id = SCOPE_IDENTITY();
+        SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
-    SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
-    SET @checkout_id                = SCOPE_IDENTITY();
+        INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
+        SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
+        SET @checkout_id                = SCOPE_IDENTITY();
 
-    INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
-    SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
-    FROM @temp_stock_details;
-    
-    
-    EXECUTE finance.auto_verify @transaction_master_id, @office_id;
-    SELECT @transaction_master_id;
+        INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
+        SELECT @checkout_id, @value_date, @book_date, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
+        FROM @temp_stock_details;
+        
+        
+        EXECUTE finance.auto_verify @transaction_master_id, @office_id;
+
+        IF(@tran_count = 0)
+        BEGIN
+            COMMIT TRANSACTION;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF(XACT_STATE() <> 0 AND @tran_count = 0) 
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+
+        DECLARE @ErrorMessage national character varying(4000)  = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity int                              = ERROR_SEVERITY();
+        DECLARE @ErrorState int                                 = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH;
 END;
 
 

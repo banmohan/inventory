@@ -169,6 +169,8 @@
     <Compile Include="Controllers\Backend\Tasks\TransferController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
     <Compile Include="Controllers\Services\InventoryBackendController.cs" />
+    <Compile Include="DAL\Backend\Setup\ItemVariants.cs" />
+    <Compile Include="DAL\Backend\Setup\Variants\IItemVariant.cs" />
     <Compile Include="DAL\Backend\Setup\Inventory.cs" />
     <Compile Include="DAL\Backend\Service\Items.cs" />
     <Compile Include="DAL\Backend\Service\Units.cs" />
@@ -176,6 +178,8 @@
     <Compile Include="DAL\Backend\Setup\OpeningEntry\IOpeningEntry.cs" />
     <Compile Include="DAL\Backend\Setup\OpeningEntry\PostgreSQL.cs" />
     <Compile Include="DAL\Backend\Setup\OpeningInventories.cs" />
+    <Compile Include="DAL\Backend\Setup\Variants\PostgreSQL.cs" />
+    <Compile Include="DAL\Backend\Setup\Variants\SqlServer.cs" />
     <Compile Include="DAL\Backend\Tasks\AdjustmentEntry\IAdjustmentEntry.cs" />
     <Compile Include="DAL\Backend\Tasks\AdjustmentEntry\PostgreSQL.cs" />
     <Compile Include="DAL\Backend\Tasks\AdjustmentEntry\SqlServer.cs" />
@@ -188,6 +192,7 @@
     <Compile Include="DTO\AssociatedUnit.cs" />
     <Compile Include="DTO\ClosingInventory.cs" />
     <Compile Include="DTO\Item.cs" />
+    <Compile Include="DTO\ItemVariantInfo.cs" />
     <Compile Include="DTO\ItemView.cs" />
     <Compile Include="DTO\OpeningInventoryStatus.cs" />
     <Compile Include="Extensions\PartialViewExtensions.cs" />

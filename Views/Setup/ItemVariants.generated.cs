@@ -33,7 +33,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -50,16 +49,288 @@ namespace ASP
             #line 3 "..\..\Views\Setup\ItemVariants.cshtml"
   
     ViewBag.Title = "";
-    Layout = ViewBag.Layout;
+    Layout = ViewBag.InventoryLayoutPath;
 
             
             #line default
             #line hidden
 WriteLiteral("\r\n\r\n<div");
 
-WriteLiteral(" class=\"ui error message container\"");
+WriteLiteral(" class=\"ui attached very relaxed padded segment\"");
 
-WriteLiteral(">\r\n    Please port this from MixERP.\r\n</div>");
+WriteLiteral(">\r\n    <div");
+
+WriteLiteral(" class=\"item variant container\"");
+
+WriteLiteral(">\r\n        <div");
+
+WriteLiteral(" class=\"ui huge grey header\"");
+
+WriteLiteral(">\r\n            <span");
+
+WriteLiteral(" id=\"heading\"");
+
+WriteLiteral(">\r\n                <span");
+
+WriteLiteral(" data-localize=\"Titles.ItemVariants\"");
+
+WriteLiteral("></span>\r\n            </span>\r\n        </div>\r\n        <div");
+
+WriteLiteral(" class=\"ui divider\"");
+
+WriteLiteral("></div>\r\n\r\n        <div");
+
+WriteLiteral(" class=\"ui form\"");
+
+WriteLiteral(">\r\n            <div");
+
+WriteLiteral(" class=\"four fields\"");
+
+WriteLiteral(">\r\n                <div");
+
+WriteLiteral(" class=\"field\"");
+
+WriteLiteral(">\r\n                    <label");
+
+WriteLiteral(" data-localize=\"Titles.SelectItem\"");
+
+WriteLiteral("></label>\r\n                    <select");
+
+WriteLiteral(" id=\"ItemSelect\"");
+
+WriteLiteral(" class=\"ui search dropdown\"");
+
+WriteLiteral("></select>\r\n                </div>\r\n                <div");
+
+WriteLiteral(" class=\"field\"");
+
+WriteLiteral(">\r\n                    <label");
+
+WriteLiteral(" data-localize=\"Titles.SelectVariant\"");
+
+WriteLiteral("></label>\r\n                    <select");
+
+WriteLiteral(" id=\"VariantSelect\"");
+
+WriteLiteral(" class=\"ui search dropdown\"");
+
+WriteLiteral("></select>\r\n                </div>\r\n                <div");
+
+WriteLiteral(" class=\"field\"");
+
+WriteLiteral(">\r\n                    <label>&nbsp;</label>\r\n                    <input");
+
+WriteLiteral(" type=\"button\"");
+
+WriteLiteral(" id=\"ShowButton\"");
+
+WriteLiteral(" class=\"ui basic button\"");
+
+WriteLiteral(" data-localize=\"Titles.Show\"");
+
+WriteLiteral(" />\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n        <table" +
+"");
+
+WriteLiteral(" id=\"variant-table\"");
+
+WriteLiteral(" class=\"ui small compact stackable form table\"");
+
+WriteLiteral(">\r\n            <thead>\r\n                <tr>\r\n                    <th");
+
+WriteLiteral(" style=\"width: 300px;\"");
+
+WriteLiteral(">\r\n                        <span");
+
+WriteLiteral(" data-localize=\"Titles.Attribute\"");
+
+WriteLiteral("></span>\r\n                    </th>\r\n                    <th");
+
+WriteLiteral(" style=\"width: 300px;\"");
+
+WriteLiteral(">\r\n                        <span");
+
+WriteLiteral(" data-localize=\"Titles.Variant\"");
+
+WriteLiteral("></span>\r\n                    </th>\r\n                    <th></th>\r\n             " +
+"   </tr>\r\n            </thead>\r\n            <tbody></tbody>\r\n            <tfoot>" +
+"\r\n                <tr>\r\n                    <th>\r\n                        <input" +
+"");
+
+WriteLiteral(" type=\"text\"");
+
+WriteLiteral(" id=\"ItemCodeInputText\"");
+
+WriteLiteral(" maxlength=\"12\"");
+
+WriteLiteral(" data-localized-placeholder=\"Titles.ItemCode\"");
+
+WriteLiteral(" />\r\n                    </th>\r\n                    <th>\r\n                       " +
+" <input");
+
+WriteLiteral(" type=\"text\"");
+
+WriteLiteral(" id=\"ItemNameInputText\"");
+
+WriteLiteral(" maxlength=\"100\"");
+
+WriteLiteral(" data-localized-placeholder=\"Titles.ItemName\"");
+
+WriteLiteral(" />\r\n                    </th>\r\n                    <th");
+
+WriteLiteral(" class=\"right aligned\"");
+
+WriteLiteral(">\r\n                        <input");
+
+WriteLiteral(" type=\"button\"");
+
+WriteLiteral(" class=\"ui blue add button\"");
+
+WriteLiteral(" data-localize=\"Titles.Add\"");
+
+WriteLiteral(" onclick=\"addRow();\"");
+
+WriteLiteral(" />\r\n                        <div");
+
+WriteLiteral(" class=\"ui buttons\"");
+
+WriteLiteral(">\r\n                            <input");
+
+WriteLiteral(" type=\"button\"");
+
+WriteLiteral(" class=\"ui olive save button\"");
+
+WriteLiteral(" id=\"SaveButton\"");
+
+WriteLiteral(" data-localize=\"Titles.Save\"");
+
+WriteLiteral(" />\r\n                            <input");
+
+WriteLiteral(" type=\"button\"");
+
+WriteLiteral(" class=\"ui purple save button\"");
+
+WriteLiteral(" id=\"DeleteButton\"");
+
+WriteLiteral(" data-localize=\"Titles.Delete\"");
+
+WriteLiteral(" />\r\n                        </div>\r\n                    </th>\r\n                <" +
+"/tr>\r\n            </tfoot>\r\n        </table>\r\n    </div>\r\n\r\n</div>\r\n\r\n\r\n<script>" +
+"\r\n    var attributes;\r\n    var variants;\r\n    var rowTemplate =\r\n    `<tr>\r\n    " +
+"    <td>\r\n            <select class=\"ui search attribute fluid dropdown\">{attrib" +
+"utes}</select>\r\n        </td>\r\n        <td>\r\n            <select class=\"ui searc" +
+"h variant fluid dropdown\"></select>\r\n        </td>\r\n        <td>\r\n            <d" +
+"iv class=\"ui basic buttons\">\r\n                <input type=\"button\" class=\"ui bas" +
+"ic delete button\" value=\"Delete\" />\r\n            </div>\r\n        </td>\r\n    </tr" +
+">`;\r\n\r\n\r\n\r\n    function bindItems() {\r\n        const url = \"/api/forms/inventory" +
+"/items/display-fields\";\r\n        const target = $(\"#ItemSelect\");\r\n        windo" +
+"w.ajaxDataBind(url, target, null, null, null, null, \"Key\", \"Value\");\r\n    };\r\n\r\n" +
+"    function getAttributes() {\r\n        function request() {\r\n            const " +
+"url = \"/api/forms/inventory/attributes/all\";\r\n            return window.getAjaxR" +
+"equest(url);\r\n        };\r\n\r\n        const ajax = request();\r\n\r\n        ajax.succ" +
+"ess(function (response) {\r\n            attributes = response;\r\n        });\r\n    " +
+"};\r\n\r\n    function getVariants() {\r\n        function request() {\r\n            co" +
+"nst url = \"/api/forms/inventory/variants/all\";\r\n            return window.getAja" +
+"xRequest(url);\r\n        };\r\n\r\n        const ajax = request();\r\n\r\n        ajax.su" +
+"ccess(function (response) {\r\n            variants = response;\r\n        });\r\n    " +
+"};\r\n\r\n\r\n    $(document).ready(function () {\r\n        bindItems();\r\n        getAt" +
+"tributes();\r\n        getVariants();\r\n\r\n        $(\"#ItemSelect\").change(function " +
+"() {\r\n            const el = $(this);\r\n            var heading = \"Item Variants\"" +
+";\r\n            heading += \" : \" + el.getSelectedText();\r\n\r\n            $(\"#headi" +
+"ng\").html(heading);\r\n        });\r\n    });\r\n\r\n    $(\"#ItemSelect\").change(functio" +
+"n () {\r\n        function request(itemId) {\r\n            const url = \"/api/forms/" +
+"inventory/items/get-where/-1\";\r\n            const filters = [];\r\n            fil" +
+"ters.push(window.getAjaxColumnFilter(\"WHERE\", \"is_variant_of\", \"int\", window.Fil" +
+"terConditions.IsEqualTo, itemId));\r\n            const data = JSON.stringify(filt" +
+"ers);\r\n\r\n            return window.getAjaxRequest(url, \"POST\", data);\r\n        }" +
+";\r\n\r\n        const itemId = $(this).val();\r\n        var target = $(\"#VariantSele" +
+"ct\");\r\n        target.dropdown(\"set selected\", \"\");\r\n        target.html(\"\");\r\n\r" +
+"\n        if (!itemId) {\r\n            return;\r\n        };\r\n\r\n        const ajax =" +
+" request(itemId);\r\n\r\n        ajax.success(function (response) {\r\n            con" +
+"st placeholder = response.length ? \"Select\" : \"None\";\r\n            window.append" +
+"Option(target, \"\", placeholder);\r\n\r\n            $.each(response, function () {\r\n" +
+"                const key = this[\"ItemId\"];\r\n                const value = this[" +
+"\"ItemCode\"] + \" (\" + this[\"ItemName\"] + \")\";\r\n                window.appendOptio" +
+"n(target, key, value);\r\n            });\r\n        });\r\n    });\r\n\r\n    function ad" +
+"dRow(attributeId, variantId) {\r\n        function getAttributes() {\r\n            " +
+"var attributeOptions = \"<option val=\'\'>\" + \"Select\" + \"</option>\";\r\n\r\n          " +
+"  $.each(attributes, function () {\r\n                attributeOptions += \"<option" +
+" value=\'\";\r\n                attributeOptions += this.AttributeId;\r\n             " +
+"   attributeOptions += \"\'\";\r\n\r\n                if (this.AttributeId === attribut" +
+"eId) {\r\n                    attributeOptions += \" selected\";\r\n                };" +
+"\r\n\r\n                attributeOptions += \">\";\r\n                attributeOptions +" +
+"= this.AttributeCode;\r\n                attributeOptions += \" (\";\r\n              " +
+"  attributeOptions += this.AttributeName;\r\n                attributeOptions += \"" +
+")\";\r\n                attributeOptions += \"</option>\";\r\n            });\r\n        " +
+"    return attributeOptions;\r\n        };\r\n\r\n        function appendVariants(targ" +
+"et, attributeId, variantId) {\r\n            target.dropdown(\"set selected\", \"\");\r" +
+"\n            target.html(\"\");\r\n\r\n            const filtered = window.Enumerable." +
+"From(variants).Where(function (x) { return x.AttributeId.toString() === attribut" +
+"eId.toString() }).ToArray();\r\n\r\n            window.appendOption(target, \"\", \"Sel" +
+"ect\");\r\n\r\n            $.each(filtered, function () {\r\n                window.app" +
+"endOption(target, this.VariantId, this.VariantName);\r\n            });\r\n\r\n       " +
+"     if (variantId) {\r\n                setTimeout(function () {\r\n               " +
+"     target.dropdown(\"set selected\", variantId);\r\n                }, 1);\r\n      " +
+"      };\r\n        };\r\n\r\n        var row = $(rowTemplate.replace(\"{attributes}\", " +
+"getAttributes()));\r\n\r\n        $(\"#variant-table tbody\").append(row);\r\n        wi" +
+"ndow.initalizeDropdowns();\r\n\r\n        row.find(\".attribute select\").change(funct" +
+"ion () {\r\n            const el = $(this);\r\n            const target = row.find(\"" +
+".variant select\");\r\n            const val = el.val();\r\n\r\n            appendVaria" +
+"nts(target, val);\r\n        });\r\n\r\n        if (variantId) {\r\n            var targ" +
+"et = row.find(\".variant select\");\r\n            setTimeout(function () {\r\n       " +
+"         appendVariants(target, attributeId, variantId);\r\n            }, 1);\r\n  " +
+"      };\r\n\r\n        $(\"input.delete.button\").unbind().click(function () {\r\n     " +
+"       const confirmed = window.confirmAction();\r\n            if (confirmed) {\r\n" +
+"                $(this).closest(\"tr\").remove();\r\n            };\r\n        });\r\n  " +
+"  };\r\n\r\n    function showItem(variantItemId) {\r\n        function request(itemId)" +
+" {\r\n            const url = \"/api/forms/inventory/items/\" + itemId;\r\n           " +
+" return window.getAjaxRequest(url);\r\n        };\r\n\r\n        const ajax = request(" +
+"variantItemId);\r\n        ajax.success(function (response) {\r\n            $(\"#Ite" +
+"mCodeInputText\").val(response.ItemCode);\r\n            $(\"#ItemNameInputText\").va" +
+"l(response.ItemName);\r\n        });\r\n    };\r\n\r\n    function cleanUp() {\r\n        " +
+"$(\"#variant-table tbody\").html(\"\");\r\n        $(\"#ItemCodeInputText\").val(\"\");\r\n " +
+"       $(\"#ItemNameInputText\").val(\"\");\r\n    };\r\n\r\n    $(\"#ShowButton\").click(fu" +
+"nction () {\r\n        function request(variantItemId) {\r\n            const url = " +
+"\"/api/forms/inventory/item-variants/get-where/-1\";\r\n            const filters = " +
+"[];\r\n            filters.push(window.getAjaxColumnFilter(\"WHERE\", \"item_id\", \"in" +
+"t\", window.FilterConditions.IsEqualTo, variantItemId));\r\n            const data " +
+"= JSON.stringify(filters);\r\n\r\n            return window.getAjaxRequest(url, \"POS" +
+"T\", data);\r\n        };\r\n\r\n        cleanUp();\r\n\r\n        const variantItemId = $(" +
+"\"#VariantSelect\").val();\r\n        if (!variantItemId) {\r\n            return;\r\n  " +
+"      };\r\n\r\n        showItem(variantItemId);\r\n        const ajax = request(varia" +
+"ntItemId);\r\n\r\n        ajax.success(function (response) {\r\n            $.each(res" +
+"ponse, function () {\r\n                var variantId = this.VariantId;\r\n         " +
+"       const attributeId = window.Enumerable.From(variants).Where(function (x) {" +
+" return x.VariantId === variantId }).FirstOrDefault().AttributeId;\r\n            " +
+"    addRow(attributeId, variantId);\r\n            });\r\n        });\r\n    });\r\n\r\n  " +
+"  $(\"#SaveButton\").click(function () {\r\n        function request(model) {\r\n     " +
+"       const url = \"/dashboard/inventory/setup/item-variants\";\r\n            cons" +
+"t data = JSON.stringify(model);\r\n            return window.getAjaxRequest(url, \"" +
+"POST\", data);\r\n        };\r\n\r\n        function getDuplicates(items) {\r\n          " +
+"  const unique = [];\r\n\r\n            for (var i = 0, len = items.length; i < len;" +
+" i++) {\r\n                const item = items[i];\r\n\r\n                if (unique.in" +
+"dexOf(item) > -1) {\r\n                    return item;\r\n                };\r\n\r\n   " +
+"             unique.push(item);\r\n            }\r\n\r\n            return null;\r\n    " +
+"    };\r\n\r\n\r\n        const attributeIds = $(\".attribute select\").map(function () " +
+"{ return $(this).val(); }).get();\r\n        const variantIds = $(\".variant select" +
+"\").map(function () { return $(this).val(); }).get();\r\n        var duplicate = ge" +
+"tDuplicates(attributeIds);\r\n\r\n        if (duplicate) {\r\n            const item =" +
+" window.Enumerable.From(attributes).Where(function (x) { return x.AttributeId.to" +
+"String() === duplicate }).FirstOrDefault().AttributeName;\r\n            window.di" +
+"splayMessage(window.stringFormat(\"Cannot create a variant having multiple attrib" +
+"utes.\", item));\r\n            return;\r\n        };\r\n\r\n        const model = {\r\n   " +
+"         VariantOf: $(\"#ItemSelect\").val(),\r\n            ItemId: $(\"#VariantSele" +
+"ct\").val() || null,\r\n            ItemCode: $(\"#ItemCodeInputText\").val(),\r\n     " +
+"       ItemName: $(\"#ItemNameInputText\").val(),\r\n            VariantIds: variant" +
+"Ids,\r\n            UserId: window.userId\r\n        };\r\n\r\n\r\n        const ajax = re" +
+"quest(model);\r\n\r\n        ajax.success(function () {\r\n            window.displayS" +
+"uccess();\r\n        });\r\n    });\r\n\r\n    $(\"#DeleteButton\").click(function () {\r\n " +
+"       function request(itemId) {\r\n            var url = \"/dashboard/inventory/s" +
+"etup/item-variants/{itemId}\";\r\n            url = url.replace(\"{itemId}\", itemId)" +
+";\r\n\r\n            return window.getAjaxRequest(url, \"DELETE\");\r\n        };\r\n\r\n   " +
+"     const variantItemId = $(\"#VariantSelect\").val();\r\n\r\n        if (variantItem" +
+"Id) {\r\n            const ajax = request(variantItemId);\r\n\r\n            ajax.succ" +
+"ess(function () {\r\n                cleanUp();\r\n                $(\"#ItemSelect\")." +
+"trigger(\"change\");\r\n            });\r\n        };\r\n    });\r\n\r\n</script>\r\n");
 
         }
     }

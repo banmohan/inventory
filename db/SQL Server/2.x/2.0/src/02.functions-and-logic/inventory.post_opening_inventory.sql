@@ -24,85 +24,109 @@ BEGIN
     DECLARE @checkout_id					bigint;
     DECLARE @tran_counter                   integer;
     DECLARE @transaction_code				national character varying(50);
-
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
 
-    SELECT
-        @can_post_transaction   = can_post_transaction,
-        @error_message          = error_message
-    FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
-
-    IF(@can_post_transaction = 0)
-    BEGIN
-        RAISERROR(@error_message, 10, 1);
-        RETURN;
-    END;
-    
     DECLARE @temp_stock_details TABLE
     (
-        id                              integer IDENTITY PRIMARY KEY,
-        tran_type                       national character varying(2),
-        store_id                        integer,
-        item_id                         integer, 
-        quantity                        decimal(30, 6),
-        unit_id                         integer,
-        base_quantity                   decimal(30, 6),
-        base_unit_id                    integer,                
-        price                           decimal(30, 6)
+        id                                  integer IDENTITY PRIMARY KEY,
+        tran_type                           national character varying(2),
+        store_id                            integer,
+        item_id                             integer, 
+        quantity                            decimal(30, 6),
+        unit_id                             integer,
+        base_quantity                       decimal(30, 6),
+        base_unit_id                        integer,                
+        price                               decimal(30, 6)
     ) ;
 
-    INSERT INTO @temp_stock_details(store_id, item_id, quantity, unit_id, price)
-    SELECT store_id, item_id, quantity, unit_id, price
-    FROM @details;
+    BEGIN TRY
+        DECLARE @tran_count int = @@TRANCOUNT;
+        
+        IF(@tran_count= 0)
+        BEGIN
+            BEGIN TRANSACTION
+        END;
+        
+        SELECT
+            @can_post_transaction   = can_post_transaction,
+            @error_message          = error_message
+        FROM finance.can_post_transaction(@login_id, @user_id, @office_id, @book_name, @value_date);
 
-    UPDATE @temp_stock_details 
-    SET
-        tran_type                       = 'Dr',
-        base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
-        base_unit_id                    = inventory.get_root_unit_id(unit_id);
+        IF(@can_post_transaction = 0)
+        BEGIN
+            RAISERROR(@error_message, 10, 1);
+            RETURN;
+        END;
+        
 
-    IF EXISTS
-    (
-        SELECT * FROM @temp_stock_details
-        WHERE store_id IS NULL
-        OR item_id IS NULL
-        OR unit_id IS NULL
-    )
-    BEGIN
-        RAISERROR('Access is denied. Invalid values supplied.', 10, 1);
-    END;
+        INSERT INTO @temp_stock_details(store_id, item_id, quantity, unit_id, price)
+        SELECT store_id, item_id, quantity, unit_id, price
+        FROM @details;
 
-    IF EXISTS
-    (
-        SELECT TOP 1 0 FROM @temp_stock_details AS details
-        WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = 0
-    )
-    BEGIN
-        RAISERROR('Item/unit mismatch.', 10, 1);
-    END;
+        UPDATE @temp_stock_details 
+        SET
+            tran_type                       = 'Dr',
+            base_quantity                   = inventory.get_base_quantity_by_unit_id(unit_id, quantity),
+            base_unit_id                    = inventory.get_root_unit_id(unit_id);
 
-    
-    SET @tran_counter           = finance.get_new_transaction_counter(@value_date);
-    SET @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
+        IF EXISTS
+        (
+            SELECT * FROM @temp_stock_details
+            WHERE store_id IS NULL
+            OR item_id IS NULL
+            OR unit_id IS NULL
+        )
+        BEGIN
+            RAISERROR('Access is denied. Invalid values supplied.', 10, 1);
+        END;
+
+        IF EXISTS
+        (
+            SELECT TOP 1 0 FROM @temp_stock_details AS details
+            WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = 0
+        )
+        BEGIN
+            RAISERROR('Item/unit mismatch.', 10, 1);
+        END;
+
+        
+        SET @tran_counter           = finance.get_new_transaction_counter(@value_date);
+        SET @transaction_code       = finance.get_transaction_code(@value_date, @office_id, @user_id, @login_id);
 
 
-    INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
-    SELECT @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
-    SET @transaction_master_id = SCOPE_IDENTITY();
+        INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, user_id, login_id, office_id, reference_number, statement_reference) 
+        SELECT @tran_counter, @transaction_code, @book_name, @value_date, @book_date, @user_id, @login_id, @office_id, @reference_number, @statement_reference;
+        SET @transaction_master_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, transaction_master_id, posted_by, office_id)
-    SELECT @book_name, @value_date, @book_date, @transaction_master_id, @user_id, @office_id;
-    SET @checkout_id = SCOPE_IDENTITY();
+        INSERT INTO inventory.checkouts(transaction_book, value_date, book_date, transaction_master_id, posted_by, office_id)
+        SELECT @book_name, @value_date, @book_date, @transaction_master_id, @user_id, @office_id;
+        SET @checkout_id = SCOPE_IDENTITY();
 
 
-    INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
-    SELECT @value_date, @book_date, @checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
-    FROM @temp_stock_details;
-    
-    EXECUTE finance.auto_verify @transaction_master_id, @office_id;    
-    SELECT @transaction_master_id;
+        INSERT INTO inventory.checkout_details(value_date, book_date, checkout_id, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
+        SELECT @value_date, @book_date, @checkout_id, tran_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price
+        FROM @temp_stock_details;
+        
+        EXECUTE finance.auto_verify @transaction_master_id, @office_id;    
+
+        IF(@tran_count = 0)
+        BEGIN
+            COMMIT TRANSACTION;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF(XACT_STATE() <> 0 AND @tran_count = 0) 
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END;
+
+        DECLARE @ErrorMessage national character varying(4000)  = ERROR_MESSAGE();
+        DECLARE @ErrorSeverity int                              = ERROR_SEVERITY();
+        DECLARE @ErrorState int                                 = ERROR_STATE();
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH;
 END;
 
 GO

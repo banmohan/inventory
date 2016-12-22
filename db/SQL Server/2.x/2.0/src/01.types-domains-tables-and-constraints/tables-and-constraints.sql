@@ -12,7 +12,7 @@ CREATE TABLE inventory.units
     unit_code                               national character varying(24) NOT NULL,
     unit_name                               national character varying(500) NOT NULL,    
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                 bit DEFAULT(0)
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE inventory.compound_units
     value                                   smallint NOT NULL DEFAULT(0) CHECk(value > 0),
     compare_unit_id                         integer NOT NULL REFERENCES inventory.units,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE inventory.supplier_types
     supplier_type_name                      national character varying(500) NOT NULL,
     account_id                                integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -74,7 +74,7 @@ CREATE TABLE inventory.suppliers
     contact_fax                             national character varying(100),
     photo                                   dbo.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -86,7 +86,7 @@ CREATE TABLE inventory.customer_types
     customer_type_name                      national character varying(500) NOT NULL,
     account_id                                integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -126,7 +126,7 @@ CREATE TABLE inventory.customers
     contact_fax                             national character varying(100),
     photo                                   dbo.photo,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -146,7 +146,7 @@ CREATE TABLE inventory.item_groups
     cost_of_goods_sold_account_id           integer NOT NULL REFERENCES finance.accounts,    
     parent_item_group_id                    integer REFERENCES inventory.item_groups(item_group_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -156,7 +156,7 @@ CREATE TABLE inventory.brands
     brand_code                              national character varying(24) NOT NULL,
     brand_name                              national character varying(500) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -167,7 +167,7 @@ CREATE TABLE inventory.item_types
     item_type_name                          national character varying(50) NOT NULL,
     is_component                            bit NOT NULL DEFAULT(0),
     audit_user_id                           integer NULL REFERENCES account.users(user_id),
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -206,7 +206,7 @@ CREATE TABLE inventory.items
     allow_purchase                          bit NOT NULL DEFAULT(1),
     is_variant_of                           integer REFERENCES inventory.items,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                 bit DEFAULT(0)    
 );
 
@@ -217,7 +217,7 @@ CREATE TABLE inventory.store_types
     store_type_code                         national character varying(12) NOT NULL,
     store_type_name                         national character varying(50) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -242,7 +242,7 @@ CREATE TABLE inventory.stores
     cell                                    national character varying(50),
     allow_sales                             bit NOT NULL DEFAULT(1),    
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -253,7 +253,7 @@ CREATE TABLE inventory.counters
     counter_name                            national character varying(100) NOT NULL,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -292,7 +292,7 @@ CREATE TABLE inventory.shippers
     cst_number                              national character varying(50),
     account_id                              integer NOT NULL REFERENCES finance.accounts(account_id),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -303,7 +303,7 @@ CREATE TABLE inventory.checkouts
     value_date                                date NOT NULL,
     book_date                                date NOT NULL,
     transaction_master_id                    bigint NOT NULL REFERENCES finance.transaction_master,
-    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
+    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
     discount                                decimal(30, 6) DEFAULT(0),
     posted_by                               integer NOT NULL REFERENCES account.users,
@@ -314,7 +314,7 @@ CREATE TABLE inventory.checkouts
     cancellation_reason                        national character varying(1000),
     shipper_id                                integer REFERENCES inventory.shippers,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -338,7 +338,7 @@ CREATE TABLE inventory.checkout_details
     quantity                                decimal(30, 6) NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric(30, 6) NOT NULL,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE())
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE())
 );
 
 CREATE TABLE inventory.inventory_transfer_requests
@@ -348,7 +348,7 @@ CREATE TABLE inventory.inventory_transfer_requests
     user_id                                 integer NOT NULL REFERENCES account.users,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
     request_date                            date NOT NULL,
-    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
+    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     reference_number                        national character varying(24),
     statement_reference                     national character varying(2000),
     authorized                              bit NOT NULL DEFAULT(0),
@@ -368,7 +368,7 @@ CREATE TABLE inventory.inventory_transfer_requests
     delivered_on                            DATETIMEOFFSET,
     delivery_memo                           national character varying(500),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
 
@@ -392,11 +392,11 @@ CREATE TABLE inventory.inventory_transfer_deliveries
     user_id                                 integer NOT NULL REFERENCES account.users,
     destination_store_id                    integer NOT NULL REFERENCES inventory.stores,
     delivery_date                           date NOT NULL,
-    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETDATE()),
+    transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     reference_number                        national character varying(24),
     statement_reference                     national character varying(2000),
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -420,7 +420,7 @@ CREATE TABLE inventory.attributes
     attribute_code                          national character varying(12) NOT NULL UNIQUE,
     attribute_name                          national character varying(100) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -432,7 +432,7 @@ CREATE TABLE inventory.variants
     attribute_id                            integer NOT NULL REFERENCES inventory.attributes,
     attribute_value                         national character varying(200) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
@@ -442,7 +442,7 @@ CREATE TABLE inventory.item_variants
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     variant_id                              integer NOT NULL REFERENCES inventory.variants,
     audit_user_id                           integer REFERENCES account.users,
-    audit_ts                                DATETIMEOFFSET DEFAULT(GETDATE()),
+    audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
 
