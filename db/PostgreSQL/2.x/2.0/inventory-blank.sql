@@ -1381,7 +1381,8 @@ BEGIN
 
     SELECT COALESCE(SUM(base_quantity), 0) INTO _total_sold
     FROM inventory.verified_checkout_details_view
-    WHERE transaction_type='Cr';
+    WHERE transaction_type='Cr'
+    AND item_id = _item_id;
 
     DROP TABLE IF EXISTS temp_cost_of_goods_sold;
     CREATE TEMPORARY TABLE temp_cost_of_goods_sold

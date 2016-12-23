@@ -33,7 +33,6 @@ namespace ASP
     using Frapid.Framework;
     using Frapid.i18n;
     using Frapid.Messaging;
-    using Frapid.Mapper.Decorators;
     using Frapid.WebsiteBuilder;
     using MixERP.Inventory;
     
@@ -77,7 +76,7 @@ WriteLiteral(@"
         Title: ""Inventory Transfer Verification"",
         AddNewText: ""Add New"",
         AddNewUrl: ""/dashboard/inventory/tasks/inventory-transfers/new"",
-        Book: ""Inventory Adjustment"",
+        Book: ""Inventory Transfer"",
         ChecklistUrl: ""/dashboard/inventory/tasks/transfers/checklist/{tranId}"",
         AdviceButtons: [
             {

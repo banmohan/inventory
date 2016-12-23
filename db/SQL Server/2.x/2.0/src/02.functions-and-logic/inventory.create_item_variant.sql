@@ -26,7 +26,7 @@ BEGIN
     BEGIN TRY
         DECLARE @tran_count int = @@TRANCOUNT;
         
-        IF(@tran_count= 0)
+        IF(@tran_count = 0)
         BEGIN
             BEGIN TRANSACTION
         END;

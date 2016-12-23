@@ -30,7 +30,8 @@ BEGIN
 
     SELECT @total_sold = COALESCE(SUM(base_quantity), 0)
     FROM inventory.verified_checkout_details_view
-    WHERE transaction_type='Cr';
+    WHERE transaction_type='Cr'
+    AND item_id = @item_id;
 
     DECLARE @temp_cost_of_goods_sold TABLE
     (

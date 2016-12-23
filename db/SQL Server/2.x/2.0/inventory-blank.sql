@@ -719,7 +719,7 @@ BEGIN
     BEGIN TRY
         DECLARE @tran_count int = @@TRANCOUNT;
         
-        IF(@tran_count= 0)
+        IF(@tran_count = 0)
         BEGIN
             BEGIN TRANSACTION
         END;
@@ -1535,7 +1535,8 @@ BEGIN
 
     SELECT @total_sold = COALESCE(SUM(base_quantity), 0)
     FROM inventory.verified_checkout_details_view
-    WHERE transaction_type='Cr';
+    WHERE transaction_type='Cr'
+    AND item_id = @item_id;
 
     DECLARE @temp_cost_of_goods_sold TABLE
     (

@@ -18,8 +18,8 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.AdjustmentEntry
             string connectionString = FrapidDbServer.GetConnectionString(tenant);
             string sql = @"SELECT * FROM inventory.post_adjustment
                           (
-                            @OfficeId, @UserId, @LoginId, @StoreId, @ValueDate, @BookDate, 
-                            @ReferenceNumber, @StatementReference, 
+                            @OfficeId::integer, @UserId::integer, @LoginId::bigint, @StoreId::integer, @ValueDate::date, @BookDate::date, 
+                            @ReferenceNumber::national character varying(24), @StatementReference::text, 
                             ARRAY[{0}]
                           );";
             sql = string.Format(sql, this.GetParametersForDetails(model.Details));

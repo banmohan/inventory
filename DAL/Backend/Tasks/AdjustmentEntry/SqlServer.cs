@@ -17,7 +17,7 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.AdjustmentEntry
             string sql = @"EXECUTE inventory.post_adjustment
                             @OfficeId, @UserId, @LoginId, @StoreId, @ValueDate, @BookDate, 
                             @ReferenceNumber, @StatementReference, 
-                            @Details
+                            @Details, @TransactionMasterId OUTPUT
                           ;";
 
 
@@ -39,9 +39,12 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.AdjustmentEntry
                         command.Parameters.AddWithNullableValue("@Details", details, "inventory.adjustment_type");
                     }
 
+                    command.Parameters.Add("@TransactionMasterId", SqlDbType.BigInt).Direction = ParameterDirection.Output;
+
                     connection.Open();
-                    var awaiter = await command.ExecuteScalarAsync().ConfigureAwait(false);
-                    return awaiter.To<long>();
+                    await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                    return command.Parameters["@TransactionMasterId"].Value.To<long>();
                 }
             }
         }

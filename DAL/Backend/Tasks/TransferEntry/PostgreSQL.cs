@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -19,8 +18,8 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.TransferEntry
             string connectionString = FrapidDbServer.GetConnectionString(tenant);
             string sql = @"SELECT * FROM inventory.post_transfer
                           (
-                            @OfficeId, @UserId, @LoginId, @ValueDate, @BookDate, 
-                            @ReferenceNumber, @StatementReference, 
+                            @OfficeId::integer, @UserId::integer, @LoginId::bigint, @ValueDate::date, @BookDate::date, 
+                            @ReferenceNumber::national character varying(24), @StatementReference::text, 
                             ARRAY[{0}]
                           );";
             sql = string.Format(sql, this.GetParametersForDetails(model.Details));
