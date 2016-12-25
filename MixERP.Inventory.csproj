@@ -206,160 +206,10 @@
     <Compile Include="ViewModels\OpeningStockType.cs" />
     <Compile Include="ViewModels\TransferType.cs" />
     <Compile Include="ViewModels\TransferTypeEnum.cs" />
-    <Compile Include="Views\Home\Index.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Index.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Layout.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Layout.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Attributes.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Attributes.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Brands.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Brands.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\CompoundUnitsOfMeasure.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CompoundUnitsOfMeasure.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Counters.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Counters.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Customers.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Customers.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\CustomerTypes.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CustomerTypes.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\InventoryItems.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>InventoryItems.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\ItemGroups.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ItemGroups.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\ItemTypes.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ItemTypes.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\ItemVariants.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ItemVariants.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\OpeningInventory\Checklist.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Checklist.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\OpeningInventory\Index.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Index.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\OpeningInventory\New.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>New.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\OpeningInventory\Verification.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Verification.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Shippers.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Shippers.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Stores.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Stores.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\StoreTypes.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StoreTypes.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Suppliers.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Suppliers.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\SupplierTypes.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SupplierTypes.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\UnitsOfMeasure.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UnitsOfMeasure.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Setup\Variants.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Variants.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Adjustment\Checklist.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Checklist.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Adjustment\Index.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Index.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Adjustment\New.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>New.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Adjustment\Verification.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Verification.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Transfer\Checklist.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Checklist.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Transfer\Index.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Index.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Transfer\New.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>New.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Tasks\Transfer\Verification.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Verification.cshtml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -370,130 +220,40 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="web.config" />
-    <Content Include="Views\Home\Index.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\ItemVariants.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>ItemVariants.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Variants.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Variants.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Suppliers.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Suppliers.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Brands.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Brands.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\UnitsOfMeasure.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>UnitsOfMeasure.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\CompoundUnitsOfMeasure.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>CompoundUnitsOfMeasure.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Shippers.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Shippers.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Attributes.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Attributes.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\ItemTypes.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>ItemTypes.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\ItemGroups.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>ItemGroups.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\InventoryItems.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>InventoryItems.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\StoreTypes.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>StoreTypes.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Stores.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Stores.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\CustomerTypes.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>CustomerTypes.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Counters.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Counters.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\SupplierTypes.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>SupplierTypes.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\Customers.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Customers.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Transfer\Index.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Transfer\New.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>New.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Adjustment\Index.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Setup\ItemVariants.cshtml" />
+    <Content Include="Views\Setup\Variants.cshtml" />
+    <Content Include="Views\Setup\Suppliers.cshtml" />
+    <Content Include="Views\Setup\Brands.cshtml" />
+    <Content Include="Views\Setup\UnitsOfMeasure.cshtml" />
+    <Content Include="Views\Setup\CompoundUnitsOfMeasure.cshtml" />
+    <Content Include="Views\Setup\Shippers.cshtml" />
+    <Content Include="Views\Setup\Attributes.cshtml" />
+    <Content Include="Views\Setup\ItemTypes.cshtml" />
+    <Content Include="Views\Setup\ItemGroups.cshtml" />
+    <Content Include="Views\Setup\InventoryItems.cshtml" />
+    <Content Include="Views\Setup\StoreTypes.cshtml" />
+    <Content Include="Views\Setup\Stores.cshtml" />
+    <Content Include="Views\Setup\CustomerTypes.cshtml" />
+    <Content Include="Views\Setup\Counters.cshtml" />
+    <Content Include="Views\Setup\SupplierTypes.cshtml" />
+    <Content Include="Views\Setup\Customers.cshtml" />
+    <Content Include="Views\Tasks\Transfer\Index.cshtml" />
+    <Content Include="Views\Tasks\Transfer\New.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\Index.cshtml" />
     <Content Include="Views\Layout.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>Layout.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\Tasks\Transfer\Checklist.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Checklist.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Adjustment\New.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>New.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Adjustment\Checklist.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Checklist.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Transfer\Verification.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Verification.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Tasks\Adjustment\Verification.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Verification.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\OpeningInventory\New.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>New.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\OpeningInventory\Index.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\OpeningInventory\Verification.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Verification.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\Setup\OpeningInventory\Checklist.cshtml">
-      <Generator>RazorGenerator</Generator>
-      <LastGenOutput>Checklist.generated.cs</LastGenOutput>
-    </Content>
+    <Content Include="Views\Tasks\Transfer\Checklist.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\New.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\Checklist.cshtml" />
+    <Content Include="Views\Tasks\Transfer\Verification.cshtml" />
+    <Content Include="Views\Tasks\Adjustment\Verification.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\New.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\Index.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\Verification.cshtml" />
+    <Content Include="Views\Setup\OpeningInventory\Checklist.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

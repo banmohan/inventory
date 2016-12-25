@@ -3064,11 +3064,7 @@ INNER JOIN inventory.brands
 ON inventory.brands.brand_id = inventory.items.brand_id
 INNER JOIN inventory.units
 ON inventory.units.unit_id = inventory.items.unit_id
-WHERE NOT inventory.items.deleted
-AND inventory.items.allow_purchase
-AND inventory.items.maintain_inventory;
-
-
+WHERE NOT inventory.items.deleted;
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.views/inventory.checkout_detail_view.sql --<--<--
 DROP VIEW IF EXISTS inventory.checkout_detail_view;
