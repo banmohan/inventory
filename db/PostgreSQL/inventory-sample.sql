@@ -79,7 +79,7 @@ SELECT 'HN', 	'Honey',							NULL,	        finance.get_account_id_by_account_num
 SELECT 'BCTS', 	'Biscuits',							NULL,	        finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200') UNION ALL    
 SELECT 'FRF', 	'Frozen Foods',						NULL,	        finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200') UNION ALL    
 SELECT 'FRUI', 	'Fruits',						    NULL,	        finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200') UNION ALL    
-SELECT 'VEBL', 	'Vegitables',						NULL,	        finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200') UNION ALL    
+SELECT 'VEBL', 	'Vegetables',						NULL,	        finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200') UNION ALL    
 SELECT 'CHLS', 	'Chocolates',						NULL,	        finance.get_account_id_by_account_number('30100'), finance.get_account_id_by_account_number('40270'), finance.get_account_id_by_account_number('20701'), finance.get_account_id_by_account_number('40100'), finance.get_account_id_by_account_number('30700'), finance.get_account_id_by_account_number('10700'), finance.get_account_id_by_account_number('40200');    
 
 
@@ -216,19 +216,19 @@ WHERE inventory.items.maintain_inventory;
 
 
 INSERT INTO inventory.customers(customer_code, customer_name, customer_type_id, company_name, account_id, currency_code)
-SELECT 'DEF', 'Default', inventory.get_customer_type_id_by_customer_type_code('C'),       	'Default',        	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'COK', 'Coke', inventory.get_customer_type_id_by_customer_type_code('C'),   			'Coke',    			finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'FAN', 'Fanta', inventory.get_customer_type_id_by_customer_type_code('C'),     		'Fanta',      		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BMB', 'Bambino', inventory.get_customer_type_id_by_customer_type_code('C'),        	'Bambino',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BRG', 'Broges', inventory.get_customer_type_id_by_customer_type_code('C'),        	'Broges',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DIL', 'Dilmah', inventory.get_customer_type_id_by_customer_type_code('C'),         	'Dilmah',          	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'NST', 'Nestle', inventory.get_customer_type_id_by_customer_type_code('C'),      	'Nestle',       	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DDC', 'DDC', inventory.get_customer_type_id_by_customer_type_code('C'),       		'DDC',        		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DBR', 'Dabur', inventory.get_customer_type_id_by_customer_type_code('C'),   		'Dabur',    		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BTN', 'Britannia', inventory.get_customer_type_id_by_customer_type_code('C'),     	'Britannia',      	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'GAI', 'GAIA', inventory.get_customer_type_id_by_customer_type_code('C'),        	'GAIA',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'MCH', 'Munchys', inventory.get_customer_type_id_by_customer_type_code('C'),        	'Munchys',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'AML', 'Amul', inventory.get_customer_type_id_by_customer_type_code('C'),         	'Dilmah',          	finance.get_account_id_by_account_number('20100'), 'USD';
+SELECT 'JOTAY', 'Joseph Taylor', 		inventory.get_customer_type_id_by_customer_type_code('C'),     	'Joseph Taylor',        	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'CHMOO', 'Christopher Moore', 	inventory.get_customer_type_id_by_customer_type_code('C'),   	'Christopher Moore',    	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'ALTHO', 'Alexander Thomas', 	inventory.get_customer_type_id_by_customer_type_code('C'),     	'Alexander Thomas',      	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'RYJAC', 'Ryan Jackson', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Ryan Jackson',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'NIHAR', 'Nicholas Harris', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Nicholas Harris',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'JATHO', 'James Thompson', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'James Thompson',          	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'BRALL', 'Brandon Allen', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Brandon Allen',       		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'GAYOU', 'Gabriel Young', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Gabriel Young',        	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'JOKIN', 'Jose King', 			inventory.get_customer_type_id_by_customer_type_code('C'),   	'Jose King',    			finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'ELWRI', 'Elijah Wright', 		inventory.get_customer_type_id_by_customer_type_code('C'),     	'Elijah Wright',      		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'JASCO', 'Jack Scott', 			inventory.get_customer_type_id_by_customer_type_code('C'),      'Jack Scott',         		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'EVGON', 'Evan Gonzalez', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Evan Gonzalez',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'AIROB', 'Aidan Roberts', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Aidan Roberts',          	finance.get_account_id_by_account_number('20100'), 'USD';
 
 --ROLLBACK TRANSACTION;
 
