@@ -802,9 +802,9 @@ $$
 LANGUAGE plpgsql;
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_customer_id.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_account_id_by_customer_id(_customer_id bigint);
+DROP FUNCTION IF EXISTS inventory.get_account_id_by_customer_id(_customer_id integer);
 
-CREATE FUNCTION inventory.get_account_id_by_customer_id(_customer_id bigint)
+CREATE FUNCTION inventory.get_account_id_by_customer_id(_customer_id integer)
 RETURNS integer
 STABLE
 AS

@@ -1,6 +1,6 @@
-﻿DROP FUNCTION IF EXISTS inventory.get_account_id_by_customer_id(_customer_id bigint);
+﻿DROP FUNCTION IF EXISTS inventory.get_account_id_by_customer_id(_customer_id integer);
 
-CREATE FUNCTION inventory.get_account_id_by_customer_id(_customer_id bigint)
+CREATE FUNCTION inventory.get_account_id_by_customer_id(_customer_id integer)
 RETURNS integer
 STABLE
 AS

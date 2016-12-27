@@ -3,7 +3,7 @@ DROP FUNCTION inventory.get_account_id_by_customer_id;
 
 GO
 
-CREATE FUNCTION inventory.get_account_id_by_customer_id(@customer_id bigint)
+CREATE FUNCTION inventory.get_account_id_by_customer_id(@customer_id integer)
 RETURNS integer
 AS
 BEGIN
