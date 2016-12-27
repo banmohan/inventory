@@ -3499,6 +3499,10 @@ EXECUTE core.create_menu 'Inventory', 'Opening Inventory Verification', '/dashbo
 
 EXECUTE core.create_menu 'Inventory', 'Reports', '', 'block layout', '';
 EXECUTE core.create_menu 'Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'book', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Physical Count', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/PhysicalCount.xml', 'circle', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Customer Contacts', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/CustomerContacts.xml', 'users', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Low Inventory Report', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/LowInventory.xml', 'battery low', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Profit Status by Item', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/ProfitStatusByItem.xml', 'bar chart', 'Reports';
 
 
 
@@ -3761,6 +3765,41 @@ ON inventory.brands.brand_id = inventory.items.brand_id
 INNER JOIN inventory.units
 ON inventory.units.unit_id = inventory.items.unit_id
 WHERE inventory.items.deleted = 0;
+
+GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.views/inventory.transaction_view.sql --<--<--
+IF OBJECT_ID('inventory.transaction_view') IS NOT NULL
+DROP VIEW inventory.transaction_view;
+
+GO
+
+CREATE VIEW inventory.transaction_view 
+AS
+SELECT 
+    checkouts.checkout_id,
+    checkouts.value_date,
+    checkouts.transaction_master_id,
+    checkouts.transaction_book,
+    checkouts.office_id,
+    checkout_details.store_id,
+    checkout_details.transaction_type,
+    checkout_details.item_id,
+    checkout_details.price,
+    checkout_details.discount,
+    checkout_details.cost_of_goods_sold,
+    checkout_details.tax,
+    checkouts.shipper_id,
+    checkout_details.shipping_charge,
+    checkout_details.unit_id,
+    checkout_details.quantity
+FROM inventory.checkouts
+JOIN inventory.checkout_details ON checkouts.checkout_id = checkout_details.checkout_id
+JOIN finance.transaction_master ON checkouts.transaction_master_id = transaction_master.transaction_master_id
+WHERE checkouts.cancelled = 0
+AND checkouts.deleted = 0
+AND transaction_master.verification_status_id > 0;
 
 GO
 

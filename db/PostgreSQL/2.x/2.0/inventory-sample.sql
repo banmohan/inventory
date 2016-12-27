@@ -26,7 +26,7 @@ SELECT 'BRG', 'Broges'      UNION ALL
 SELECT 'DIL', 'Dilmah'      UNION ALL
 SELECT 'NST', 'Nestle'      UNION ALL
 SELECT 'DDC', 'DDC'      	UNION ALL
-SELECT 'DBR', 'Dabar'      	UNION ALL
+SELECT 'DBR', 'Dabur'      	UNION ALL
 SELECT 'BTN', 'Britannia'   UNION ALL
 SELECT 'GAI', 'GAIA'      	UNION ALL
 SELECT 'MCH', 'Munchys'     UNION ALL
@@ -53,7 +53,7 @@ SELECT 'BRG', 'Broges', inventory.get_supplier_type_id_by_supplier_type_code('S'
 SELECT 'DIL', 'Dilmah', inventory.get_supplier_type_id_by_supplier_type_code('S'),         	'Dilmah',          	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
 SELECT 'NST', 'Nestle', inventory.get_supplier_type_id_by_supplier_type_code('S'),      	'Nestle',       	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
 SELECT 'DDC', 'DDC', inventory.get_supplier_type_id_by_supplier_type_code('S'),       		'DDC',        		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DBR', 'Dabar', inventory.get_supplier_type_id_by_supplier_type_code('S'),   		'Dabar',    		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
+SELECT 'DBR', 'Dabur', inventory.get_supplier_type_id_by_supplier_type_code('S'),   		'Dabur',    		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
 SELECT 'BTN', 'Britannia', inventory.get_supplier_type_id_by_supplier_type_code('S'),     	'Britannia',      	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
 SELECT 'GAI', 'GAIA', inventory.get_supplier_type_id_by_supplier_type_code('S'),        	'GAIA',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
 SELECT 'MCH', 'Munchys', inventory.get_supplier_type_id_by_supplier_type_code('S'),         'Munchys',          finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
@@ -170,7 +170,7 @@ SELECT 'LVED',  'Las Vegas Energy Drink',               	inventory.get_item_grou
 SELECT 'ABT',  	'Amul Butter',                    			inventory.get_item_group_id_by_item_group_code('DP'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('AML'),       inventory.get_supplier_id_by_supplier_code('AML'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    200,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
 SELECT 'DYC',  	'DDC Yak Cheese',               			inventory.get_item_group_id_by_item_group_code('DP'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('DDC'),       inventory.get_supplier_id_by_supplier_code('DDC'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    250,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
 SELECT 'NEDW', 	'Nestle EveryDay Dairy Whitener',       	inventory.get_item_group_id_by_item_group_code('DP'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('NST'),       inventory.get_supplier_id_by_supplier_code('NST'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    300,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
-SELECT 'DHON', 	'Dabar Honey',       						inventory.get_item_group_id_by_item_group_code('HN'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('DBR'),       inventory.get_supplier_id_by_supplier_code('DBR'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    500,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
+SELECT 'DHON', 	'Dabur Honey',       						inventory.get_item_group_id_by_item_group_code('HN'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('DBR'),       inventory.get_supplier_id_by_supplier_code('DBR'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    500,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
 SELECT 'DAHE', 	'Dark Honey',       						inventory.get_item_group_id_by_item_group_code('HN'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('DBR'),       inventory.get_supplier_id_by_supplier_code('DBR'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    500,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
 SELECT 'BGDC',  'Britannia Good Day Cashew Cookies',        inventory.get_item_group_id_by_item_group_code('BCTS'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('BTN'),       inventory.get_supplier_id_by_supplier_code('BTN'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    200,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL
 SELECT 'BGDP',  'Britannia Good Day Pistachio Cookies',     inventory.get_item_group_id_by_item_group_code('BCTS'),	inventory.get_item_type_id_by_item_type_code('GEN'), inventory.get_brand_id_by_brand_code('BTN'),       inventory.get_supplier_id_by_supplier_code('BTN'),  inventory.get_unit_id_by_unit_code('PC'), false,    10,     true,    300,   450,  inventory.get_unit_id_by_unit_code('PC'), 200  UNION ALL

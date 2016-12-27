@@ -53,6 +53,10 @@ EXECUTE core.create_menu 'Inventory', 'Opening Inventory Verification', '/dashbo
 
 EXECUTE core.create_menu 'Inventory', 'Reports', '', 'block layout', '';
 EXECUTE core.create_menu 'Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'book', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Physical Count', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/PhysicalCount.xml', 'circle', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Customer Contacts', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/CustomerContacts.xml', 'users', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Low Inventory Report', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/LowInventory.xml', 'battery low', 'Reports';
+EXECUTE core.create_menu 'Inventory', 'Profit Status by Item', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/ProfitStatusByItem.xml', 'bar chart', 'Reports';
 
 
 

@@ -2,7 +2,7 @@
 
 CREATE VIEW inventory.verified_checkout_details_view
 AS
-SELECT inventory.checkout_details.* 
+SELECT inventory.checkout_details.*
 FROM inventory.checkout_details
 INNER JOIN inventory.checkouts
 ON inventory.checkouts.checkout_id = inventory.checkout_details.checkout_id
