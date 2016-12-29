@@ -151,7 +151,7 @@
                 });
             };
 
-            $("#ShowButton").unbind("click").bind("click", function () {
+            $("#ShowButton").off("click").on("click", function () {
                 function request(storeId) {
                     var url = "/dashboard/inventory/tasks/inventory-adjustments/closing/{storeId}";
                     url = url.replace("{storeId}", storeId);

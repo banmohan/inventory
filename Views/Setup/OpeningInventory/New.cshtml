@@ -650,7 +650,7 @@ else
 
 
     function initializeClickAndAction() {
-        $("#POSItemList .item").unbind("click").bind("click", function () {
+        $("#POSItemList .item").off("click").on("click", function () {
             var el = $(this);
             var costPrice = el.attr("data-cost-price");
             var photo = el.attr("data-photo");
@@ -841,7 +841,7 @@ else
         var targetEl = $(".cat.filter");
         $(".category.list").find(".category").remove();
 
-        targetEl.unbind("click").bind("click", function () {
+        targetEl.off("click").on("click", function () {
             displayProducts();
             $(".category").removeClass("selected");
             targetEl.hide();
@@ -852,7 +852,7 @@ else
             const category = $("<div class='category' />");
             category.html(this);
 
-            category.unbind("click").bind("click", function () {
+            category.off("click").on("click", function () {
                 $(".search.panel input").val("");
                 const el = $(this);
                 const name = el.text();
@@ -959,7 +959,7 @@ else
 
     </script>
     <script>
-    $("#CheckoutButton").unbind("click").bind("click", function () {
+    $("#CheckoutButton").off("click").on("click", function () {
 
         function request(model) {
             const url = "/dashboard/inventory/setup/opening-inventory/new";
