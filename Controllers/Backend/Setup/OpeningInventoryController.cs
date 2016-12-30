@@ -4,9 +4,11 @@ using Frapid.ApplicationState.Cache;
 using Frapid.Dashboard;
 using MixERP.Inventory.Models;
 using MixERP.Inventory.ViewModels;
+using Frapid.Areas.CSRF;
 
 namespace MixERP.Inventory.Controllers.Backend.Setup
 {
+    [AntiForgery]
     public class OpeningInventoryController : InventoryBackendController
     {
         [Route("dashboard/inventory/setup/opening-inventory")]
