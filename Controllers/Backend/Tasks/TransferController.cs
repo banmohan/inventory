@@ -7,9 +7,11 @@ using Frapid.Dashboard;
 using MixERP.Inventory.DAL.Backend.Service;
 using MixERP.Inventory.DAL.Backend.Tasks;
 using MixERP.Inventory.ViewModels;
+using Frapid.Areas.CSRF;
 
 namespace MixERP.Inventory.Controllers.Backend.Tasks
 {
+    [AntiForgery]
     public class TransferController : InventoryBackendController
     {
         [Route("dashboard/inventory/tasks/inventory-transfers")]

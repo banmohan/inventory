@@ -5,9 +5,11 @@ using System.Web.Mvc;
 using Frapid.Dashboard;
 using MixERP.Inventory.DAL.Backend.Setup;
 using MixERP.Inventory.DTO;
+using Frapid.Areas.CSRF;
 
 namespace MixERP.Inventory.Controllers.Backend.Setup
 {
+    [AntiForgery]
     public class ItemVariantController : InventoryBackendController
     {
         [Route("dashboard/inventory/setup/item-variants")]

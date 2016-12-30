@@ -6,9 +6,11 @@ using Frapid.ApplicationState.Cache;
 using Frapid.Dashboard;
 using MixERP.Inventory.DAL.Backend.Tasks;
 using MixERP.Inventory.ViewModels;
+using Frapid.Areas.CSRF;
 
 namespace MixERP.Inventory.Controllers.Backend.Tasks
 {
+    [AntiForgery]
     public class AdjustmentController : InventoryBackendController
     {
         [Route("dashboard/inventory/tasks/inventory-adjustments")]
