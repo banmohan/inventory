@@ -4,9 +4,6 @@ GO
 CREATE SCHEMA inventory;
 GO
 
-
---TODO: CREATE UNIQUE INDEXES
-
 CREATE TABLE inventory.units
 (
     unit_id                                 integer IDENTITY PRIMARY KEY,
@@ -16,6 +13,14 @@ CREATE TABLE inventory.units
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                 bit DEFAULT(0)
 );
+
+CREATE UNIQUE INDEX units_unit_code_uix
+ON inventory.units(unit_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX units_unit_name_uix
+ON inventory.units(unit_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.compound_units
 (
@@ -28,6 +33,9 @@ CREATE TABLE inventory.compound_units
     deleted                                    bit DEFAULT(0)
 );
 
+CREATE UNIQUE INDEX compound_units_base_unit_id_value_uix
+ON inventory.compound_units(base_unit_id, value)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.supplier_types
 (
@@ -39,6 +47,14 @@ CREATE TABLE inventory.supplier_types
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
+
+CREATE UNIQUE INDEX supplier_types_supplier_type_code_uix
+ON inventory.supplier_types(supplier_type_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX supplier_types_supplier_type_name_uix
+ON inventory.supplier_types(supplier_type_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.suppliers
 (
@@ -79,6 +95,9 @@ CREATE TABLE inventory.suppliers
     deleted                                    bit DEFAULT(0)
 );
 
+CREATE UNIQUE INDEX suppliers_supplier_code_uix
+ON inventory.suppliers(supplier_code)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.customer_types
 (
@@ -91,6 +110,13 @@ CREATE TABLE inventory.customer_types
     deleted                                    bit DEFAULT(0)
 );
 
+CREATE UNIQUE INDEX customer_types_customer_type_code_uix
+ON inventory.customer_types(customer_type_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX customer_types_customer_type_name_uix
+ON inventory.customer_types(customer_type_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.customers
 (
@@ -131,6 +157,10 @@ CREATE TABLE inventory.customers
     deleted                                    bit DEFAULT(0)
 );
 
+CREATE UNIQUE INDEX customers_customer_code_uix
+ON inventory.customers(customer_code)
+WHERE deleted = 0;
+
 CREATE TABLE inventory.item_groups
 (
     item_group_id                           integer IDENTITY PRIMARY KEY,
@@ -151,6 +181,14 @@ CREATE TABLE inventory.item_groups
     deleted                                    bit DEFAULT(0)    
 );
 
+CREATE UNIQUE INDEX item_groups_item_group_code_uix
+ON inventory.item_groups(item_group_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX item_groups_item_group_name_uix
+ON inventory.item_groups(item_group_name)
+WHERE deleted = 0;
+
 CREATE TABLE inventory.brands
 (
     brand_id                                integer IDENTITY PRIMARY KEY,
@@ -160,6 +198,14 @@ CREATE TABLE inventory.brands
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
+
+CREATE UNIQUE INDEX brands_brand_code_uix
+ON inventory.brands(brand_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX brands_brand_name_uix
+ON inventory.brands(brand_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.item_types
 (
@@ -172,12 +218,14 @@ CREATE TABLE inventory.item_types
     deleted                                    bit DEFAULT(0)    
 );
 
-CREATE UNIQUE INDEX item_type_item_type_code_uix
-ON inventory.item_types(item_type_code);
 
+CREATE UNIQUE INDEX item_type_item_type_code_uix
+ON inventory.item_types(item_type_code)
+WHERE deleted = 0;
 
 CREATE UNIQUE INDEX item_type_item_type_name_uix
-ON inventory.item_types(item_type_name);
+ON inventory.item_types(item_type_name)
+WHERE deleted = 0;
 
 
 CREATE TABLE inventory.items
@@ -211,6 +259,13 @@ CREATE TABLE inventory.items
     deleted                                 bit DEFAULT(0)    
 );
 
+CREATE UNIQUE INDEX items_item_code_uix
+ON inventory.items(item_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX items_item_name_uix
+ON inventory.items(item_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.store_types
 (
@@ -221,6 +276,14 @@ CREATE TABLE inventory.store_types
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)    
 );
+
+CREATE UNIQUE INDEX store_types_store_type_code_uix
+ON inventory.store_types(store_type_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX store_types_store_type_name_uix
+ON inventory.store_types(store_type_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.stores
 (
@@ -247,6 +310,14 @@ CREATE TABLE inventory.stores
     deleted                                    bit DEFAULT(0)    
 );
 
+CREATE UNIQUE INDEX stores_store_code_uix
+ON inventory.stores(store_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX stores_store_name_uix
+ON inventory.stores(store_name)
+WHERE deleted = 0;
+
 CREATE TABLE inventory.counters
 (
     counter_id                              integer IDENTITY PRIMARY KEY,
@@ -257,6 +328,14 @@ CREATE TABLE inventory.counters
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
+
+CREATE UNIQUE INDEX counters_counter_code_uix
+ON inventory.counters(counter_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX counters_counter_name_uix
+ON inventory.counters(counter_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.shippers
 (
@@ -297,6 +376,13 @@ CREATE TABLE inventory.shippers
     deleted                                    bit DEFAULT(0)
 );
 
+CREATE UNIQUE INDEX shippers_shipper_code_uix
+ON inventory.shippers(shipper_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX shippers_shipper_name_uix
+ON inventory.shippers(shipper_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.checkouts
 (
@@ -319,6 +405,8 @@ CREATE TABLE inventory.checkouts
     deleted                                    bit DEFAULT(0)    
 );
 
+CREATE INDEX checkouts_transaction_master_id_inx
+ON inventory.checkouts(transaction_master_id);
 
 CREATE TABLE inventory.checkout_details
 (
@@ -425,6 +513,14 @@ CREATE TABLE inventory.attributes
     deleted                                    bit DEFAULT(0)
 );
 
+CREATE UNIQUE INDEX attributes_attribute_code_uix
+ON inventory.attributes(attribute_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX attributes_attribute_name_uix
+ON inventory.attributes(attribute_name)
+WHERE deleted = 0;
+
 CREATE TABLE inventory.variants
 (
     variant_id                              integer IDENTITY NOT NULL PRIMARY KEY,
@@ -436,6 +532,14 @@ CREATE TABLE inventory.variants
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
     deleted                                    bit DEFAULT(0)
 );
+
+CREATE UNIQUE INDEX variants_variant_code_uix
+ON inventory.variants(variant_code)
+WHERE deleted = 0;
+
+CREATE UNIQUE INDEX variants_variant_name_uix
+ON inventory.variants(variant_name)
+WHERE deleted = 0;
 
 CREATE TABLE inventory.item_variants
 (
@@ -2068,6 +2172,28 @@ GO
 
 
 
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_office_id_by_counter_id.sql --<--<--
+IF OBJECT_ID('inventory.get_office_id_by_counter_id') IS NOT NULL
+DROP FUNCTION inventory.get_office_id_by_counter_id;
+
+GO
+
+CREATE FUNCTION inventory.get_office_id_by_counter_id(@counter_id	integer)
+RETURNS integer AS
+BEGIN
+    RETURN
+	(
+		SELECT
+			offices.office_id
+		FROM inventory.counters
+		JOIN inventory.stores ON counters.store_id = stores.store_id
+		JOIN core.offices ON stores.office_id = offices.office_id
+		WHERE counters.counter_id = @counter_id
+	);
+END;
+
+GO
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_office_id_by_store_id.sql --<--<--
 IF OBJECT_ID('inventory.get_office_id_by_store_id') IS NOT NULL
