@@ -1897,24 +1897,6 @@ LANGUAGE plpgsql;
 
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_office_id_by_counter_id.sql --<--<--
-
-DROP FUNCTION IF EXISTS inventory.get_office_id_by_counter_id(integer);
-CREATE FUNCTION inventory.get_office_id_by_counter_id(integer)
-RETURNS integer AS
-$$
-BEGIN
-    RETURN
-        offices.office_id
-    FROM inventory.counters
-    JOIN inventory.stores ON counters.store_id = stores.store_id
-    JOIN core.offices ON stores.office_id = offices.office_id
-    WHERE counters.counter_id = $1;
-END
-$$
-LANGUAGE plpgsql STABLE;
-
-
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_office_id_by_store_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_office_id_by_store_id(integer);
 
