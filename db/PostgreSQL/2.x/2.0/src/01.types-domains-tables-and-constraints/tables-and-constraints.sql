@@ -2,8 +2,6 @@
 
 CREATE SCHEMA inventory;
 
---TODO: CREATE UNIQUE INDEXES
-
 CREATE TABLE inventory.units
 (
     unit_id                                 SERIAL PRIMARY KEY,
@@ -13,6 +11,14 @@ CREATE TABLE inventory.units
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
+
+CREATE UNIQUE INDEX units_unit_code_uix
+ON inventory.units(UPPER(unit_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX units_unit_name_uix
+ON inventory.units(UPPER(unit_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.compound_units
 (
@@ -25,6 +31,9 @@ CREATE TABLE inventory.compound_units
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE UNIQUE INDEX compound_units_base_unit_id_value_uix
+ON inventory.compound_units(base_unit_id, value)
+WHERE NOT deleted;
 
 CREATE TABLE inventory.supplier_types
 (
@@ -36,6 +45,14 @@ CREATE TABLE inventory.supplier_types
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
+
+CREATE UNIQUE INDEX supplier_types_supplier_type_code_uix
+ON inventory.supplier_types(UPPER(supplier_type_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX supplier_types_supplier_type_name_uix
+ON inventory.supplier_types(UPPER(supplier_type_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.suppliers
 (
@@ -76,6 +93,9 @@ CREATE TABLE inventory.suppliers
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE UNIQUE INDEX suppliers_supplier_code_uix
+ON inventory.suppliers(UPPER(supplier_code))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.customer_types
 (
@@ -87,6 +107,14 @@ CREATE TABLE inventory.customer_types
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
+
+CREATE UNIQUE INDEX customer_types_customer_type_code_uix
+ON inventory.customer_types(UPPER(customer_type_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX customer_types_customer_type_name_uix
+ON inventory.customer_types(UPPER(customer_type_name))
+WHERE NOT deleted;
 
 
 CREATE TABLE inventory.customers
@@ -128,6 +156,10 @@ CREATE TABLE inventory.customers
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE UNIQUE INDEX customers_customer_code_uix
+ON inventory.customers(UPPER(customer_code))
+WHERE NOT deleted;
+
 CREATE TABLE inventory.item_groups
 (
     item_group_id                           SERIAL PRIMARY KEY,
@@ -148,6 +180,14 @@ CREATE TABLE inventory.item_groups
 	deleted									boolean DEFAULT(false)    
 );
 
+CREATE UNIQUE INDEX item_groups_item_group_code_uix
+ON inventory.item_groups(UPPER(item_group_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX item_groups_item_group_name_uix
+ON inventory.item_groups(UPPER(item_group_name))
+WHERE NOT deleted;
+
 CREATE TABLE inventory.brands
 (
     brand_id                                SERIAL PRIMARY KEY,
@@ -157,6 +197,14 @@ CREATE TABLE inventory.brands
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
+
+CREATE UNIQUE INDEX brands_brand_code_uix
+ON inventory.brands(UPPER(brand_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX brands_brand_name_uix
+ON inventory.brands(UPPER(brand_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.item_types
 (
@@ -170,11 +218,12 @@ CREATE TABLE inventory.item_types
 );
 
 CREATE UNIQUE INDEX item_type_item_type_code_uix
-ON inventory.item_types(UPPER(item_type_code));
-
+ON inventory.item_types(UPPER(item_type_code))
+WHERE NOT deleted;
 
 CREATE UNIQUE INDEX item_type_item_type_name_uix
-ON inventory.item_types(UPPER(item_type_name));
+ON inventory.item_types(UPPER(item_type_name))
+WHERE NOT deleted;
 
 
 CREATE TABLE inventory.items
@@ -208,6 +257,13 @@ CREATE TABLE inventory.items
 	deleted									boolean DEFAULT(false)    
 );
 
+CREATE UNIQUE INDEX items_item_code_uix
+ON inventory.items(UPPER(item_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX items_item_name_uix
+ON inventory.items(UPPER(item_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.store_types
 (
@@ -218,6 +274,14 @@ CREATE TABLE inventory.store_types
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
 );
+
+CREATE UNIQUE INDEX store_types_store_type_code_uix
+ON inventory.store_types(UPPER(store_type_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX store_types_store_type_name_uix
+ON inventory.store_types(UPPER(store_type_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.stores
 (
@@ -244,6 +308,14 @@ CREATE TABLE inventory.stores
 	deleted									boolean DEFAULT(false)    
 );
 
+CREATE UNIQUE INDEX stores_store_code_uix
+ON inventory.stores(UPPER(store_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX stores_store_name_uix
+ON inventory.stores(UPPER(store_name))
+WHERE NOT deleted;
+
 CREATE TABLE inventory.counters
 (
     counter_id                              SERIAL PRIMARY KEY,
@@ -254,6 +326,14 @@ CREATE TABLE inventory.counters
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
+
+CREATE UNIQUE INDEX counters_counter_code_uix
+ON inventory.counters(UPPER(counter_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX counters_counter_name_uix
+ON inventory.counters(UPPER(counter_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.shippers
 (
@@ -294,6 +374,13 @@ CREATE TABLE inventory.shippers
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE UNIQUE INDEX shippers_shipper_code_uix
+ON inventory.shippers(UPPER(shipper_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX shippers_shipper_name_uix
+ON inventory.shippers(UPPER(shipper_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.checkouts
 (
@@ -316,6 +403,8 @@ CREATE TABLE inventory.checkouts
 	deleted									boolean DEFAULT(false)    
 );
 
+CREATE INDEX checkouts_transaction_master_id_inx
+ON inventory.checkouts(transaction_master_id);
 
 CREATE TABLE inventory.checkout_details
 (
@@ -422,6 +511,14 @@ CREATE TABLE inventory.attributes
 	deleted									boolean DEFAULT(false)
 );
 
+CREATE UNIQUE INDEX attributes_attribute_code_uix
+ON inventory.attributes(UPPER(attribute_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX attributes_attribute_name_uix
+ON inventory.attributes(UPPER(attribute_name))
+WHERE NOT deleted;
+
 CREATE TABLE inventory.variants
 (
 	variant_id                              SERIAL NOT NULL PRIMARY KEY,
@@ -433,6 +530,14 @@ CREATE TABLE inventory.variants
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)
 );
+
+CREATE UNIQUE INDEX variants_variant_code_uix
+ON inventory.variants(UPPER(variant_code))
+WHERE NOT deleted;
+
+CREATE UNIQUE INDEX variants_variant_name_uix
+ON inventory.variants(UPPER(variant_name))
+WHERE NOT deleted;
 
 CREATE TABLE inventory.item_variants
 (
