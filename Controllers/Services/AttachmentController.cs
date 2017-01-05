@@ -55,5 +55,4 @@ namespace MixERP.Inventory.Controllers.Services
             return new FileContentResult(attachment, "image/png");
         }
     }
-
 }

@@ -168,7 +168,7 @@
     <Compile Include="Controllers\Backend\Tasks\AdjustmentController.cs" />
     <Compile Include="Controllers\Backend\Tasks\TransferController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
-    <Compile Include="Controllers\Services\InventoryBackendController.cs" />
+    <Compile Include="Controllers\Services\AttachmentController.cs" />
     <Compile Include="DAL\Backend\Setup\ItemVariants.cs" />
     <Compile Include="DAL\Backend\Setup\Variants\IItemVariant.cs" />
     <Compile Include="DAL\Backend\Setup\Inventory.cs" />
