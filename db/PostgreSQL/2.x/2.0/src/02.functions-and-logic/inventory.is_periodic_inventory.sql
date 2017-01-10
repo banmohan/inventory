@@ -20,7 +20,7 @@ RETURNS boolean
 AS
 $$
 BEGIN
-    RETURN inventory.is_periodic_inventory(@office_id);
+    RETURN inventory.is_periodic_inventory(_office_id);
 END
 $$
 LANGUAGE plpgsql;
