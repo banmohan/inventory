@@ -5,37 +5,37 @@
   <TopSection>
     <table class="table horizontal">
       <tr>
-        <td>{Resources.Titles.ItemId}</td>
+        <td>{i18n.ItemId}</td>
         <td>
           {DataSource[0].item_id} <br />
         </td>
       </tr>
       <tr>
-        <td>{Resources.Titles.ItemCode}</td>
+        <td>{i18n.ItemCode}</td>
         <td>
           {DataSource[0].item_code} <br />
         </td>
       </tr>
       <tr>
-        <td>{Resources.Titles.ItemName}</td>
+        <td>{i18n.ItemName}</td>
         <td>
           {DataSource[0].item_name} <br />
         </td>
       </tr>
       <tr>
-        <td>{Resources.Titles.ItemGroup}</td>
+        <td>{i18n.ItemGroup}</td>
         <td>{DataSource[0].item_group_name}</td>
       </tr>
       <tr>
-        <td>{Resources.Titles.ItemType}</td>
+        <td>{i18n.ItemType}</td>
         <td>{DataSource[0].item_type_name}</td>
       </tr>
       <tr>
-        <td>{Resources.Titles.Brand}</td>
+        <td>{i18n.Brand}</td>
         <td>{DataSource[0].brand_name}</td>
       </tr>
       <tr>
-        <td>{Resources.Titles.UnitName}</td>
+        <td>{i18n.UnitName}</td>
         <td>{DataSource[0].unit_name}</td>
       </tr>
     </table>
