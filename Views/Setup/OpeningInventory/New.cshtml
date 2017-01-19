@@ -928,7 +928,7 @@ else
             const info = $("<div class='info' />");
 
             const price = $("<div class='price' />");
-            price.html(product.CostPrice);
+            price.html(window.getFormattedNumber(product.CostPrice));
 
             price.appendTo(info);
 
