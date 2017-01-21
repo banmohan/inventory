@@ -109,7 +109,7 @@ BEGIN
     ELSE IF (@method != 'MAVCO')
     BEGIN
         RETURN 0;
-        --RAISERROR('Invalid configuration: COGS method.', 10, 1);
+        --RAISERROR('Invalid configuration: COGS method.', 13, 1);
     END;
 
     --APPLY decimal(30, 6) QUANTITY PROVISON

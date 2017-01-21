@@ -15,7 +15,7 @@
     <div class="ui huge header">Opening Inventories</div>
     <div class="ui divider"></div>
     <div class="ui basic buttons">
-        <a id="AddNewButton" class="ui basic button" style="" href="/dashboard/inventory/setup/opening-inventory/new">
+        <a id="AddNewButton" class="ui basic button" style="" href="/dashboard/inventory/setup/opening-inventories/new">
             Add New
         </a>
         @*<a class="ui basic button" id="Import" href="ImportTransaction.mix">Import</a>*@
@@ -49,7 +49,7 @@
                 <input class="date" data-persist placeholder="From" id="FromInputDate" title="From" type="date">
             </div>
             <div class="field">
-                <input class="date"  data-persist placeholder="To" id="ToInputDate" title="To" type="date">
+                <input class="date" data-persist placeholder="To" id="ToInputDate" title="To" type="date">
             </div>
             <div class="field">
                 <input placeholder="TranId" id="TranIdInputText" title="TranId" type="text">
@@ -94,27 +94,29 @@
 
     </div>
 
-    <table id="InventoryView" class="ui table segment">
-        <thead>
-            <tr>
-                <th>Actions</th>
-                <th>Select</th>
-                <th>TranId</th>
-                <th>TranCode</th>
-                <th>Value Date</th>
-                <th>Book Date</th>
-                <th>Ref#</th>
-                <th>Statement Reference</th>
-                <th>Posted By</th>
-                <th>Office</th>
-                <th>Status</th>
-                <th>Verified By</th>
-                <th>Verified On</th>
-                <th>Reason</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="fluid width overflown section">
+        <table id="InventoryView" class="ui nowrap table segment">
+            <thead>
+                <tr>
+                    <th>Actions</th>
+                    <th>Select</th>
+                    <th>TranId</th>
+                    <th>TranCode</th>
+                    <th>Value Date</th>
+                    <th>Book Date</th>
+                    <th>Ref#</th>
+                    <th>Statement Reference</th>
+                    <th>Posted By</th>
+                    <th>Office</th>
+                    <th>Status</th>
+                    <th>Verified By</th>
+                    <th>Verified On</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
 <div class="ui large advice modal">
@@ -144,7 +146,7 @@
             const cell = $("<td />");
 
             const checklistAnchor = $("<a title='Checklist Window'><i class='list icon'></i></a>");
-            checklistAnchor.attr("href", "/dashboard/inventory/setup/opening-inventory/checklist/" + tranId);
+            checklistAnchor.attr("href", "/dashboard/inventory/setup/opening-inventories/checklist/" + tranId);
 
             const inventoryAdviceAnchor = $("<a title='View Opening Inventory Advice'><i class='zoom icon'></i></a>");
             inventoryAdviceAnchor.attr("href", "javascript:void(0);");
@@ -232,7 +234,7 @@
 
     loadDatepicker();
 
-    
+
     function showOpeningAdvice(tranId) {
         $(".advice.modal iframe").attr("src", "/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Opening.xml?transaction_master_id=" + tranId);
 

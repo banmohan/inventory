@@ -75,7 +75,7 @@ BEGIN
 
         IF(@can_post_transaction = 0)
         BEGIN
-            RAISERROR(@error_message, 10, 1);
+            RAISERROR(@error_message, 13, 1);
             RETURN;
         END;
         
@@ -89,7 +89,7 @@ BEGIN
             WHERE tran_type = 'Dr'
         )
         BEGIN
-            RAISERROR('A stock adjustment entry can not contain debit item(s).', 10, 1);
+            RAISERROR('A stock adjustment entry can not contain debit item(s).', 13, 1);
         END;
 
         IF EXISTS
@@ -99,7 +99,7 @@ BEGIN
             HAVING COUNT(item_code) <> 1
         )
         BEGIN
-            RAISERROR('An item can appear only once in a store.', 10, 1);
+            RAISERROR('An item can appear only once in a store.', 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -113,7 +113,7 @@ BEGIN
             WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
         )
         BEGIN
-            RAISERROR('Invalid data supplied.', 10, 1);
+            RAISERROR('Invalid data supplied.', 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -140,7 +140,7 @@ BEGIN
             HAVING COUNT(DISTINCT inventory.stores.office_id) > 1
         )
         BEGIN
-            RAISERROR('Access is denied!\nA stock adjustment transaction cannot references multiple branches.', 10, 1);
+            RAISERROR('Access is denied!\nA stock adjustment transaction cannot references multiple branches.', 13, 1);
         END;
 
         IF EXISTS
@@ -152,7 +152,7 @@ BEGIN
             AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id)
         )
         BEGIN
-            RAISERROR('Negative stock is not allowed.', 10, 1);
+            RAISERROR('Negative stock is not allowed.', 13, 1);
         END;
 
         --No accounting treatment is needed for periodic accounting system.

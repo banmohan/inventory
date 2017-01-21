@@ -30,18 +30,14 @@ SELECT
     inventory.items.allow_purchase,
     inventory.items.photo
 FROM inventory.items
-INNER JOIN inventory.item_groups
+LEFT JOIN inventory.item_groups
 ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-INNER JOIN inventory.item_types
+LEFT JOIN inventory.item_types
 ON inventory.item_types.item_type_id = inventory.items.item_type_id
-INNER JOIN inventory.brands
+LEFT JOIN inventory.brands
 ON inventory.brands.brand_id = inventory.items.brand_id
-INNER JOIN inventory.units
+LEFT JOIN inventory.units
 ON inventory.units.unit_id = inventory.items.unit_id
-WHERE inventory.items.deleted = 0
-AND inventory.items.allow_purchase = 1
-AND inventory.items.maintain_inventory = 1;
-
-
+WHERE inventory.items.deleted = 0;
 
 GO

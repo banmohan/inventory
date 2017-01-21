@@ -3099,8 +3099,8 @@ SELECT * FROM core.create_menu('Inventory', 'Shippers', '/dashboard/inventory/se
 SELECT * FROM core.create_menu('Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'crosshairs', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'align center', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'unordered list', 'Setup');
-SELECT * FROM core.create_menu('Inventory', 'Opening Inventory', '/dashboard/inventory/setup/opening-inventory', 'toggle on', 'Setup');
-SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventory/verification', 'check circle outline', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventories', '/dashboard/inventory/setup/opening-inventories', 'toggle on', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventories/verification', 'check circle outline', 'Setup');
 
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'block layout', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'book', 'Reports');
@@ -3124,6 +3124,24 @@ SELECT * FROM auth.create_app_menu_policy
 INSERT INTO inventory.inventory_setup(office_id, inventory_system, cogs_calculation_method, default_discount_account_id)
 SELECT office_id, 'Perpetual', 'FIFO', finance.get_account_id_by_account_number('40270')
 FROM core.offices;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.scrud-views/inventory.compound_unit_scrud_view.sql --<--<--
+DROP VIEW IF EXISTS inventory.compound_unit_scrud_view;
+
+CREATE VIEW inventory.compound_unit_scrud_view
+AS
+SELECT
+    compound_unit_id,
+    base_unit.unit_name base_unit_name,
+    value,
+    compare_unit.unit_name compare_unit_name
+FROM
+    inventory.compound_units,
+    inventory.units base_unit,
+    inventory.units compare_unit
+WHERE inventory.compound_units.base_unit_id = base_unit.unit_id
+AND inventory.compound_units.compare_unit_id = compare_unit.unit_id;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.scrud-views/inventory.customer_scrud_view.sql --<--<--
@@ -3177,13 +3195,13 @@ SELECT
     inventory.items.allow_purchase,
     inventory.items.photo
 FROM inventory.items
-INNER JOIN inventory.item_groups
+LEFT JOIN inventory.item_groups
 ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-INNER JOIN inventory.item_types
+LEFT JOIN inventory.item_types
 ON inventory.item_types.item_type_id = inventory.items.item_type_id
-INNER JOIN inventory.brands
+LEFT JOIN inventory.brands
 ON inventory.brands.brand_id = inventory.items.brand_id
-INNER JOIN inventory.units
+LEFT JOIN inventory.units
 ON inventory.units.unit_id = inventory.items.unit_id
 WHERE NOT inventory.items.deleted;
 

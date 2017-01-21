@@ -55,7 +55,7 @@ BEGIN
 
         IF(@can_post_transaction = 0)
         BEGIN
-            RAISERROR(@error_message, 10, 1);
+            RAISERROR(@error_message, 13, 1);
             RETURN;
         END;
         
@@ -78,7 +78,7 @@ BEGIN
             OR unit_id IS NULL
         )
         BEGIN
-            RAISERROR('Access is denied. Invalid values supplied.', 10, 1);
+            RAISERROR('Access is denied. Invalid values supplied.', 13, 1);
         END;
 
         IF EXISTS
@@ -87,7 +87,7 @@ BEGIN
             WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = 0
         )
         BEGIN
-            RAISERROR('Item/unit mismatch.', 10, 1);
+            RAISERROR('Item/unit mismatch.', 13, 1);
         END;
 
         

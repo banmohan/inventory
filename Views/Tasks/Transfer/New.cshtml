@@ -26,59 +26,61 @@
         </div>
     </div>
     <div>
-        <table id="TransferGridView" class="ui table segment" style="min-width:1000px;max-width:2000px;">
-            <thead>
-                <tr>
-                    <th style="width:150px">
-                        <label for="TransactionTypeSelect">Type</label>
-                    </th>
-                    <th style="width:200px">
-                        <label for="StoreSelect">Store</label>
-                    </th>
-                    <th style="width:200px">
-                        <label for="ItemCodeInputText">Item Code</label>
-                    </th>
-                    <th>
-                        <label for="ItemSelect">Item Name</label>
-                    </th>
-                    <th style="width:200px;">
-                        <label for="UnitSelect">Unit</label>
-                    </th>
-                    <th style="width:100px" class="text-right">
-                        <label for="QuantityInputText">Quantity</label>
-                    </th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="footer-row ui form">
-                    <td>
-                        <select class="ui fluid dropdown" id="TransactionTypeSelect">
-                            <option value="Cr">OUT</option>
-                            <option value="Dr">IN</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select id="StoreSelect" class="ui fluid dropdown"></select>
-                    </td>
-                    <td>
-                        <input id="ItemCodeInputText" type="text">
-                    </td>
-                    <td>
-                        <select id="ItemSelect" class="ui fluid dropdown"></select>
-                    </td>
-                    <td>
-                        <select id="UnitSelect" class="ui fluid dropdown"></select>
-                    </td>
-                    <td>
-                        <input id="QuantityInputText" class="text-right integer" type="text">
-                    </td>
-                    <td>
-                        <input id="AddButton" value="Add" class="ui small red button" type="button">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="fluid width overflown section">
+            <table id="TransferGridView" class="ui nowrap table segment">
+                <thead>
+                    <tr>
+                        <th style="width:150px">
+                            <label for="TransactionTypeSelect">Type</label>
+                        </th>
+                        <th style="width:200px">
+                            <label for="StoreSelect">Store</label>
+                        </th>
+                        <th style="width:200px">
+                            <label for="ItemCodeInputText">Item Code</label>
+                        </th>
+                        <th>
+                            <label for="ItemSelect">Item Name</label>
+                        </th>
+                        <th style="width:200px;">
+                            <label for="UnitSelect">Unit</label>
+                        </th>
+                        <th style="width:100px" class="text-right">
+                            <label for="QuantityInputText">Quantity</label>
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="footer-row ui form">
+                        <td>
+                            <select class="ui fluid dropdown" id="TransactionTypeSelect">
+                                <option value="Cr">OUT</option>
+                                <option value="Dr">IN</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="StoreSelect" class="ui fluid dropdown"></select>
+                        </td>
+                        <td>
+                            <input id="ItemCodeInputText" type="text">
+                        </td>
+                        <td>
+                            <select id="ItemSelect" class="ui fluid dropdown"></select>
+                        </td>
+                        <td>
+                            <select id="UnitSelect" class="ui fluid dropdown"></select>
+                        </td>
+                        <td>
+                            <input id="QuantityInputText" class="text-right integer" type="text">
+                        </td>
+                        <td>
+                            <input id="AddButton" value="Add" class="ui small red button" type="button">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id="ErrorLabel" class="big error vpad16"></div>
     <div class="ui form" style="width:290px;">

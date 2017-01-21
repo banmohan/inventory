@@ -13,7 +13,7 @@
         <div class="ui divider"></div>
         <div class="ui positive message">Opening inventory has already been entered for this office.</div>
 
-        <a href="/dashboard/inventory/setup/opening-inventory" class="ui positive button">Okay</a>
+        <a href="/dashboard/inventory/setup/opening-inventories" class="ui positive button">Okay</a>
     </div>
 }
 else
@@ -962,7 +962,7 @@ else
     $("#CheckoutButton").off("click").on("click", function () {
 
         function request(model) {
-            const url = "/dashboard/inventory/setup/opening-inventory/new";
+            const url = "/dashboard/inventory/setup/opening-inventories/new";
             const data = JSON.stringify(model);
             return window.getAjaxRequest(url, "POST", data);
         };
@@ -1027,7 +1027,7 @@ else
 
         ajax.success(function (response) {
             const id = response;
-            document.location = "/dashboard/inventory/setup/opening-inventory/checklist/" + id;
+            document.location = "/dashboard/inventory/setup/opening-inventories/checklist/" + id;
         });
 
         ajax.fail(function (xhr) {
@@ -1086,6 +1086,6 @@ else
         $(".decimal").number(true, window.currencyDecimalPlaces, ".", "");
     }, 100);
 
-    window.overridePath = "/dashboard/inventory/setup/opening-inventory";
+    window.overridePath = "/dashboard/inventory/setup/opening-inventories";
     </script>
 }
