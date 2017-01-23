@@ -2,7 +2,7 @@
 @model long
 
 @{
-    ViewBag.Title = "Checklist";
+    ViewBag.Title = I18N.Checklist;
     Layout = ViewBag.InventoryLayoutPath;
 }
 @Html.FinancePartialView("Shared/Checklist.cshtml", TenantConvention.GetTenant())
@@ -13,9 +13,9 @@
     window.prepareChecklist({
         TranId: "@Model",
         Title: "Inventory Adjustment Checklist #@Model",
-        ViewText: "View Adjustments",
+        ViewText: window.translate("ViewAdjustments"),
         ViewUrl: "/dashboard/inventory/tasks/inventory-adjustments",
-        AddNewText: "Add New Adjustment",
+        AddNewText: window.translate("AddNewAdjustment"),
         AddNewUrl: "/dashboard/inventory/tasks/inventory-adjustments/new",
         ReportPath: "/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Adjustment.xml?transaction_master_id=@Model"
     });

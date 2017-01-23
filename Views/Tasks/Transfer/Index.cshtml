@@ -2,14 +2,14 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Inventory Transfers";
+    ViewBag.Title = I18N.InventoryTransfers;
     Layout = ViewBag.InventoryLayoutPath;
 }
 @Html.FinancePartialView("Shared/JournalView.cshtml", TenantConvention.GetTenant())
 
 <script>
     window.prepareView({
-        Title: "Inventory Transfers",
+        Title: window.translate("InventoryTransfers"),
         AddNewText: "Add New",
         AddNewUrl: "/dashboard/inventory/tasks/inventory-transfers/new",
         Book: "Inventory Transfer",

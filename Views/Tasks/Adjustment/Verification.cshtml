@@ -2,7 +2,7 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Inventory Adjustment Verification";
+    ViewBag.Title = I18N.InventoryAdjustmentVerification;
     Layout = ViewBag.InventoryLayoutPath;
 }
 
@@ -10,8 +10,8 @@
 
 <script>
     window.prepareVerification({
-        Title: "Inventory Adjustments Verification",
-        AddNewText: "Add New",
+        Title: window.translate("InventoryAdjustmentsVerification"),
+        AddNewText: window.translate("AddNew"),
         AddNewUrl: "/dashboard/inventory/tasks/inventory-adjustments/new",
         Book: "Inventory Adjustment",
         ChecklistUrl: "/dashboard/inventory/tasks/adjustments/checklist/{tranId}",

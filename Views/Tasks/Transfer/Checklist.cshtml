@@ -2,7 +2,7 @@
 @model long
 
 @{
-    ViewBag.Title = "Checklist";
+    ViewBag.Title = @I18N.Checklist;
     Layout = ViewBag.InventoryLayoutPath;
 }
 
@@ -14,7 +14,7 @@
     window.prepareChecklist({
         TranId: "@Model",
         Title: "Inventory Transfer Checklist #@Model",
-        ViewText: "View Transfers",
+        ViewText: window.translate("ViewTransfers"),
         ViewUrl: "/dashboard/inventory/tasks/inventory-transfers",
         AddNewText: "Add New Transfer",
         AddNewUrl: "/dashboard/inventory/tasks/inventory-transfers/new",
