@@ -11,7 +11,7 @@ namespace MixERP.Inventory.Controllers.Backend.Setup
     [AntiForgery]
     public class OpeningInventoryController : InventoryBackendController
     {
-        [Route("dashboard/inventory/setup/opening-inventory")]
+        [Route("dashboard/inventory/setup/opening-inventories")]
         [MenuPolicy]
         public async Task<ActionResult> IndexAsync()
         {
@@ -21,15 +21,15 @@ namespace MixERP.Inventory.Controllers.Backend.Setup
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Setup/OpeningInventory/Index.cshtml", this.Tenant), model);
         }
 
-        [Route("dashboard/inventory/setup/opening-inventory/checklist/{tranId}")]
-        [MenuPolicy(OverridePath = "/dashboard/inventory/setup/opening-inventory")]
+        [Route("dashboard/inventory/setup/opening-inventories/checklist/{tranId}")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/setup/opening-inventories")]
         public ActionResult ChecklistAsync(long tranId)
         {
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Setup/OpeningInventory/Checklist.cshtml", this.Tenant), tranId);
         }
 
-        [Route("dashboard/inventory/setup/opening-inventory/new")]
-        [MenuPolicy(OverridePath = "/dashboard/inventory/setup/opening-inventory")]
+        [Route("dashboard/inventory/setup/opening-inventories/new")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/setup/opening-inventories")]
         public async Task<ActionResult> NewAsync()
         {
             var meta = await AppUsers.GetCurrentAsync().ConfigureAwait(true);
@@ -38,9 +38,9 @@ namespace MixERP.Inventory.Controllers.Backend.Setup
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Setup/OpeningInventory/New.cshtml", this.Tenant), model);
         }
 
-        [Route("dashboard/inventory/setup/opening-inventory/new")]
+        [Route("dashboard/inventory/setup/opening-inventories/new")]
         [HttpPost]
-        [MenuPolicy(OverridePath = "/dashboard/inventory/setup/opening-inventory")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/setup/opening-inventories")]
         public async Task<ActionResult> PostAsync(OpeningInventory model)
         {
             if (!this.ModelState.IsValid)

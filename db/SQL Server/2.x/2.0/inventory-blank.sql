@@ -1718,7 +1718,7 @@ BEGIN
     ELSE IF (@method != 'MAVCO')
     BEGIN
         RETURN 0;
-        --RAISERROR('Invalid configuration: COGS method.', 10, 1);
+        --RAISERROR('Invalid configuration: COGS method.', 13, 1);
     END;
 
     --APPLY decimal(30, 6) QUANTITY PROVISON
@@ -3074,7 +3074,7 @@ BEGIN
 
         IF(@can_post_transaction = 0)
         BEGIN
-            RAISERROR(@error_message, 10, 1);
+            RAISERROR(@error_message, 13, 1);
             RETURN;
         END;
         
@@ -3088,7 +3088,7 @@ BEGIN
             WHERE tran_type = 'Dr'
         )
         BEGIN
-            RAISERROR('A stock adjustment entry can not contain debit item(s).', 10, 1);
+            RAISERROR('A stock adjustment entry can not contain debit item(s).', 13, 1);
         END;
 
         IF EXISTS
@@ -3098,7 +3098,7 @@ BEGIN
             HAVING COUNT(item_code) <> 1
         )
         BEGIN
-            RAISERROR('An item can appear only once in a store.', 10, 1);
+            RAISERROR('An item can appear only once in a store.', 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -3112,7 +3112,7 @@ BEGIN
             WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
         )
         BEGIN
-            RAISERROR('Invalid data supplied.', 10, 1);
+            RAISERROR('Invalid data supplied.', 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -3139,7 +3139,7 @@ BEGIN
             HAVING COUNT(DISTINCT inventory.stores.office_id) > 1
         )
         BEGIN
-            RAISERROR('Access is denied!\nA stock adjustment transaction cannot references multiple branches.', 10, 1);
+            RAISERROR('Access is denied!\nA stock adjustment transaction cannot references multiple branches.', 13, 1);
         END;
 
         IF EXISTS
@@ -3151,7 +3151,7 @@ BEGIN
             AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id)
         )
         BEGIN
-            RAISERROR('Negative stock is not allowed.', 10, 1);
+            RAISERROR('Negative stock is not allowed.', 13, 1);
         END;
 
         --No accounting treatment is needed for periodic accounting system.
@@ -3299,7 +3299,7 @@ BEGIN
 
         IF(@can_post_transaction = 0)
         BEGIN
-            RAISERROR(@error_message, 10, 1);
+            RAISERROR(@error_message, 13, 1);
             RETURN;
         END;
         
@@ -3322,7 +3322,7 @@ BEGIN
             OR unit_id IS NULL
         )
         BEGIN
-            RAISERROR('Access is denied. Invalid values supplied.', 10, 1);
+            RAISERROR('Access is denied. Invalid values supplied.', 13, 1);
         END;
 
         IF EXISTS
@@ -3331,7 +3331,7 @@ BEGIN
             WHERE inventory.is_valid_unit_id(details.unit_id, details.item_id) = 0
         )
         BEGIN
-            RAISERROR('Item/unit mismatch.', 10, 1);
+            RAISERROR('Item/unit mismatch.', 13, 1);
         END;
 
         
@@ -3434,7 +3434,7 @@ BEGIN
 
         IF(@can_post_transaction = 0)
         BEGIN
-            RAISERROR(@error_message, 10, 1);
+            RAISERROR(@error_message, 13, 1);
             RETURN;
         END;
 
@@ -3450,7 +3450,7 @@ BEGIN
             HAVING COUNT(item_code) <> 1
         )
         BEGIN
-            RAISERROR('An item can appear only once in a store.', 10, 1);
+            RAISERROR('An item can appear only once in a store.', 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -3465,7 +3465,7 @@ BEGIN
             WHERE item_id IS NULL OR unit_id IS NULL OR store_id IS NULL
         )
         BEGIN
-            RAISERROR('Invalid data supplied.', 10, 1);
+            RAISERROR('Invalid data supplied.', 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -3485,7 +3485,7 @@ BEGIN
             HAVING SUM(CASE WHEN tran_type='Dr' THEN base_quantity ELSE base_quantity *-1 END) <> 0
         )
         BEGIN
-            RAISERROR('Referencing sides are not equal.', 10, 1);
+            RAISERROR('Referencing sides are not equal.', 13, 1);
         END;
 
 
@@ -3503,7 +3503,7 @@ BEGIN
             HAVING COUNT(DISTINCT inventory.stores.office_id) > 1
         )
         BEGIN
-            RAISERROR('Access is denied!\nA stock journal transaction cannot references multiple branches.', 10, 1);
+            RAISERROR('Access is denied!\nA stock journal transaction cannot references multiple branches.', 13, 1);
         END;
 
         IF EXISTS
@@ -3515,7 +3515,7 @@ BEGIN
             AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id)
         )
         BEGIN
-            RAISERROR('Negative stock is not allowed.', 10, 1);
+            RAISERROR('Negative stock is not allowed.', 13, 1);
         END;
 
         INSERT INTO finance.transaction_master(transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
@@ -3619,8 +3619,8 @@ EXECUTE core.create_menu 'Inventory', 'Shippers', '/dashboard/inventory/setup/sh
 EXECUTE core.create_menu 'Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'crosshairs', 'Setup';
 EXECUTE core.create_menu 'Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'align center', 'Setup';
 EXECUTE core.create_menu 'Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'unordered list', 'Setup';
-EXECUTE core.create_menu 'Inventory', 'Opening Inventory', '/dashboard/inventory/setup/opening-inventory', 'toggle on', 'Setup';
-EXECUTE core.create_menu 'Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventory/verification', 'check circle outline', 'Setup';
+EXECUTE core.create_menu 'Inventory', 'Opening Inventories', '/dashboard/inventory/setup/opening-inventories', 'toggle on', 'Setup';
+EXECUTE core.create_menu 'Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventories/verification', 'check circle outline', 'Setup';
 
 EXECUTE core.create_menu 'Inventory', 'Reports', '', 'block layout', '';
 EXECUTE core.create_menu 'Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'book', 'Reports';
@@ -3649,6 +3649,28 @@ FROM core.offices;
 
 GO
 
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.scrud-views/inventory.compound_unit_scrud_view.sql --<--<--
+IF OBJECT_ID('inventory.compound_unit_scrud_view') IS NOT NULL
+DROP VIEW inventory.compound_unit_scrud_view;
+
+GO
+
+CREATE VIEW inventory.compound_unit_scrud_view
+AS
+SELECT
+    compound_unit_id,
+    base_unit.unit_name base_unit_name,
+    value,
+    compare_unit.unit_name compare_unit_name
+FROM
+    inventory.compound_units,
+    inventory.units base_unit,
+    inventory.units compare_unit
+WHERE inventory.compound_units.base_unit_id = base_unit.unit_id
+AND inventory.compound_units.compare_unit_id = compare_unit.unit_id;
+
+GO
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.scrud-views/inventory.customer_scrud_view.sql --<--<--
 IF OBJECT_ID('inventory.customer_scrud_view') IS NOT NULL
@@ -3714,19 +3736,15 @@ SELECT
     inventory.items.allow_purchase,
     inventory.items.photo
 FROM inventory.items
-INNER JOIN inventory.item_groups
+LEFT JOIN inventory.item_groups
 ON inventory.item_groups.item_group_id = inventory.items.item_group_id
-INNER JOIN inventory.item_types
+LEFT JOIN inventory.item_types
 ON inventory.item_types.item_type_id = inventory.items.item_type_id
-INNER JOIN inventory.brands
+LEFT JOIN inventory.brands
 ON inventory.brands.brand_id = inventory.items.brand_id
-INNER JOIN inventory.units
+LEFT JOIN inventory.units
 ON inventory.units.unit_id = inventory.items.unit_id
-WHERE inventory.items.deleted = 0
-AND inventory.items.allow_purchase = 1
-AND inventory.items.maintain_inventory = 1;
-
-
+WHERE inventory.items.deleted = 0;
 
 GO
 

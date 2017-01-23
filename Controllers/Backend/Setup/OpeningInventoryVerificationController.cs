@@ -13,14 +13,14 @@ namespace MixERP.Inventory.Controllers.Backend.Setup
     [AntiForgery]
     public class OpeningInventoryVerificationController : InventoryBackendController
     {
-        [Route("dashboard/inventory/setup/opening-inventory/verification")]
+        [Route("dashboard/inventory/setup/opening-inventories/verification")]
         [MenuPolicy]
         public ActionResult Index()
         {
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Setup/OpeningInventory/Verification.cshtml", this.Tenant));
         }
 
-        [Route("dashboard/inventory/setup/opening-inventory/verification/approve")]
+        [Route("dashboard/inventory/setup/opening-inventories/verification/approve")]
         [HttpPost]
         public async Task<ActionResult> ApproveAsync(Verification model)
         {
@@ -42,7 +42,7 @@ namespace MixERP.Inventory.Controllers.Backend.Setup
             }
         }
 
-        [Route("dashboard/inventory/setup/opening-inventory/verification/reject")]
+        [Route("dashboard/inventory/setup/opening-inventories/verification/reject")]
         [HttpPost]
         public async Task<ActionResult> RejectAsync(Verification model)
         {

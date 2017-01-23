@@ -87,9 +87,17 @@
             loadStores();
 
             function displayClosingInventory(model) {
-                function getCell(text) {
+                function getCell(text, isDate) {
                     const cell = $("<td />");
-                    cell.html(text);
+
+                    cell.text(text);
+
+                    if (isDate) {
+                        if ((text || "").trim()) {
+                            cell.text(window.moment(new Date(text)).fromNow() || "");
+                            cell.attr("title", text);
+                        };
+                    };
 
                     return cell;
                 };

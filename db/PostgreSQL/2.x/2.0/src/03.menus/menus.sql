@@ -48,8 +48,8 @@ SELECT * FROM core.create_menu('Inventory', 'Shippers', '/dashboard/inventory/se
 SELECT * FROM core.create_menu('Inventory', 'Attributes', '/dashboard/inventory/setup/attributes', 'crosshairs', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Variants', '/dashboard/inventory/setup/variants', 'align center', 'Setup');
 SELECT * FROM core.create_menu('Inventory', 'Item Variants', '/dashboard/inventory/setup/item-variants', 'unordered list', 'Setup');
-SELECT * FROM core.create_menu('Inventory', 'Opening Inventory', '/dashboard/inventory/setup/opening-inventory', 'toggle on', 'Setup');
-SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventory/verification', 'check circle outline', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventories', '/dashboard/inventory/setup/opening-inventories', 'toggle on', 'Setup');
+SELECT * FROM core.create_menu('Inventory', 'Opening Inventory Verification', '/dashboard/inventory/setup/opening-inventories/verification', 'check circle outline', 'Setup');
 
 SELECT * FROM core.create_menu('Inventory', 'Reports', '', 'block layout', '');
 SELECT * FROM core.create_menu('Inventory', 'Inventory Account Statement', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/AccountStatement.xml', 'book', 'Reports');

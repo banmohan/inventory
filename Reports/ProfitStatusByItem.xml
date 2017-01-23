@@ -73,7 +73,7 @@
     </DataSource>
 	<DataSource>
 	  <Query>
-		SELECT @From AS from_date, @To AS to_date;
+		SELECT @From::date AS from_date, @To::date AS to_date;
 	  </Query>
       <Parameters>
         <Parameter Name="@From" FieldLabel="From Date" Type="System.DateTime" />
