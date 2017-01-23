@@ -2,34 +2,34 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Inventory";
+    ViewBag.Title = I18N.Inventory;
     Layout = ViewBag.InventoryLayoutPath;
 }
 <div class="ui attached segment" style="min-height: 100%;padding:3em;">
     <div class="">
-        <div class="ui huge header">Inventory Adjustments</div>
+        <div class="ui huge header">@I18N.InventoryAdjustments</div>
 
         <div class="ui form segment">
             <div class="fields">
                 <div class="field">
-                    <label for="ValueDateInputText">Value Date</label>
+                    <label for="ValueDateInputText">@I18N.ValueDate</label>
                     <input id="ValueDateInputText" class="date" type="text" />
                 </div>
                 <div class="field">
-                    <label for="BookDateInputText">Book Date</label>
+                    <label for="BookDateInputText">@I18N.BookDate</label>
                     <input id="BookDateInputText" class="date" type="text" />
                 </div>
                 <div class="field">
-                    <label for="ReferenceNumberInputText">Reference Number</label>
+                    <label for="ReferenceNumberInputText">@I18N.ReferenceNumber</label>
                     <input id="ReferenceNumberInputText" type="text">
                 </div>
                 <div class="three wide field">
-                    <label for="StoreSelect">Select Store</label>
+                    <label for="StoreSelect">@I18N.SelectStore</label>
                     <select id="StoreSelect" class="ui search dropdown"></select>
                     <input id="StoreHidden" type="hidden">
                 </div>
                 <div class="field">
-                    <label for="ShowButton">Show Items</label>
+                    <label for="ShowButton">@I18N.ShowItems</label>
                     <input value="Show" id="ShowButton" class="ui small positive button" type="submit">
                 </div>
             </div>
@@ -37,14 +37,14 @@
         <table id="ClosingInventoryGrid" class="ui collapsing table form segment">
             <thead>
                 <tr>
-                    <th>Item Id</th>
-                    <th>Item Code</th>
-                    <th>Item Name</th>
-                    <th>Unit Id</th>
-                    <th>Unit Name</th>
-                    <th>Quantity</th>
-                    <th>Actual</th>
-                    <th>Difference</th>
+                    <th>@I18N.ItemId</th>
+                    <th>@I18N.ItemCode</th>
+                    <th>@I18N.ItemName</th>
+                    <th>@I18N.UnitId</th>
+                    <th>@I18N.UnitName</th>
+                    <th>@I18N.Quantity</th>
+                    <th>@I18N.Actual</th>
+                    <th>@I18N.Difference</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -52,15 +52,15 @@
         <div id="ErrorDiv" class="big error vpad16"></div>
         <div class="ui form" style="width: 300px;">
             <div class="field">
-                <label for="StatementReferenceTextArea">Statement Reference</label>
+                <label for="StatementReferenceTextArea">@I18N.StatementReference</label>
                 <textarea id="StatementReferenceTextArea" rows="4"></textarea>
             </div>
             <div id="ErrorLabel" class="big error vpad16"></div>
             <div class="ui buttons">
                 <button id="SaveButton" class="ui green button" type="button">
-                    Save
+                    @I18N.Save
                 </button>
-                <a href="/dashboard/inventory/tasks/inventory-adjustments" class="ui blue button">Back</a>
+                <a href="/dashboard/inventory/tasks/inventory-adjustments" class="ui blue button">@I18N.Back</a>
             </div>
 
         </div>

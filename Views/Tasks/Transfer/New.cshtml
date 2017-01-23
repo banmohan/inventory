@@ -2,25 +2,25 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Inventory";
+    ViewBag.Title = I18N.Inventory;
     Layout = ViewBag.InventoryLayoutPath;
 }
 <div class="ui attached page segment" style="min-height: 100%;padding:3em;display:none;">
-    <div class="ui huge header">Inventory Transfer</div>
+    <div class="ui huge header">@I18N.InventoryTransfer</div>
     <div class="ui divider"></div>
 
     <div class="ui form">
         <div class="inline fields">
             <div class="small field">
-                <label for="ValueDateTextBox">Value Date</label>
+                <label for="ValueDateTextBox">@I18N.ValueDate</label>
                 <input id="ValueDateTextBox" class="date" type="date">
             </div>
             <div class="small field">
-                <label for="BookDateTextBox">Book Date</label>
+                <label for="BookDateTextBox">@I18N.BookDate</label>
                 <input id="BookDateTextBox" class="date" type="date">
             </div>
             <div class="small field">
-                <label for="ReferenceNumberInputText">Ref#</label>
+                <label for="ReferenceNumberInputText">@I18N.Ref#</label>
                 <input id="ReferenceNumberInputText" maxlength="24" type="text">
             </div>
         </div>
@@ -30,32 +30,32 @@
             <thead>
                 <tr>
                     <th style="width:150px">
-                        <label for="TransactionTypeSelect">Type</label>
+                        <label for="TransactionTypeSelect">@I18N.Type</label>
                     </th>
                     <th style="width:200px">
-                        <label for="StoreSelect">Store</label>
+                        <label for="StoreSelect">@I18N.Store</label>
                     </th>
                     <th style="width:200px">
-                        <label for="ItemCodeInputText">Item Code</label>
+                        <label for="ItemCodeInputText">@I18N.ItemCode</label>
                     </th>
                     <th>
-                        <label for="ItemSelect">Item Name</label>
+                        <label for="ItemSelect">@I18N.ItemName</label>
                     </th>
                     <th style="width:200px;">
-                        <label for="UnitSelect">Unit</label>
+                        <label for="UnitSelect">@I18N.Unit</label>
                     </th>
                     <th style="width:100px" class="text-right">
-                        <label for="QuantityInputText">Quantity</label>
+                        <label for="QuantityInputText">@I18N.Quantity</label>
                     </th>
-                    <th>Action</th>
+                    <th>@I18N.Action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="footer-row ui form">
                     <td>
                         <select class="ui fluid dropdown" id="TransactionTypeSelect">
-                            <option value="Cr">OUT</option>
-                            <option value="Dr">IN</option>
+                            <option value="Cr">@I18N.OUT</option>
+                            <option value="Dr">@I18N.IN</option>
                         </select>
                     </td>
                     <td>
@@ -83,14 +83,14 @@
     <div id="ErrorLabel" class="big error vpad16"></div>
     <div class="ui form" style="width:290px;">
         <div class="small field">
-            <label for="StatementReferenceTextArea">Statement Reference</label>
+            <label for="StatementReferenceTextArea">@I18N.StatementReference</label>
             <textarea id="StatementReferenceTextArea" rows="4"></textarea>
         </div>
         <div class="ui buttons">
             <button id="SaveButton" class="ui green button" type="button">
-                Save
+                @I18N.Save
             </button>
-            <a href="/dashboard/inventory/tasks/inventory-transfers" class="ui blue button">Back</a>            
+            <a href="/dashboard/inventory/tasks/inventory-transfers" class="ui blue button">@I18N.Back</a>            
         </div>
     </div>
 

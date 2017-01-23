@@ -58,7 +58,7 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
 
                     if (existingQuantity < item.Quantity)
                     {
-                        return this.Failed($"We only have {existingQuantity} {item.UnitName} in inventory",
+                        return this.Failed(string.Format(I18N.WeOnlyHaveInInventory, existingQuantity, item.UnitName),
                             HttpStatusCode.InternalServerError);
                     }
                 }

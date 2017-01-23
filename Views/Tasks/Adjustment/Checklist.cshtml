@@ -2,7 +2,7 @@
 @model long
 
 @{
-    ViewBag.Title = "Checklist";
+    ViewBag.Title = I18N.Checklist;
     Layout = ViewBag.InventoryLayoutPath;
 }
 @Html.FinancePartialView("Shared/Checklist.cshtml", TenantConvention.GetTenant())

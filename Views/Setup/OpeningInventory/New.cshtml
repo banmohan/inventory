@@ -2,18 +2,18 @@
 @model MixERP.Inventory.ViewModels.OpeningInventoryViewModel
 
 @{
-    ViewBag.Title = "Opening Inventory";
+    ViewBag.Title = I18N.OpeningInventory;
     Layout = ViewBag.InventoryLayoutPath;
     var meta = AppUsers.GetCurrent();
 }
 @if (!Model.MultipleInventoryAllowed && Model.HasOpeningInventory)
 {
     <div class="ui attached segment" style="min-height: 100%; padding: 3em;">
-        <div class="ui huge header">Opening Inventory</div>
+        <div class="ui huge header">@I18N.OpeningInventory</div>
         <div class="ui divider"></div>
-        <div class="ui positive message">Opening inventory has already been entered for this office.</div>
+        <div class="ui positive message">@I18N.OpeningInventoryAlreadyEnteredOffice</div>
 
-        <a href="/dashboard/inventory/setup/opening-inventory" class="ui positive button">Okay</a>
+        <a href="/dashboard/inventory/setup/opening-inventory" class="ui positive button">@I18N.Okay</a>
     </div>
 }
 else
@@ -420,14 +420,14 @@ else
 
     <div class="ui attached inverted pos opening inventory segment">
         <div class="ui active inverted dimmer" id="POSDimmer">
-            <div class="ui large text loader">Doing something ...</div>
+            <div class="ui large text loader">@I18N.DoingSomething</div>
         </div>
         <div class="ui grid">
             <div class="eleven wide column">
                 <div class="status head">
                     <div class="left">
                         <strong class="title info">
-                            Opening Inventory
+                            @I18N.OpeningInventory
                         </strong>
                         <span class="office info" title="Current Branch Office">
                             @meta.OfficeName
@@ -448,12 +448,12 @@ else
 
                 <div class="category list">
                     <div class="cat filter" style="display: none;">
-                        Clear
+                        @I18N.Clear
                         <i class="delete icon"></i>
                     </div>
                 </div>
                 <div class="search panel">
-                    <input type="search" placeholder="Search ..." />
+                    <input type="search" placeholder="@I18N.Search  ..." />
 
                 </div>
                 <div class="item list" id="POSItemList">
@@ -463,13 +463,13 @@ else
                 <div class="tender info">
                     <div id="SummaryItems" class="two summary items">
                         <div class="amount item">
-                            <div class="description">Amount</div>
+                            <div class="description">@I18N.Amount</div>
                             <div class="money">
                                 <span></span>
                             </div>
                         </div>
                         <div class="store item">
-                            <div class="description">Store</div>
+                            <div class="description">@I18N.Store</div>
                             <div class="control">
                                 <select id="StoreSelect"></select>
                             </div>
@@ -477,13 +477,13 @@ else
                     </div>
                     <div class="two summary items">
                         <div class="value date item">
-                            <div class="description">Value Date</div>
+                            <div class="description">@I18N.ValueDate</div>
                             <div class="control">
                                 <input type="text" class="date" id="ValueDateInputDate" />
                             </div>
                         </div>
                         <div class="book date item">
-                            <div class="description">Book Date</div>
+                            <div class="description">@I18N.BookDate</div>
                             <div class="control">
                                 <input type="text" class="date" id="BookDateInputDate" />
                             </div>
@@ -491,13 +491,13 @@ else
                     </div>
                     <div class="two summary items">
                         <div class="reference number item">
-                            <div class="description">Ref#</div>
+                            <div class="description">@I18N.Ref#</div>
                             <div class="control">
                                 <input type="text" id="ReferenceNumberInputText" />
                             </div>
                         </div>
                         <div class="memo item">
-                            <div class="description">Memo</div>
+                            <div class="description">@I18N.Memo</div>
                             <div class="control">
                                 <input type="text" id="StatementReferenceInputText" />
                             </div>
@@ -507,11 +507,11 @@ else
                         <div class="column">
                             <button id="CheckoutButton" class="ui green icon big button">
                                 <i class="cart icon"></i>
-                                CHECKOUT
+                                @I18N.CHECKOUT
                             </button>
                             <button id="ClearScreenButton" class="ui red icon big button">
                                 <i class="delete icon"></i>
-                                CLS
+                                @I18N.CLS
                             </button>
                         </div>
                     </div>

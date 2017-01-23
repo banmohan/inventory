@@ -2,7 +2,7 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Inventory Transfers";
+    ViewBag.Title = I18N.InventoryTransfers;
     Layout = ViewBag.InventoryLayoutPath;
 }
 @Html.FinancePartialView("Shared/JournalView.cshtml", TenantConvention.GetTenant())

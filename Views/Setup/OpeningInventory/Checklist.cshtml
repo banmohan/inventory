@@ -1,7 +1,7 @@
 ﻿@model long
 
 @{
-    ViewBag.Title = "Opening Inventory";
+    ViewBag.Title = @I18N.OpeningInventory;
     Layout = ViewBag.InventoryLayoutPath;
 }
 <style>
@@ -14,16 +14,16 @@
     }
 </style>
 <div class="ui attached page segment" style="min-height: 100%; padding: 3em;">
-    <div class="ui huge header">Opening Inventory</div>
+    <div class="ui huge header">@I18N.OpeningInventory</div>
     <div class="ui divider"></div>
 
-    <div class="ui positive message">The transaction was posted successfully.</div>
+    <div class="ui positive message">@I18N.TransactionPostedSuccessfully</div>
 
     <a href="/dashboard/inventory/setup/opening-inventory" class="ui green button">
-        View Opening Inventories
+        @I18N.ViewOpeningInventories
     </a>
     <a href="/dashboard/inventory/setup/opening-inventory/new" class="ui red button">
-        Add a New Opening Inventory
+        @I18N.AddNewOpeningInventory
     </a>
     <iframe src="/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Opening.xml?transaction_master_id=@Model"></iframe>
 </div>

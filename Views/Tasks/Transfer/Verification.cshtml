@@ -2,7 +2,7 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Inventory Transfer Verification";
+    ViewBag.Title = I18N.InventoryTransferVerification;
     Layout = ViewBag.InventoryLayoutPath;
 }
 @Html.FinancePartialView("Shared/Verification.cshtml", TenantConvention.GetTenant())
@@ -10,13 +10,13 @@
 <script>
     window.prepareVerification({
         Title: "Inventory Transfer Verification",
-        AddNewText: "Add New",
+        AddNewText: window.translate("AddNew"),
         AddNewUrl: "/dashboard/inventory/tasks/inventory-transfers/new",
-        Book: "Inventory Transfer",
+        Book: window.translate("InventoryTransfer"),
         ChecklistUrl: "/dashboard/inventory/tasks/transfers/checklist/{tranId}",
         AdviceButtons: [
             {
-                Title: "View Transfer",
+                Title: window.translate("ViewTransfer"),
                 Href: "javascript:void(0);",
                 OnClick: "showTransfer({tranId});"
             }
