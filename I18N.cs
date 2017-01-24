@@ -66,7 +66,7 @@ namespace MixERP.Inventory
 		/// <summary>
 		///Are you sure?
 		/// </summary>
-		public static string AreYouSure? => I18NResource.GetString(ResourceDirectory, "AreYouSure?");
+		public static string AreYouSure => I18NResource.GetString(ResourceDirectory, "AreYouSure");
 
 		/// <summary>
 		///Attributes
@@ -316,7 +316,7 @@ namespace MixERP.Inventory
 		/// <summary>
 		///Please select a store!
 		/// </summary>
-		public static string PleaseSelectStore! => I18NResource.GetString(ResourceDirectory, "PleaseSelectStore!");
+		public static string PleaseSelectStore => I18NResource.GetString(ResourceDirectory, "PleaseSelectStore");
 
 		/// <summary>
 		///PostedBy
@@ -361,7 +361,7 @@ namespace MixERP.Inventory
 		/// <summary>
 		///Search ...
 		/// </summary>
-		public static string Search... => I18NResource.GetString(ResourceDirectory, "Search...");
+		public static string Search => I18NResource.GetString(ResourceDirectory, "Search");
 
 		/// <summary>
 		///Select
