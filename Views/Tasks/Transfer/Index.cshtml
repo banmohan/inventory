@@ -10,13 +10,13 @@
 <script>
     window.prepareView({
         Title: window.translate("InventoryTransfers"),
-        AddNewText: "Add New",
+        AddNewText: window.translate("AddNew"),
         AddNewUrl: "/dashboard/inventory/tasks/inventory-transfers/new",
         Book: "Inventory Transfer",
         ChecklistUrl: "/dashboard/inventory/tasks/transfers/checklist/{tranId}",
         AdviceButtons: [
             {
-                Title: "View Transfer",
+                Title: window.translate("ViewTransfer"),
                 Href: "javascript:void(0);",
                 OnClick: "showTransfer({tranId});"
             }

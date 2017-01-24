@@ -9,7 +9,7 @@
     <div class="item variant container">
         <div class="ui huge grey header">
             <span id="heading">
-                <span data-localize="Titles.ItemVariants"></span>
+                <span>@I18N.ItemVariants</span>
             </span>
         </div>
         <div class="ui divider"></div>
@@ -17,16 +17,16 @@
         <div class="ui form">
             <div class="four fields">
                 <div class="field">
-                    <label data-localize="Titles.SelectItem"></label>
+                    <label>@I18N.SelectItem</label>
                     <select id="ItemSelect" class="ui search dropdown"></select>
                 </div>
                 <div class="field">
-                    <label data-localize="Titles.SelectVariant"></label>
+                    <label>@I18N.SelectVariant</label>
                     <select id="VariantSelect" class="ui search dropdown"></select>
                 </div>
                 <div class="field">
                     <label>&nbsp;</label>
-                    <input type="button" id="ShowButton" class="ui basic button" data-localize="Titles.Show" />
+                    <input type="button" id="ShowButton" class="ui basic button" value="@I18N.Show" />
                 </div>
             </div>
         </div>
@@ -35,10 +35,10 @@
             <thead>
                 <tr>
                     <th style="width: 300px;">
-                        <span data-localize="Titles.Attribute"></span>
+                        <span>@I18N.Attribute</span>
                     </th>
                     <th style="width: 300px;">
-                        <span data-localize="Titles.Variant"></span>
+                        <span>@I18N.Variant</span>
                     </th>
                     <th></th>
                 </tr>
@@ -47,18 +47,18 @@
             <tfoot>
                 <tr>
                     <th>
-                        <input type="text" id="ItemCodeInputText" maxlength="12" data-localized-placeholder="Titles.ItemCode" />
+                        <input type="text" id="ItemCodeInputText" maxlength="12" placeholder="@I18N.ItemCode" />
                     </th>
                     <th>
-                        <input type="text" id="ItemNameInputText" maxlength="100" data-localized-placeholder="Titles.ItemName" />
+                        <input type="text" id="ItemNameInputText" maxlength="100" placeholder="@I18N.ItemName" />
                     </th>
                 </tr>
                 <tr>
                     <th colspan="2">
-                        <input type="button" class="ui basic blue add button" data-localize="Titles.Add" onclick="addRow();" />
+                        <input type="button" class="ui basic blue add button" value="@I18N.Add" onclick="addRow();" />
                         <div class="ui basic buttons">
-                            <input type="button" class="ui save button" id="SaveButton" data-localize="Titles.Save" />
-                            <input type="button" class="ui save button" id="DeleteButton" data-localize="Titles.Delete" />
+                            <input type="button" class="ui save button" id="SaveButton" value="@I18N.Save" />
+                            <input type="button" class="ui save button" id="DeleteButton" value="@I18N.Delete" />
                         </div>
                     </th>
                 </tr>
@@ -82,7 +82,7 @@
         </td>
         <td>
             <div class="ui basic buttons">
-                <input type="button" class="ui basic delete button" value="Delete" />
+                <input type="button" class ="ui basic delete button" value=${window.translate("Delete")} />
             </div>
         </td>
     </tr>`;
@@ -129,7 +129,7 @@
 
         $("#ItemSelect").change(function () {
             const el = $(this);
-            var heading = "Item Variants";
+            var heading = window.translate("ItemVariants");
             heading += " : " + el.getSelectedText();
 
             $("#heading").html(heading);
@@ -172,7 +172,7 @@
 
     function addRow(attributeId, variantId) {
         function getAttributes() {
-            var attributeOptions = "<option val=''>" + "Select" + "</option>";
+            var attributeOptions = "<option val=''>" + window.translate("Select") + "</option>";
 
             $.each(attributes, function () {
                 attributeOptions += "<option value='";
@@ -199,7 +199,7 @@
 
             const filtered = window.Enumerable.From(variants).Where(function (x) { return x.AttributeId.toString() === attributeId.toString() }).ToArray();
 
-            window.appendOption(target, "", "Select");
+            window.appendOption(target, "", window.translate("Select"));
 
             $.each(filtered, function () {
                 window.appendOption(target, this.VariantId, this.VariantName);
@@ -324,19 +324,19 @@
 
 
         if (!attributeIds.length) {
-            window.displayMessage("Please select an attribute.");
+            window.displayMessage(window.translate("PleaseSelectAttribute"));
             return;
         };
 
         if (!itemCode) {
-            window.displayMessage("Please enter a code of the new item variant.");
+            window.displayMessage(window.translate("PleaseEnterCodeNewItemVariant"));
             window.makeDirty($("#ItemCodeInputText"));
             return;
         };
 
 
         if (!itemName) {
-            window.displayMessage("Please enter a name for the new item variant.");
+            window.displayMessage(window.translate("PleaseEnterNameNewItemVariant"));
             window.makeDirty($("#ItemNameInputText"));
             return;
         };
@@ -347,7 +347,8 @@
         if (duplicate) {
             const item = window.Enumerable.From(attributes).Where(function (x) { return x.AttributeId.toString() === duplicate }).FirstOrDefault().AttributeName;
 
-            window.displayMessage(window.stringFormat("Cannot create this item because you must specify a single variant of \"{0}\" attribute.", item));
+            window.displayMessage(
+                window.stringFormat(window.translate("CannotCreateItemBecauseYouMustSpecifySingleVariantAttribute"), item));
             return;
         };
 

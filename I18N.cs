@@ -39,6 +39,11 @@ namespace MixERP.Inventory
 		public static string Actual => I18NResource.GetString(ResourceDirectory, "Actual");
 
 		/// <summary>
+		///Add
+		/// </summary>
+		public static string Add => I18NResource.GetString(ResourceDirectory, "Add");
+
+		/// <summary>
 		///Add New
 		/// </summary>
 		public static string AddNew => I18NResource.GetString(ResourceDirectory, "AddNew");
@@ -54,6 +59,11 @@ namespace MixERP.Inventory
 		public static string AddNewOpeningInventory => I18NResource.GetString(ResourceDirectory, "AddNewOpeningInventory");
 
 		/// <summary>
+		///Add New Transfer
+		/// </summary>
+		public static string AddNewTransfer => I18NResource.GetString(ResourceDirectory, "AddNewTransfer");
+
+		/// <summary>
 		///Amount
 		/// </summary>
 		public static string Amount => I18NResource.GetString(ResourceDirectory, "Amount");
@@ -64,9 +74,19 @@ namespace MixERP.Inventory
 		public static string Approve => I18NResource.GetString(ResourceDirectory, "Approve");
 
 		/// <summary>
+		///Approve Transaction
+		/// </summary>
+		public static string ApproveTransaction => I18NResource.GetString(ResourceDirectory, "ApproveTransaction");
+
+		/// <summary>
 		///Are you sure?
 		/// </summary>
 		public static string AreYouSure => I18NResource.GetString(ResourceDirectory, "AreYouSure");
+
+		/// <summary>
+		///Attribute
+		/// </summary>
+		public static string Attribute => I18NResource.GetString(ResourceDirectory, "Attribute");
 
 		/// <summary>
 		///Attributes
@@ -94,16 +114,6 @@ namespace MixERP.Inventory
 		public static string Brands => I18NResource.GetString(ResourceDirectory, "Brands");
 
 		/// <summary>
-		///CHECKOUT
-		/// </summary>
-		public static string CHECKOUT => I18NResource.GetString(ResourceDirectory, "CHECKOUT");
-
-		/// <summary>
-		///CLS
-		/// </summary>
-		public static string CLS => I18NResource.GetString(ResourceDirectory, "CLS");
-
-		/// <summary>
 		///Cancel
 		/// </summary>
 		public static string Cancel => I18NResource.GetString(ResourceDirectory, "Cancel");
@@ -112,6 +122,11 @@ namespace MixERP.Inventory
 		///Cannot add item because the price is zero.
 		/// </summary>
 		public static string CannotAddItemBecausePriceZero => I18NResource.GetString(ResourceDirectory, "CannotAddItemBecausePriceZero");
+
+		/// <summary>
+		///Cannot create this item because you must specify a single variant of "{0}" attribute.
+		/// </summary>
+		public static string CannotCreateItemBecauseYouMustSpecifySingleVariantAttribute => I18NResource.GetString(ResourceDirectory, "CannotCreateItemBecauseYouMustSpecifySingleVariantAttribute");
 
 		/// <summary>
 		///Checklist
@@ -124,9 +139,19 @@ namespace MixERP.Inventory
 		public static string ChecklistWindow => I18NResource.GetString(ResourceDirectory, "ChecklistWindow");
 
 		/// <summary>
+		///Checkout
+		/// </summary>
+		public static string Checkout => I18NResource.GetString(ResourceDirectory, "Checkout");
+
+		/// <summary>
 		///Clear
 		/// </summary>
 		public static string Clear => I18NResource.GetString(ResourceDirectory, "Clear");
+
+		/// <summary>
+		///Cls
+		/// </summary>
+		public static string Cls => I18NResource.GetString(ResourceDirectory, "Cls");
 
 		/// <summary>
 		///Compound Units of Measure
@@ -139,6 +164,21 @@ namespace MixERP.Inventory
 		public static string Counters => I18NResource.GetString(ResourceDirectory, "Counters");
 
 		/// <summary>
+		///CTRL + RETURN
+		/// </summary>
+		public static string CtrlPlusReturn => I18NResource.GetString(ResourceDirectory, "CtrlPlusReturn");
+
+		/// <summary>
+		///CurrentArea
+		/// </summary>
+		public static string CurrentArea => I18NResource.GetString(ResourceDirectory, "CurrentArea");
+
+		/// <summary>
+		///Current Branch Office
+		/// </summary>
+		public static string CurrentBranchOffice => I18NResource.GetString(ResourceDirectory, "CurrentBranchOffice");
+
+		/// <summary>
 		///Customer Types
 		/// </summary>
 		public static string CustomerTypes => I18NResource.GetString(ResourceDirectory, "CustomerTypes");
@@ -147,6 +187,11 @@ namespace MixERP.Inventory
 		///Customers
 		/// </summary>
 		public static string Customers => I18NResource.GetString(ResourceDirectory, "Customers");
+
+		/// <summary>
+		///Delete
+		/// </summary>
+		public static string Delete => I18NResource.GetString(ResourceDirectory, "Delete");
 
 		/// <summary>
 		///Difference
@@ -162,6 +207,16 @@ namespace MixERP.Inventory
 		///Duplicate Entry
 		/// </summary>
 		public static string DuplicateEntry => I18NResource.GetString(ResourceDirectory, "DuplicateEntry");
+
+		/// <summary>
+		///Edit Price
+		/// </summary>
+		public static string EditPrice => I18NResource.GetString(ResourceDirectory, "EditPrice");
+
+		/// <summary>
+		///Enter Quantity
+		/// </summary>
+		public static string EnterQuantity => I18NResource.GetString(ResourceDirectory, "EnterQuantity");
 
 		/// <summary>
 		///Export
@@ -186,7 +241,7 @@ namespace MixERP.Inventory
 		/// <summary>
 		///Export to PDF
 		/// </summary>
-		public static string ExportPDF => I18NResource.GetString(ResourceDirectory, "ExportPDF");
+		public static string ExportPdf => I18NResource.GetString(ResourceDirectory, "ExportPdf");
 
 		/// <summary>
 		///From
@@ -194,9 +249,24 @@ namespace MixERP.Inventory
 		public static string From => I18NResource.GetString(ResourceDirectory, "From");
 
 		/// <summary>
-		///IN
+		///Gridview is empty!
 		/// </summary>
-		public static string IN => I18NResource.GetString(ResourceDirectory, "IN");
+		public static string GridviewEmpty => I18NResource.GetString(ResourceDirectory, "GridviewEmpty");
+
+		/// <summary>
+		///In
+		/// </summary>
+		public static string In => I18NResource.GetString(ResourceDirectory, "In");
+
+		/// <summary>
+		///Invalid Date!
+		/// </summary>
+		public static string InvalidDate => I18NResource.GetString(ResourceDirectory, "InvalidDate");
+
+		/// <summary>
+		///Invalid Store!
+		/// </summary>
+		public static string InvalidStore => I18NResource.GetString(ResourceDirectory, "InvalidStore");
 
 		/// <summary>
 		///Inventory
@@ -207,6 +277,11 @@ namespace MixERP.Inventory
 		///Inventory Adjustment
 		/// </summary>
 		public static string InventoryAdjustment => I18NResource.GetString(ResourceDirectory, "InventoryAdjustment");
+
+		/// <summary>
+		///Inventory Adjustment Checklist
+		/// </summary>
+		public static string InventoryAdjustmentChecklist => I18NResource.GetString(ResourceDirectory, "InventoryAdjustmentChecklist");
 
 		/// <summary>
 		///Inventory Adjustment Verification
@@ -264,6 +339,11 @@ namespace MixERP.Inventory
 		public static string ItemTypes => I18NResource.GetString(ResourceDirectory, "ItemTypes");
 
 		/// <summary>
+		///Item Variants
+		/// </summary>
+		public static string ItemVariants => I18NResource.GetString(ResourceDirectory, "ItemVariants");
+
+		/// <summary>
 		///Item Varients
 		/// </summary>
 		public static string ItemVarients => I18NResource.GetString(ResourceDirectory, "ItemVarients");
@@ -274,9 +354,9 @@ namespace MixERP.Inventory
 		public static string Memo => I18NResource.GetString(ResourceDirectory, "Memo");
 
 		/// <summary>
-		///OUT
+		///Nothing to transfer!
 		/// </summary>
-		public static string OUT => I18NResource.GetString(ResourceDirectory, "OUT");
+		public static string NothingToTransfer => I18NResource.GetString(ResourceDirectory, "NothingToTransfer");
 
 		/// <summary>
 		///Office
@@ -287,6 +367,11 @@ namespace MixERP.Inventory
 		///OfficeId
 		/// </summary>
 		public static string OfficeId => I18NResource.GetString(ResourceDirectory, "OfficeId");
+
+		/// <summary>
+		///OfficeName
+		/// </summary>
+		public static string OfficeName => I18NResource.GetString(ResourceDirectory, "OfficeName");
 
 		/// <summary>
 		///Okay
@@ -312,6 +397,31 @@ namespace MixERP.Inventory
 		///Opening Inventory Verification
 		/// </summary>
 		public static string OpeningInventoryVerification => I18NResource.GetString(ResourceDirectory, "OpeningInventoryVerification");
+
+		/// <summary>
+		///Out
+		/// </summary>
+		public static string Out => I18NResource.GetString(ResourceDirectory, "Out");
+
+		/// <summary>
+		///Please enter a code of the new item variant.
+		/// </summary>
+		public static string PleaseEnterCodeNewItemVariant => I18NResource.GetString(ResourceDirectory, "PleaseEnterCodeNewItemVariant");
+
+		/// <summary>
+		///Please enter a name for the new item variant.
+		/// </summary>
+		public static string PleaseEnterNameNewItemVariant => I18NResource.GetString(ResourceDirectory, "PleaseEnterNameNewItemVariant");
+
+		/// <summary>
+		///Please select an attribute.
+		/// </summary>
+		public static string PleaseSelectAttribute => I18NResource.GetString(ResourceDirectory, "PleaseSelectAttribute");
+
+		/// <summary>
+		///Please select an item.
+		/// </summary>
+		public static string PleaseSelectItem => I18NResource.GetString(ResourceDirectory, "PleaseSelectItem");
 
 		/// <summary>
 		///Please select a store!
@@ -354,6 +464,11 @@ namespace MixERP.Inventory
 		public static string Reject => I18NResource.GetString(ResourceDirectory, "Reject");
 
 		/// <summary>
+		///Reject Transaction
+		/// </summary>
+		public static string RejectTransaction => I18NResource.GetString(ResourceDirectory, "RejectTransaction");
+
+		/// <summary>
 		///Save
 		/// </summary>
 		public static string Save => I18NResource.GetString(ResourceDirectory, "Save");
@@ -369,9 +484,19 @@ namespace MixERP.Inventory
 		public static string Select => I18NResource.GetString(ResourceDirectory, "Select");
 
 		/// <summary>
+		///Select Item
+		/// </summary>
+		public static string SelectItem => I18NResource.GetString(ResourceDirectory, "SelectItem");
+
+		/// <summary>
 		///Select Store
 		/// </summary>
 		public static string SelectStore => I18NResource.GetString(ResourceDirectory, "SelectStore");
+
+		/// <summary>
+		///Select Variant
+		/// </summary>
+		public static string SelectVariant => I18NResource.GetString(ResourceDirectory, "SelectVariant");
 
 		/// <summary>
 		///Shippers
@@ -479,6 +604,11 @@ namespace MixERP.Inventory
 		public static string ValueDate => I18NResource.GetString(ResourceDirectory, "ValueDate");
 
 		/// <summary>
+		///Variant
+		/// </summary>
+		public static string Variant => I18NResource.GetString(ResourceDirectory, "Variant");
+
+		/// <summary>
 		///Variants
 		/// </summary>
 		public static string Variants => I18NResource.GetString(ResourceDirectory, "Variants");
@@ -502,6 +632,11 @@ namespace MixERP.Inventory
 		///Verify
 		/// </summary>
 		public static string Verify => I18NResource.GetString(ResourceDirectory, "Verify");
+
+		/// <summary>
+		///View Adjustment
+		/// </summary>
+		public static string ViewAdjustment => I18NResource.GetString(ResourceDirectory, "ViewAdjustment");
 
 		/// <summary>
 		///View Adjustments
@@ -532,6 +667,11 @@ namespace MixERP.Inventory
 		///We only have {0} {1} in inventory
 		/// </summary>
 		public static string WeOnlyHaveInInventory => I18NResource.GetString(ResourceDirectory, "WeOnlyHaveInInventory");
+
+		/// <summary>
+		///You
+		/// </summary>
+		public static string You => I18NResource.GetString(ResourceDirectory, "You");
 
 	}
 }

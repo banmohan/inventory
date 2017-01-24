@@ -1,5 +1,4 @@
-﻿@using Frapid.ApplicationState.Cache
-@model dynamic
+﻿@model dynamic
 
 @{
     ViewBag.Title = I18N.Inventory;
@@ -30,7 +29,7 @@
                 </div>
                 <div class="field">
                     <label for="ShowButton">@I18N.ShowItems</label>
-                    <input value="Show" id="ShowButton" class="ui small positive button" type="submit">
+                    <input value="@I18N.Show" id="ShowButton" class="ui small positive button" type="submit">
                 </div>
             </div>
         </div>
@@ -116,8 +115,8 @@
                     row.append(getCell(this.UnitName));
                     row.append(getCell(this.Quantity));
 
-                    row.append(getCell("<input type='text' tabindex='" + tabIndex + "' class='integer actual' />"));
-                    row.append(getCell("<input type='text' tabindex='" + (tabIndex + totalRows) + "' class='integer difference' />"));
+                    row.append(getCell(`<input type='text' tabindex='${tabIndex}' class='integer actual' />`));
+                    row.append(getCell(`<input type='text' tabindex='${tabIndex + totalRows}' class='integer difference' />`));
 
 
                     closingInventoryGrid.append(row);
@@ -169,7 +168,7 @@
                 const storeId = parseInt(storeSelect.val());
 
                 if (!storeId) {
-                    window.displayMessage(window.translate("PleaseSelectStore!"));
+                    window.displayMessage(window.translate("PleaseSelectStore"));
                     return;
                 };
 
@@ -226,19 +225,19 @@
 
                     if (!storeId) {
                         window.makeDirty(storeSelect);
-                        errorLabel.html("Invalid store!");
+                        errorLabel.html(window.translate("InvalidStore"));
                         return null;
                     };
 
                     if (!window.isDate(valueDate)) {
                         window.makeDirty(valueDateInputText);
-                        errorLabel.html("Invalid date!");
+                        errorLabel.html(window.translate("InvalidDate"));
                         return null;
                     };
 
                     if (!window.isDate(bookDate)) {
                         window.makeDirty(bookDateInputText);
-                        errorLabel.html("Invalid date!");
+                        errorLabel.html(window.translate("InvalidDate"));
                         return null;
                     };
 

@@ -36,7 +36,7 @@
                     <i class="file excel outline green icon"></i> @I18N.ExportExcel
                 </a>
                 <a class="item" href="javascript:void(0);" onclick="createPDF();">
-                    <i class="file pdf outline red icon"></i> @I18N.ExportPDF
+                    <i class="file pdf outline red icon"></i> @I18N.ExportPdf
                 </a>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 <input placeholder="@I18N.Office" id="OfficeInputText" title="@I18N.Office" type="text">
             </div>
             <div class="field">
-                <input placeholder="@I18N.Status" id="StatusInputText" title="@I18N.Status" type="text" value="Unverified">
+                <input placeholder="@I18N.Status" id="StatusInputText" title="@I18N.Status" type="text" value="@I18N.Unverified">
             </div>
             <div class="field">
                 <input placeholder="@I18N.VerifiedBy" id="VerifiedByInputText" title="@I18N.VerifiedBy" type="text">
@@ -135,8 +135,8 @@
     </div>
     <div class="actions">
         <div class="ui buttons">
-            <input type="button" class="ui red cancel button" value="Cancel"/>
-            <input type="button" id="VerifyButton" class="ui green ok button" value="Verify" title="CTRL + RETURN"/>
+            <input type="button" class="ui red cancel button" value="@I18N.Cancel"/>
+            <input type="button" id="VerifyButton" class="ui green ok button" value="@I18N.Verify" title="@I18N.CtrlPlusReturn"/>
         </div>
     </div>
 </div>
@@ -168,12 +168,12 @@
         function getActionCell(tranId) {
             const cell = $("<td />");
 
-            const checklistAnchor = $("<a title='" + window.translate("ChecklistWindow") + "'><i class='list icon'></i></a>");
-            checklistAnchor.attr("href", "/dashboard/inventory/setup/opening-inventories/checklist/" + tranId);
+            const checklistAnchor = $(`<a title='${window.translate("ChecklistWindow")}'><i class='list icon'></i></a>`);
+            checklistAnchor.attr("href", `/dashboard/inventory/setup/opening-inventories/checklist/${tranId}`);
 
-            const inventoryAdviceAnchor = $("<a title='" + window.translate("ViewOpeningInventoryAdvice") + "'><i class='zoom icon'></i></a>");
+            const inventoryAdviceAnchor = $(`<a title='${window.translate("ViewOpeningInventoryAdvice")}'><i class='zoom icon'></i></a>`);
             inventoryAdviceAnchor.attr("href", "javascript:void(0);");
-            inventoryAdviceAnchor.attr("onclick", "showOpeningAdvice(" + tranId + ");");
+            inventoryAdviceAnchor.attr("onclick", `showOpeningAdvice(${tranId});`);
 
 
             cell.append(checklistAnchor);
@@ -291,12 +291,12 @@
         const header = modal.find(".ui.massive.header");
         const subheader = modal.find(".ui.dividing.header");
 
-        header.html("Reject Transaction");
-        subheader.html(window.stringFormat("TranId: #{0}", tranId));
+        header.html(window.translate("RejectTransaction"));
+        subheader.html(window.stringFormat(window.translate("TranId") + ": #{0}", tranId));
         header.removeClass("green").addClass("red");
 
         if (approve) {
-            header.html("Approve Transaction");
+            header.html(window.translate("ApproveTransaction"));
             header.removeClass("red").addClass("green");
         };
 
