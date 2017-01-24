@@ -33,16 +33,16 @@ else
                         <strong class="title info">
                             @I18N.OpeningInventory
                         </strong>
-                        <span class="office info" title="Current Branch Office">
+                        <span class="office info" title="@I18N.CurrentBranchOffice">
                             @meta.OfficeName
                         </span>
-                        <span class="user info" title="You">
+                        <span class="user info" title="@I18N.You">
                             @meta.Name
                         </span>
-                        <span class="area info" title="Current Area">
+                        <span class="area info" title="@I18N.CurrentArea">
                             @meta.OfficeCode
                         </span>
-                        <span class="office info" title="Office Name">
+                        <span class="office info" title="@I18N.OfficeName">
                             @meta.OfficeName
                         </span>
                     </div>
@@ -57,7 +57,7 @@ else
                     </div>
                 </div>
                 <div class="search panel">
-                    <input type="search" placeholder="@I18N.Search..." />
+                    <input type="search" placeholder="@I18N.Search" />
 
                 </div>
                 <div class="item list" id="POSItemList">
@@ -111,11 +111,11 @@ else
                         <div class="column">
                             <button id="CheckoutButton" class="ui green icon big button">
                                 <i class="cart icon"></i>
-                                @I18N.CHECKOUT
+                                @I18N.Checkout
                             </button>
                             <button id="ClearScreenButton" class="ui red icon big button">
                                 <i class="delete icon"></i>
-                                @I18N.CLS
+                                @I18N.Cls
                             </button>
                         </div>
                     </div>
@@ -161,9 +161,9 @@ else
 		</div>
 	</div>
 	<div class="number block">
-		<input type="text" class="price" title="Edit Price" value="{CostPrice}">
-		<input type="text" class="quantity" title="Enter Quantity" value="1">
-		<button class="ui red fluid button" onclick="removeItem(this);" style="display:none;">Delete</button>
+		<input type="text" class="price" title="${window.translate('EditPrice')}" value="{CostPrice}">
+		<input type="text" class ="quantity" title="${window.translate('EnterQuantity')}" value="1">
+		<button class ="ui red fluid button" onclick="removeItem(this);" style="display:none;">${window.translate("Edit Price")}</button>
 	</div>
 </div>`
     </script>
@@ -233,7 +233,7 @@ else
         }, 120000);
 
         function removeItem(el) {
-            const confirmed = confirm(window.translate("AreYouSure?"));
+            const confirmed = confirm(window.translate("AreYouSure"));
 
             if (!confirmed) {
                 return;
@@ -270,7 +270,7 @@ else
                 var price = parseFloat(costPrice || 0);
 
                 if (!price) {
-                    alert("Cannot add item because the price is zero.");
+                    alert(window.translate("CannotAddItemBecausePriceZero"));
                     return;
                 };
 
@@ -324,7 +324,7 @@ else
                     $.each(units, function () {
                         const unit = this;
 
-                        const option = $("<option/ >");
+                        const option = $("<option/>");
                         option.attr("value", unit.UnitId);
                         option.html(unit.UnitName);
 
@@ -389,7 +389,7 @@ else
                         priceInput.val(response).trigger("keyup");
                     });
 
-                    ajax.fail(function (xr) {
+                    ajax.fail(function (xhr) {
                         $(".pos.opening.segment").removeClass("loading");
                         console.log(window.getAjaxErrorMessage(xhr));
                     });
@@ -617,11 +617,11 @@ else
             const model = getModel();
 
             if (!model.Details.length) {
-                window.displayMessage("Please select an item.");
+                window.displayMessage(window.translate("PleaseSelectItem"));
                 return;
             };
 
-            const confirmed = confirm("Are you sure");
+            const confirmed = confirm(window.translate("AreYouSure"));
 
             if (!confirmed) {
                 return;

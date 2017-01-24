@@ -55,8 +55,8 @@
                     <tr class="footer-row ui form">
                         <td>
                             <select class="ui fluid dropdown" id="TransactionTypeSelect">
-                                <option value="Cr">@I18N.OUT</option>
-                                <option value="Dr">@I18N.IN</option>
+                                <option value="Cr">@I18N.Out</option>
+                                <option value="Dr">@I18N.In</option>
                             </select>
                         </td>
                         <td>
@@ -75,7 +75,7 @@
                             <input id="QuantityInputText" class="text-right integer" type="text">
                         </td>
                         <td>
-                            <input id="AddButton" value="Add" class="ui small red button" type="button">
+                            <input id="AddButton" value="@I18N.Add" class="ui small red button" type="button">
                         </td>
                     </tr>
                 </tbody>
@@ -296,18 +296,18 @@
 
             if (!window.isDate(valueDate)) {
                 window.makeDirty($("#ValueDateTextBox"));
-                errorLabel.html("Invalid date!");
+                errorLabel.html(window.translate("InvalidDate"));
                 return false;
             };
 
             if (!window.isDate(bookDate)) {
                 window.makeDirty($("#BookDateTextBox"));
-                errorLabel.html("Invalid date!");
+                errorLabel.html(window.translate("InvalidDate"));
                 return false;
             };
 
             if (!details || details.length === 0) {
-                errorLabel.html("Nothing to transfer!");
+                errorLabel.html(window.translate("NothingToTransfer"));
                 return false;
             };
 
@@ -325,7 +325,7 @@
         errorLabel.html("");
 
         if (transferGridView.find("tr").length === 2) {
-            errorLabel.html("Gridview is empty!");
+            errorLabel.html(window.translate("GridviewEmpty"));
             return false;
         };
 
@@ -371,7 +371,7 @@
 
         const ajax = request();
         ajax.success(function (response) {
-            var options = "<option>Select</option>";
+            var options = `<option>${window.translate("Select")}</option>`;
 
             $.each(response, function () {
                 var option = "<option value='{key}'>{value}</option>";
@@ -396,7 +396,7 @@
         const itemCode = itemCodeInputText.val();
         const ajax = request(itemCode);
         ajax.success(function (response) {
-            var options = "<option>Select</option>";
+            var options = `<option>${window.translate("Select")}</option>`;
 
             $.each(response, function () {
                 var option = "<option value='{key}'>{value}</option>";
