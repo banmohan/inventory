@@ -62,8 +62,9 @@ CREATE TABLE inventory.suppliers
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
     supplier_type_id                        integer NOT NULL REFERENCES inventory.supplier_types,
-    account_id                                integer NOT NULL REFERENCES finance.accounts,
-    currency_code                            national character varying(12) NOT NULL REFERENCES core.currencies,
+    account_id                              integer REFERENCES finance.accounts,
+    email                                   national character varying(128),
+    currency_code                           national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -92,22 +93,27 @@ CREATE TABLE inventory.suppliers
     photo                                   dbo.photo,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX suppliers_supplier_code_uix
 ON inventory.suppliers(supplier_code)
 WHERE deleted = 0;
 
+CREATE UNIQUE INDEX suppliers_account_id_uix
+ON inventory.suppliers(account_id)
+WHERE deleted = 0
+AND account_id IS NOT NULL;
+
 CREATE TABLE inventory.customer_types
 (
     customer_type_id                        integer IDENTITY PRIMARY KEY,
     customer_type_code                      national character varying(24) NOT NULL,
     customer_type_name                      national character varying(500) NOT NULL,
-    account_id                                integer NOT NULL REFERENCES finance.accounts,
+    account_id                              integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX customer_types_customer_type_code_uix
@@ -124,8 +130,9 @@ CREATE TABLE inventory.customers
     customer_code                           national character varying(24) NOT NULL,
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
-    account_id                                integer NOT NULL REFERENCES finance.accounts,
-    currency_code                            national character varying(12) NOT NULL REFERENCES core.currencies,
+    account_id                              integer REFERENCES finance.accounts,
+    email                                   national character varying(128),
+    currency_code                           national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -160,6 +167,11 @@ CREATE TABLE inventory.customers
 CREATE UNIQUE INDEX customers_customer_code_uix
 ON inventory.customers(customer_code)
 WHERE deleted = 0;
+
+CREATE UNIQUE INDEX customers_account_id_uix
+ON inventory.customers(account_id)
+WHERE deleted = 0
+AND account_id IS NOT NULL;
 
 CREATE TABLE inventory.item_groups
 (
@@ -215,7 +227,7 @@ CREATE TABLE inventory.item_types
     is_component                            bit NOT NULL DEFAULT(0),
     audit_user_id                           integer NULL REFERENCES account.users(user_id),
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)    
+    deleted                                 bit DEFAULT(0)    
 );
 
 
@@ -1000,6 +1012,28 @@ END;
 GO
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_customer_type_id.sql --<--<--
+IF OBJECT_ID('inventory.get_account_id_by_customer_type_id') IS NOT NULL
+DROP FUNCTION inventory.get_account_id_by_customer_type_id;
+
+GO
+
+CREATE FUNCTION inventory.get_account_id_by_customer_type_id(@customer_type_id integer)
+RETURNS integer
+AS
+BEGIN
+    RETURN 
+	(
+		SELECT account_id
+		FROM inventory.customer_types
+		WHERE customer_type_id=@customer_type_id
+	);
+END;
+
+GO
+
+--SELECT inventory.get_account_id_by_customer_type_id(1);
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_shipper_id.sql --<--<--
 IF OBJECT_ID('inventory.get_account_id_by_shipper_id') IS NOT NULL
 DROP FUNCTION inventory.get_account_id_by_shipper_id;
@@ -1049,6 +1083,28 @@ END;
 
 GO
 
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_supplier_type_id.sql --<--<--
+IF OBJECT_ID('inventory.get_account_id_by_supplier_type_id') IS NOT NULL
+DROP FUNCTION inventory.get_account_id_by_supplier_type_id;
+
+GO
+
+CREATE FUNCTION inventory.get_account_id_by_supplier_type_id(@supplier_type_id integer)
+RETURNS integer
+AS
+BEGIN
+    RETURN 
+	(
+		SELECT account_id
+		FROM inventory.supplier_types
+		WHERE supplier_type_id=@supplier_type_id
+	);
+END;
+
+GO
+
+--SELECT inventory.get_account_id_by_supplier_type_id(1);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_account_statement.sql --<--<--
 IF OBJECT_ID('inventory.get_account_statement') IS NOT NULL
@@ -1882,6 +1938,58 @@ END;
 GO
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_transaction_summary.sql --<--<--
+IF OBJECT_ID('inventory.get_customer_transaction_summary') IS NOT NULL
+DROP FUNCTION inventory.get_customer_transaction_summary;
+
+GO
+
+CREATE FUNCTION inventory.get_customer_transaction_summary
+(
+    @office_id                  integer, 
+    @customer_id				integer
+)
+RETURNS @results TABLE
+(
+    currency_code               national character varying(12), 
+    currency_symbol             national character varying(12), 
+    total_due_amount            decimal(30, 6), 
+    office_due_amount           decimal(30, 6)
+)
+AS
+BEGIN
+    DECLARE @root_office_id		integer = 0;
+    DECLARE @currency_code		national character varying(12); 
+    DECLARE @currency_symbol    national character varying(12);
+    DECLARE @total_due_amount   decimal(30, 6); 
+    DECLARE @office_due_amount  decimal(30, 6); 
+    DECLARE @last_receipt_date  date;
+    DECLARE @transaction_value  decimal(30, 6);
+
+    SET @currency_code = inventory.get_currency_code_by_customer_id(@customer_id);
+
+    SELECT @currency_symbol = core.currencies.currency_symbol 
+    FROM core.currencies
+    WHERE core.currencies.currency_code = @currency_code;
+
+    SELECT @root_office_id = core.offices.office_id
+    FROM core.offices
+    WHERE parent_office_id IS NULL;
+
+    SET @total_due_amount = inventory.get_total_customer_due(@root_office_id, @customer_id);
+    SET @office_due_amount = inventory.get_total_customer_due(@office_id, @customer_id);
+	
+	INSERT INTO @results
+    SELECT @currency_code, @currency_symbol, @total_due_amount, @office_due_amount;
+	
+	RETURN;
+END
+
+GO
+
+--SELECT * FROM inventory.get_customer_transaction_summary(1, 1);
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_type_id_by_customer_id.sql --<--<--
 IF OBJECT_ID('inventory.get_customer_type_id_by_customer_id') IS NOT NULL
 DROP FUNCTION inventory.get_customer_type_id_by_customer_id;
@@ -2670,6 +2778,51 @@ END;
 
 
 GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_total_customer_due.sql --<--<--
+IF OBJECT_ID('inventory.get_total_customer_due') IS NOT NULL
+DROP FUNCTION inventory.get_total_customer_due;
+
+GO
+
+CREATE FUNCTION inventory.get_total_customer_due(@office_id integer, @customer_id integer)
+RETURNS DECIMAL(24, 4)
+AS
+BEGIN
+    DECLARE @account_id                     integer							= inventory.get_account_id_by_customer_id(@customer_id);
+    DECLARE @debit                          decimal(30, 6)					= 0;
+    DECLARE @credit                         decimal(30, 6)					= 0;
+    DECLARE @local_currency_code            national character varying(12)	= core.get_currency_code_by_office_id(@office_id); 
+    DECLARE @base_currency_code             national character varying(12)	= inventory.get_currency_code_by_customer_id(@customer_id);
+    DECLARE @amount_in_local_currency       decimal(30, 6)					= 0;
+    DECLARE @amount_in_base_currency        decimal(30, 6)					= 0;
+    DECLARE @er								decimal(30, 6)					= 0;
+
+    SELECT @debit = SUM(amount_in_local_currency)
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@account_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
+    AND tran_type='Dr';
+
+    SELECT @credit = SUM(amount_in_local_currency)
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@customer_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
+    AND tran_type='Cr';
+
+    SET @er							= COALESCE(finance.convert_exchange_rate(@office_id, @local_currency_code, @base_currency_code), 0);
+    SET @amount_in_local_currency	= COALESCE(@credit, 0) - COALESCE(@debit, 0);
+
+
+    SET @amount_in_base_currency	= @amount_in_local_currency * @er; 
+
+    RETURN @amount_in_base_currency;
+END
+
+GO
+
+--SELECT inventory.get_total_customer_due(1, 1);
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_code.sql --<--<--
@@ -3984,6 +4137,140 @@ WHERE verification_status_id > 0;
 
 GO
 
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/10.triggers/inventory.customer_after_insert_trigger.sql --<--<--
+IF OBJECT_ID('inventory.customer_after_insert_trigger') IS NOT NULL
+DROP TRIGGER inventory.customer_after_insert_trigger;
+
+GO
+
+CREATE TRIGGER inventory.customer_after_insert_trigger
+ON inventory.customers
+AFTER INSERT
+AS
+BEGIN    
+	DECLARE @customer_type_id		integer;
+    DECLARE @parent_account_id		integer;
+    DECLARE @customer_id			integer;
+    DECLARE @account_id				integer;
+	DECLARE @customer_code			national character varying(24);
+	DECLARE @currency_code			national character varying(12);
+	DECLARE @customer_name			national character varying(500);
+
+
+	SELECT 
+		@customer_type_id			= customer_type_id,
+		@customer_id				= customer_id,
+		@customer_code				= customer_code,
+		@account_id					= account_id,
+		@currency_code				= currency_code,
+		@customer_name				= customer_name
+	FROM INSERTED;
+
+
+	SET @parent_account_id			=  inventory.get_account_id_by_customer_type_id(@customer_type_id);
+
+    IF(COALESCE(@customer_name, '') = '')
+	BEGIN
+		RAISERROR('The customer name cannot be left empty.', 16, 1);
+    END;
+
+    --Create a new account
+    IF(@account_id IS NULL)
+	BEGIN
+        INSERT INTO finance.accounts(account_master_id, account_number, currency_code, account_name, parent_account_id)
+        SELECT finance.get_account_master_id_by_account_id(@parent_account_id), '15010-' + CAST(@customer_id AS varchar(50)), @currency_code, @customer_name, @parent_account_id;
+		
+		SET @account_id = SCOPE_IDENTITY();
+		    
+        UPDATE inventory.customers
+        SET 
+            account_id		= @account_id
+        WHERE inventory.customers.customer_id = @customer_id;
+    END;
+END
+
+GO
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/10.triggers/inventory.items_unit_check_trigger.sql --<--<--
+IF OBJECT_ID('inventory.items_unit_check_trigger') IS NOT NULL
+DROP TRIGGER inventory.items_unit_check_trigger;
+
+GO
+
+CREATE TRIGGER inventory.items_unit_check_trigger
+ON inventory.items
+FOR INSERT, UPDATE
+AS
+BEGIN
+	IF EXISTS(SELECT TOP 1 1 FROM INSERTED WHERE inventory.get_root_unit_id(INSERTED.unit_id) != inventory.get_root_unit_id(INSERTED.reorder_unit_id))
+	BEGIN
+        RAISERROR('The reorder unit is incompatible with the base unit.', 16, 1);
+    END;
+END
+
+GO
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/10.triggers/inventory.supplier_after_insert_trigger.sql --<--<--
+IF OBJECT_ID('inventory.supplier_after_insert_trigger') IS NOT NULL
+DROP TRIGGER inventory.supplier_after_insert_trigger;
+
+GO
+
+CREATE TRIGGER inventory.supplier_after_insert_trigger
+ON inventory.suppliers
+AFTER INSERT
+AS
+BEGIN    
+	DECLARE @supplier_type_id		integer;
+    DECLARE @parent_account_id		integer;
+    DECLARE @supplier_id			integer;
+    DECLARE @account_id				integer;
+	DECLARE @supplier_code			national character varying(24);
+	DECLARE @currency_code			national character varying(12);
+	DECLARE @supplier_name			national character varying(500);
+
+
+	SELECT 
+		@supplier_type_id			= supplier_type_id,
+		@supplier_id				= supplier_id,
+		@supplier_code				= supplier_code,
+		@account_id					= account_id,
+		@currency_code				= currency_code,
+		@supplier_name				= supplier_name
+	FROM INSERTED;
+
+	SET @parent_account_id			=  inventory.get_account_id_by_supplier_type_id(@supplier_type_id);
+
+    IF(COALESCE(@supplier_name, '') = '')
+	BEGIN
+		RAISERROR('The supplier name cannot be left empty.', 16, 1);
+    END;
+
+    --Create a new account
+    IF(@account_id IS NULL)
+	BEGIN
+        INSERT INTO finance.accounts(account_master_id, account_number, currency_code, account_name, parent_account_id)
+        SELECT finance.get_account_master_id_by_account_id(@parent_account_id), @supplier_code, @currency_code, @supplier_name, @parent_account_id;
+		
+		SET @account_id = SCOPE_IDENTITY();
+
+		
+		IF(@account_id IS NULL)
+		BEGIN
+			RAISERROR('Could not create account.', 16, 1);		
+		END;
+				    
+        UPDATE inventory.suppliers
+        SET 
+            account_id		= @account_id
+        WHERE inventory.suppliers.supplier_id = @supplier_id;
+    END;
+END
+
+GO
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/99.ownership.sql --<--<--
 EXEC sp_addrolemember  @rolename = 'db_owner', @membername  = 'frapid_db_user'

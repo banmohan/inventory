@@ -1,4 +1,6 @@
 ﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/99.sample-data/inventory.sample.sql --<--<--
+SET NOCOUNT ON;
+
 INSERT INTO inventory.brands(brand_code, brand_name)
 SELECT 'DEF', 'Default';
 
@@ -44,20 +46,20 @@ SELECT 'C', 'Customer', finance.get_account_id_by_account_number('10400');
 INSERT INTO inventory.supplier_types(supplier_type_code, supplier_type_name, account_id) 
 SELECT 'S', 'Supplier', finance.get_account_id_by_account_number('20100');
 
-INSERT INTO inventory.suppliers(supplier_code, supplier_name, supplier_type_id, company_name, account_id, currency_code)
-SELECT 'DEF', 'Default',	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Default',         finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'COK', 'Coke', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Coke',            finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'FAN', 'Fanta',		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Fanta',           finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BMB', 'Bambino', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Bambino',         finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BRG', 'Broges', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Broges',          finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DIL', 'Dilmah', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Dilmah',          finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'NST', 'Nestle', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Nestle',          finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DDC', 'DDC', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'DDC',             finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'DBR', 'Dabur', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Dabur',           finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BTN', 'Britannia', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),         	 'Britannia',       finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'GAI', 'GAIA', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'GAIA',            finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'MCH', 'Munchys', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),         	 'Munchys',         finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'AML', 'Amul', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Amul',            finance.get_account_id_by_account_number('20100'), 'USD';
+INSERT INTO inventory.suppliers(supplier_code, supplier_name, supplier_type_id, company_name, currency_code)
+SELECT 'DEF', 'Default',	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Default',          'USD' UNION ALL
+SELECT 'COK', 'Coke', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Coke',             'USD' UNION ALL
+SELECT 'FAN', 'Fanta',		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Fanta',            'USD' UNION ALL
+SELECT 'BMB', 'Bambino', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Bambino',          'USD' UNION ALL
+SELECT 'BRG', 'Broges', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Broges',           'USD' UNION ALL
+SELECT 'DIL', 'Dilmah', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Dilmah',           'USD' UNION ALL
+SELECT 'NST', 'Nestle', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Nestle',           'USD' UNION ALL
+SELECT 'DDC', 'DDC', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'DDC',              'USD' UNION ALL
+SELECT 'DBR', 'Dabur', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Dabur',            'USD' UNION ALL
+SELECT 'BTN', 'Britannia', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),         	 'Britannia',        'USD' UNION ALL
+SELECT 'GAI', 'GAIA', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'GAIA',             'USD' UNION ALL
+SELECT 'MCH', 'Munchys', 	inventory.get_supplier_type_id_by_supplier_type_code('S'),         	 'Munchys',          'USD' UNION ALL
+SELECT 'AML', 'Amul', 		inventory.get_supplier_type_id_by_supplier_type_code('S'),           'Amul',             'USD';
 
 
 INSERT INTO inventory.shippers(shipper_name, company_name, account_id)
@@ -215,26 +217,23 @@ SET photo = '/dashboard/inventory/services/attachments/' + item_code + '.jpg'
 WHERE inventory.items.maintain_inventory = 1;
 
 
-INSERT INTO inventory.customers(customer_code, customer_name, customer_type_id, company_name, account_id, currency_code)
-SELECT 'JOTAY', 'Joseph Taylor', 		inventory.get_customer_type_id_by_customer_type_code('C'),     	'Joseph Taylor',        	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'CHMOO', 'Christopher Moore', 	inventory.get_customer_type_id_by_customer_type_code('C'),   	'Christopher Moore',    	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'ALTHO', 'Alexander Thomas', 	inventory.get_customer_type_id_by_customer_type_code('C'),     	'Alexander Thomas',      	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'RYJAC', 'Ryan Jackson', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Ryan Jackson',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'NIHAR', 'Nicholas Harris', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Nicholas Harris',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'JATHO', 'James Thompson', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'James Thompson',          	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'BRALL', 'Brandon Allen', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Brandon Allen',       		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'GAYOU', 'Gabriel Young', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Gabriel Young',        	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'JOKIN', 'Jose King', 			inventory.get_customer_type_id_by_customer_type_code('C'),   	'Jose King',    			finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'ELWRI', 'Elijah Wright', 		inventory.get_customer_type_id_by_customer_type_code('C'),     	'Elijah Wright',      		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'JASCO', 'Jack Scott', 			inventory.get_customer_type_id_by_customer_type_code('C'),      'Jack Scott',         		finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'EVGON', 'Evan Gonzalez', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Evan Gonzalez',         	finance.get_account_id_by_account_number('20100'), 'USD' UNION ALL
-SELECT 'AIROB', 'Aidan Roberts', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Aidan Roberts',          	finance.get_account_id_by_account_number('20100'), 'USD';
+INSERT INTO inventory.customers(customer_code, customer_name, customer_type_id, company_name, currency_code)
+SELECT 'JOTAY', 'Joseph Taylor', 		inventory.get_customer_type_id_by_customer_type_code('C'),     	'Joseph Taylor',        	 'USD' UNION ALL
+SELECT 'CHMOO', 'Christopher Moore', 	inventory.get_customer_type_id_by_customer_type_code('C'),   	'Christopher Moore',    	 'USD' UNION ALL
+SELECT 'ALTHO', 'Alexander Thomas', 	inventory.get_customer_type_id_by_customer_type_code('C'),     	'Alexander Thomas',      	 'USD' UNION ALL
+SELECT 'RYJAC', 'Ryan Jackson', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Ryan Jackson',         	 'USD' UNION ALL
+SELECT 'NIHAR', 'Nicholas Harris', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Nicholas Harris',         	 'USD' UNION ALL
+SELECT 'JATHO', 'James Thompson', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'James Thompson',          	 'USD' UNION ALL
+SELECT 'BRALL', 'Brandon Allen', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Brandon Allen',       		 'USD' UNION ALL
+SELECT 'GAYOU', 'Gabriel Young', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Gabriel Young',        	 'USD' UNION ALL
+SELECT 'JOKIN', 'Jose King', 			inventory.get_customer_type_id_by_customer_type_code('C'),   	'Jose King',    			 'USD' UNION ALL
+SELECT 'ELWRI', 'Elijah Wright', 		inventory.get_customer_type_id_by_customer_type_code('C'),     	'Elijah Wright',      		 'USD' UNION ALL
+SELECT 'JASCO', 'Jack Scott', 			inventory.get_customer_type_id_by_customer_type_code('C'),      'Jack Scott',         		 'USD' UNION ALL
+SELECT 'EVGON', 'Evan Gonzalez', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Evan Gonzalez',         	 'USD' UNION ALL
+SELECT 'AIROB', 'Aidan Roberts', 		inventory.get_customer_type_id_by_customer_type_code('C'),      'Aidan Roberts',          	 'USD';
 
---ROLLBACK TRANSACTION;
 
 UPDATE inventory.items
 SET cost_price = ROUND(cost_price / 100, 2),
 selling_price = ROUND(cost_price / 70, 2);
-
-GO
 

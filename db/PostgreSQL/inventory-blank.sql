@@ -61,7 +61,8 @@ CREATE TABLE inventory.suppliers
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
 	supplier_type_id						integer NOT NULL REFERENCES inventory.supplier_types,
-	account_id								integer NOT NULL REFERENCES finance.accounts,
+	account_id								integer REFERENCES finance.accounts UNIQUE,
+    email                                   national character varying(128),
 	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
@@ -124,8 +125,9 @@ CREATE TABLE inventory.customers
     customer_code                           national character varying(24) NOT NULL,
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
-	account_id								integer NOT NULL REFERENCES finance.accounts,
+	account_id								integer REFERENCES finance.accounts UNIQUE,
 	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
+    email                                   national character varying(128),
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -925,6 +927,24 @@ LANGUAGE plpgsql;
 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_customer_type_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_account_id_by_customer_type_id(_customer_type_id integer);
+
+CREATE FUNCTION inventory.get_account_id_by_customer_type_id(_customer_type_id integer)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN account_id
+    FROM inventory.customer_types
+    WHERE customer_type_id=_customer_type_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+--SELECT * FROM inventory.get_account_id_by_customer_type_id(1);
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_shipper_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_account_id_by_shipper_id(integer);
 
@@ -962,6 +982,24 @@ $$
 LANGUAGE plpgsql;
 
 
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_id_by_supplier_type_id.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_account_id_by_supplier_type_id(_supplier_type_id integer);
+
+CREATE FUNCTION inventory.get_account_id_by_supplier_type_id(_supplier_type_id integer)
+RETURNS integer
+STABLE
+AS
+$$
+BEGIN
+    RETURN account_id
+    FROM inventory.supplier_types
+    WHERE supplier_type_id=_supplier_type_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+--SELECT * FROM inventory.get_account_id_by_supplier_type_id(1);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_account_statement.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_account_statement
@@ -1678,6 +1716,59 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_transaction_summary.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_customer_transaction_summary
+(
+    office_id                   integer, 
+    customer_id                 integer
+);
+
+CREATE FUNCTION inventory.get_customer_transaction_summary
+(
+    office_id                   integer, 
+    customer_id                 integer
+)
+RETURNS TABLE
+(
+    currency_code               national character varying(12), 
+    currency_symbol             national character varying(12), 
+    total_due_amount            decimal(30, 6), 
+    office_due_amount           decimal(30, 6)
+)
+AS
+$$
+    DECLARE root_office_id      integer = 0;
+    DECLARE _currency_code      national character varying(12); 
+    DECLARE _currency_symbol    national character varying(12);
+    DECLARE _total_due_amount   decimal(30, 6); 
+    DECLARE _office_due_amount  decimal(30, 6); 
+    DECLARE _last_receipt_date  date;
+    DECLARE _transaction_value  decimal(30, 6);
+BEGIN
+    _currency_code := inventory.get_currency_code_by_customer_id(customer_id);
+
+    SELECT core.currencies.currency_symbol 
+    INTO _currency_symbol
+    FROM core.currencies
+    WHERE core.currencies.currency_code = _currency_code;
+
+    SELECT core.offices.office_id INTO root_office_id
+    FROM core.offices
+    WHERE parent_office_id IS NULL;
+
+
+
+    _total_due_amount := inventory.get_total_customer_due(root_office_id, customer_id);
+    _office_due_amount := inventory.get_total_customer_due(office_id, customer_id);
+
+    RETURN QUERY
+    SELECT _currency_code, _currency_symbol, _total_due_amount, _office_due_amount;
+END
+$$
+LANGUAGE plpgsql;
+
+--SELECT * FROM inventory.get_customer_transaction_summary(1, 1);
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_customer_type_id_by_customer_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_customer_type_id_by_customer_id(_customer_id integer);
 
@@ -2254,6 +2345,58 @@ BEGIN
 END
 $$
 LANGUAGE plpgsql;
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_total_customer_due.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_total_customer_due(office_id integer, customer_id integer);
+
+CREATE FUNCTION inventory.get_total_customer_due(office_id integer, customer_id integer)
+RETURNS DECIMAL(24, 4)
+AS
+$$
+    DECLARE _account_id                     integer         = inventory.get_account_id_by_customer_id($2);
+    DECLARE _debit                          decimal(30, 6)  = 0;
+    DECLARE _credit                         decimal(30, 6)  = 0;
+    DECLARE _local_currency_code            national character varying(12) = core.get_currency_code_by_office_id($1); 
+    DECLARE _base_currency_code             national character varying(12) = inventory.get_currency_code_by_customer_id($2);
+    DECLARE _amount_in_local_currency       decimal(30, 6)= 0;
+    DECLARE _amount_in_base_currency        decimal(30, 6)= 0;
+    DECLARE _er decimal_strict2 = 0;
+BEGIN
+
+    SELECT SUM(amount_in_local_currency)
+    INTO _debit
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(_account_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids($1))
+    AND tran_type='Dr';
+
+    SELECT SUM(amount_in_local_currency)
+    INTO _credit
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(_account_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids($1))
+    AND tran_type='Cr';
+
+    _er := COALESCE(finance.convert_exchange_rate($1, _local_currency_code, _base_currency_code), 0);
+
+
+   IF(_er = 0) THEN
+        RAISE EXCEPTION 'Exchange rate between % and % was not found.', _local_currency_code, _base_currency_code
+        USING ERRCODE='P4010';
+    END IF;
+
+
+    _amount_in_local_currency = COALESCE(_credit, 0) - COALESCE(_debit, 0);
+
+
+    _amount_in_base_currency = _amount_in_local_currency * _er; 
+
+    RETURN _amount_in_base_currency;
+END
+$$
+LANGUAGE plpgsql;
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_code.sql --<--<--
@@ -3400,6 +3543,115 @@ WHERE verification_status_id > 0;
 
 ALTER MATERIALIZED VIEW inventory.verified_checkout_view
 OWNER TO frapid_db_user;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/10.triggers/inventory.customer_after_insert_trigger.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.customer_after_insert_trigger() CASCADE;
+
+CREATE FUNCTION inventory.customer_after_insert_trigger()
+RETURNS TRIGGER
+AS
+$$
+    DECLARE _parent_account_id          integer;
+    DECLARE _customer_code              text;
+    DECLARE _account_id                 integer;
+BEGIN    
+    _parent_account_id      := inventory.get_account_id_by_customer_type_id(NEW.customer_type_id);
+
+    IF(COALESCE(NEW.customer_name, '') = '') THEN
+		RAISE EXCEPTION 'The customer name cannot be left empty.';
+    END IF;
+
+    --Create a new account
+    IF(NEW.account_id IS NULL) THEN
+        INSERT INTO finance.accounts(account_master_id, account_number, currency_code, account_name, parent_account_id)
+        SELECT finance.get_account_master_id_by_account_id(_parent_account_id), '15010-' || NEW.customer_id, NEW.currency_code, NEW.customer_name, _parent_account_id
+        RETURNING account_id INTO _account_id;
+    
+        UPDATE inventory.customers
+        SET 
+            account_id=_account_id
+        WHERE inventory.customers.customer_id = NEW.customer_id;
+
+        RETURN NEW;
+    END IF;
+
+    RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER customer_after_insert_trigger
+AFTER INSERT
+ON inventory.customers
+FOR EACH ROW EXECUTE PROCEDURE inventory.customer_after_insert_trigger();
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/10.triggers/inventory.items_unit_check_trigger.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.items_unit_check_trigger() CASCADE;
+
+CREATE FUNCTION inventory.items_unit_check_trigger()
+RETURNS TRIGGER
+AS
+$$        
+BEGIN
+    IF(inventory.get_root_unit_id(NEW.unit_id) != inventory.get_root_unit_id(NEW.reorder_unit_id)) THEN
+        RAISE EXCEPTION 'The reorder unit is incompatible with the base unit.'
+        USING ERRCODE='P3054';
+    END IF;
+    RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER items_unit_check_trigger
+AFTER INSERT OR UPDATE
+ON inventory.items
+FOR EACH ROW EXECUTE PROCEDURE inventory.items_unit_check_trigger();
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/10.triggers/inventory.supplier_after_insert_trigger.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.supplier_after_insert_trigger() CASCADE;
+
+CREATE FUNCTION inventory.supplier_after_insert_trigger()
+RETURNS TRIGGER
+AS
+$$
+    DECLARE _parent_account_id          integer;
+    DECLARE _supplier_code              text;
+    DECLARE _account_id                 integer;
+BEGIN    
+    _parent_account_id      := inventory.get_account_id_by_supplier_type_id(NEW.supplier_type_id);
+
+    IF(COALESCE(NEW.supplier_name, '') = '') THEN
+		RAISE EXCEPTION 'The supplier name cannot be left empty.';
+    END IF;
+
+    --Create a new account
+    IF(NEW.account_id IS NULL) THEN
+        RAISE NOTICE '% %', NEW.supplier_name, _account_id;
+
+        INSERT INTO finance.accounts(account_master_id, account_number, currency_code, account_name, parent_account_id)
+        SELECT finance.get_account_master_id_by_account_id(_parent_account_id),  '10110-' || NEW.supplier_id, NEW.currency_code, NEW.supplier_name, _parent_account_id
+        RETURNING account_id INTO _account_id;
+    
+        UPDATE inventory.suppliers
+        SET 
+            account_id = _account_id
+        WHERE inventory.suppliers.supplier_id = NEW.supplier_id;
+
+        RETURN NEW;
+    END IF;
+
+    RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER supplier_after_insert_trigger
+AFTER INSERT
+ON inventory.suppliers
+FOR EACH ROW EXECUTE PROCEDURE inventory.supplier_after_insert_trigger();
+
+
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/99.ownership.sql --<--<--
 DO

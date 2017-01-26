@@ -61,8 +61,9 @@ CREATE TABLE inventory.suppliers
     supplier_code                           national character varying(24) NOT NULL,
     supplier_name                           national character varying(500) NOT NULL,
     supplier_type_id                        integer NOT NULL REFERENCES inventory.supplier_types,
-    account_id                                integer NOT NULL REFERENCES finance.accounts,
-    currency_code                            national character varying(12) NOT NULL REFERENCES core.currencies,
+    account_id                              integer REFERENCES finance.accounts,
+    email                                   national character varying(128),
+    currency_code                           national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -91,22 +92,27 @@ CREATE TABLE inventory.suppliers
     photo                                   dbo.photo,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX suppliers_supplier_code_uix
 ON inventory.suppliers(supplier_code)
 WHERE deleted = 0;
 
+CREATE UNIQUE INDEX suppliers_account_id_uix
+ON inventory.suppliers(account_id)
+WHERE deleted = 0
+AND account_id IS NOT NULL;
+
 CREATE TABLE inventory.customer_types
 (
     customer_type_id                        integer IDENTITY PRIMARY KEY,
     customer_type_code                      national character varying(24) NOT NULL,
     customer_type_name                      national character varying(500) NOT NULL,
-    account_id                                integer NOT NULL REFERENCES finance.accounts,
+    account_id                              integer NOT NULL REFERENCES finance.accounts,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX customer_types_customer_type_code_uix
@@ -123,8 +129,9 @@ CREATE TABLE inventory.customers
     customer_code                           national character varying(24) NOT NULL,
     customer_name                           national character varying(500) NOT NULL,
     customer_type_id                        integer NOT NULL REFERENCES inventory.customer_types,
-    account_id                                integer NOT NULL REFERENCES finance.accounts,
-    currency_code                            national character varying(12) NOT NULL REFERENCES core.currencies,
+    account_id                              integer REFERENCES finance.accounts,
+    email                                   national character varying(128),
+    currency_code                           national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
@@ -159,6 +166,11 @@ CREATE TABLE inventory.customers
 CREATE UNIQUE INDEX customers_customer_code_uix
 ON inventory.customers(customer_code)
 WHERE deleted = 0;
+
+CREATE UNIQUE INDEX customers_account_id_uix
+ON inventory.customers(account_id)
+WHERE deleted = 0
+AND account_id IS NOT NULL;
 
 CREATE TABLE inventory.item_groups
 (
@@ -214,7 +226,7 @@ CREATE TABLE inventory.item_types
     is_component                            bit NOT NULL DEFAULT(0),
     audit_user_id                           integer NULL REFERENCES account.users(user_id),
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)    
+    deleted                                 bit DEFAULT(0)    
 );
 
 
