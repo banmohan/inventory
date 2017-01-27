@@ -29,7 +29,7 @@ BEGIN
     AND tran_type='Cr';
 
     SET @er							= COALESCE(finance.convert_exchange_rate(@office_id, @local_currency_code, @base_currency_code), 0);
-    SET @amount_in_local_currency	= COALESCE(@credit, 0) - COALESCE(@debit, 0);
+    SET @amount_in_local_currency	= COALESCE(@debit, 0) - COALESCE(@credit, 0);
 
 
     SET @amount_in_base_currency	= @amount_in_local_currency * @er; 

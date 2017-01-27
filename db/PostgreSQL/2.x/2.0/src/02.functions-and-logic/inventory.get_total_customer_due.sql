@@ -31,13 +31,13 @@ BEGIN
     _er := COALESCE(finance.convert_exchange_rate($1, _local_currency_code, _base_currency_code), 0);
 
 
-   IF(_er = 0) THEN
+    IF(_er = 0) THEN
         RAISE EXCEPTION 'Exchange rate between % and % was not found.', _local_currency_code, _base_currency_code
         USING ERRCODE='P4010';
     END IF;
 
 
-    _amount_in_local_currency = COALESCE(_credit, 0) - COALESCE(_debit, 0);
+    _amount_in_local_currency = COALESCE(_debit, 0) - COALESCE(_credit, 0);
 
 
     _amount_in_base_currency = _amount_in_local_currency * _er; 
