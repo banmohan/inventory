@@ -2755,6 +2755,58 @@ END;
 GO
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_transaction_summary.sql --<--<--
+IF OBJECT_ID('inventory.get_supplier_transaction_summary') IS NOT NULL
+DROP FUNCTION inventory.get_supplier_transaction_summary;
+
+GO
+
+CREATE FUNCTION inventory.get_supplier_transaction_summary
+(
+    @office_id                  integer, 
+    @supplier_id				integer
+)
+RETURNS @results TABLE
+(
+    currency_code               national character varying(12), 
+    currency_symbol             national character varying(12), 
+    total_due_amount            decimal(30, 6), 
+    office_due_amount           decimal(30, 6)
+)
+AS
+BEGIN
+    DECLARE @root_office_id		integer = 0;
+    DECLARE @currency_code		national character varying(12); 
+    DECLARE @currency_symbol    national character varying(12);
+    DECLARE @total_due_amount   decimal(30, 6); 
+    DECLARE @office_due_amount  decimal(30, 6); 
+    DECLARE @last_receipt_date  date;
+    DECLARE @transaction_value  decimal(30, 6);
+
+    SET @currency_code = inventory.get_currency_code_by_supplier_id(@supplier_id);
+
+    SELECT @currency_symbol = core.currencies.currency_symbol 
+    FROM core.currencies
+    WHERE core.currencies.currency_code = @currency_code;
+
+    SELECT @root_office_id = core.offices.office_id
+    FROM core.offices
+    WHERE parent_office_id IS NULL;
+
+    SET @total_due_amount = inventory.get_total_supplier_due(@root_office_id, @supplier_id);
+    SET @office_due_amount = inventory.get_total_supplier_due(@office_id, @supplier_id);
+	
+	INSERT INTO @results
+    SELECT @currency_code, @currency_symbol, @total_due_amount, @office_due_amount;
+	
+	RETURN;
+END
+
+GO
+
+--SELECT * FROM inventory.get_supplier_transaction_summary(1, 1);
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_type_id_by_supplier_type_code.sql --<--<--
 IF OBJECT_ID('inventory.get_supplier_type_id_by_supplier_type_code') IS NOT NULL
 DROP FUNCTION inventory.get_supplier_type_id_by_supplier_type_code;
@@ -2823,6 +2875,51 @@ END
 GO
 
 --SELECT inventory.get_total_customer_due(1, 1);
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_total_supplier_due.sql --<--<--
+IF OBJECT_ID('inventory.get_total_supplier_due') IS NOT NULL
+DROP FUNCTION inventory.get_total_supplier_due;
+
+GO
+
+CREATE FUNCTION inventory.get_total_supplier_due(@office_id integer, @supplier_id integer)
+RETURNS DECIMAL(24, 4)
+AS
+BEGIN
+    DECLARE @account_id                     integer							= inventory.get_account_id_by_supplier_id(@supplier_id);
+    DECLARE @debit                          decimal(30, 6)					= 0;
+    DECLARE @credit                         decimal(30, 6)					= 0;
+    DECLARE @local_currency_code            national character varying(12)	= core.get_currency_code_by_office_id(@office_id); 
+    DECLARE @base_currency_code             national character varying(12)	= inventory.get_currency_code_by_supplier_id(@supplier_id);
+    DECLARE @amount_in_local_currency       decimal(30, 6)					= 0;
+    DECLARE @amount_in_base_currency        decimal(30, 6)					= 0;
+    DECLARE @er								decimal(30, 6)					= 0;
+
+    SELECT @debit = SUM(amount_in_local_currency)
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@account_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
+    AND tran_type='Dr';
+
+    SELECT @credit = SUM(amount_in_local_currency)
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@supplier_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
+    AND tran_type='Cr';
+
+    SET @er							= COALESCE(finance.convert_exchange_rate(@office_id, @local_currency_code, @base_currency_code), 0);
+    SET @amount_in_local_currency	= COALESCE(@credit, 0) - COALESCE(@debit, 0);
+
+
+    SET @amount_in_base_currency	= @amount_in_local_currency * @er; 
+
+    RETURN @amount_in_base_currency;
+END
+
+GO
+
+--SELECT inventory.get_total_supplier_due(1, 1);
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_code.sql --<--<--

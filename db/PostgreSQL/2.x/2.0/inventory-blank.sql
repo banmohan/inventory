@@ -2329,6 +2329,59 @@ $$
 LANGUAGE plpgsql;
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_transaction_summary.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_supplier_transaction_summary
+(
+    office_id                   integer, 
+    supplier_id                 integer
+);
+
+CREATE FUNCTION inventory.get_supplier_transaction_summary
+(
+    office_id                   integer, 
+    supplier_id                 integer
+)
+RETURNS TABLE
+(
+    currency_code               national character varying(12), 
+    currency_symbol             national character varying(12), 
+    total_due_amount            decimal(30, 6), 
+    office_due_amount           decimal(30, 6)
+)
+AS
+$$
+    DECLARE root_office_id      integer = 0;
+    DECLARE _currency_code      national character varying(12); 
+    DECLARE _currency_symbol    national character varying(12);
+    DECLARE _total_due_amount   decimal(30, 6); 
+    DECLARE _office_due_amount  decimal(30, 6); 
+    DECLARE _last_receipt_date  date;
+    DECLARE _transaction_value  decimal(30, 6);
+BEGIN
+    _currency_code := inventory.get_currency_code_by_supplier_id(supplier_id);
+
+    SELECT core.currencies.currency_symbol 
+    INTO _currency_symbol
+    FROM core.currencies
+    WHERE core.currencies.currency_code = _currency_code;
+
+    SELECT core.offices.office_id INTO root_office_id
+    FROM core.offices
+    WHERE parent_office_id IS NULL;
+
+
+
+    _total_due_amount := inventory.get_total_supplier_due(root_office_id, supplier_id);
+    _office_due_amount := inventory.get_total_supplier_due(office_id, supplier_id);
+
+    RETURN QUERY
+    SELECT _currency_code, _currency_symbol, _total_due_amount, _office_due_amount;
+END
+$$
+LANGUAGE plpgsql;
+
+--SELECT * FROM inventory.get_supplier_transaction_summary(1, 1);
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_supplier_type_id_by_supplier_type_code.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_supplier_type_id_by_supplier_type_code(text);
 
@@ -2397,6 +2450,57 @@ END
 $$
 LANGUAGE plpgsql;
 
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_total_supplier_due.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_total_supplier_due(office_id integer, supplier_id integer);
+
+CREATE FUNCTION inventory.get_total_supplier_due(office_id integer, supplier_id integer)
+RETURNS DECIMAL(24, 4)
+AS
+$$
+    DECLARE _account_id                     integer         = inventory.get_account_id_by_supplier_id($2);
+    DECLARE _debit                          decimal(30, 6)  = 0;
+    DECLARE _credit                         decimal(30, 6)  = 0;
+    DECLARE _local_currency_code            national character varying(12) = core.get_currency_code_by_office_id($1); 
+    DECLARE _base_currency_code             national character varying(12) = inventory.get_currency_code_by_customer_id($2);
+    DECLARE _amount_in_local_currency       decimal(30, 6)= 0;
+    DECLARE _amount_in_base_currency        decimal(30, 6)= 0;
+    DECLARE _er decimal_strict2 = 0;
+BEGIN
+
+    SELECT SUM(amount_in_local_currency)
+    INTO _debit
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(_account_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids($1))
+    AND tran_type='Dr';
+
+    SELECT SUM(amount_in_local_currency)
+    INTO _credit
+    FROM finance.verified_transaction_view
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(_account_id))
+    AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids($1))
+    AND tran_type='Cr';
+
+    _er := COALESCE(finance.convert_exchange_rate($1, _local_currency_code, _base_currency_code), 0);
+
+
+    IF(_er = 0) THEN
+        RAISE EXCEPTION 'Exchange rate between % and % was not found.', _local_currency_code, _base_currency_code
+        USING ERRCODE='P4010';
+    END IF;
+
+
+    _amount_in_local_currency = COALESCE(_credit, 0) - COALESCE(_debit, 0);
+
+
+    _amount_in_base_currency = _amount_in_local_currency * _er; 
+
+    RETURN _amount_in_base_currency;
+END
+$$
+LANGUAGE plpgsql;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_code.sql --<--<--
