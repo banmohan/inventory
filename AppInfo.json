@@ -18,7 +18,7 @@
     "PatchFilePath" : null,
 	"InstallSample": true,
 	"My": null,
-	"OverrideTemplatePath": "~/Areas/MixERP.Inventory/Override",
+	"OverrideTemplatePath": "~/Areas/MixERP.Inventory/Overrides",
     "OverrideDestination":"~/Tenants/{0}/Areas",
 	"DependsOn": ["Frapid", "Frapid.Frapid.Account", "Frapid.Authorization", "Frapid.Config", "Frapid.Core", "Frapid.Dashboard", "Frapid.WebsiteBuilder", "MixERP.Finance"]
 }

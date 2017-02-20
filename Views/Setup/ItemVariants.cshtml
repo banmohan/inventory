@@ -149,7 +149,11 @@
 
         const itemId = $(this).val();
         var target = $("#VariantSelect");
-        target.dropdown("set selected", "");
+
+        //Todo: Remove Semantic UI Dropdown dependency 
+        //target.dropdown("set selected", "");
+        target.val("");
+
         target.html("");
 
         if (!itemId) {
@@ -194,7 +198,10 @@
         };
 
         function appendVariants(target, attributeId, variantId) {
-            target.dropdown("set selected", "");
+            //Todo: Remove Semantic UI Dropdown dependency 
+            //target.dropdown("set selected", "");
+            target.val("");
+
             target.html("");
 
             const filtered = window.Enumerable.From(variants).Where(function (x) { return x.AttributeId.toString() === attributeId.toString() }).ToArray();
@@ -206,9 +213,12 @@
             });
 
             if (variantId) {
-                setTimeout(function () {
-                    target.dropdown("set selected", variantId);
-                }, 1);
+                //Todo: Remove Semantic UI Dropdown dependency 
+                //setTimeout(function () {
+                //    target.dropdown("set selected", variantId);
+                //}, 1);
+
+                target.val(variantId);
             };
         };
 

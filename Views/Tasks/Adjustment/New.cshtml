@@ -77,7 +77,8 @@
             var bookDateInputText = $("#BookDateInputText");
             var errorLabel = $("#ErrorLabel");
 
-            $(".dropdown").dropdown();
+            //Todo: Remove Semantic UI Dropdown dependency 
+            //$(".dropdown").dropdown({forceSelection: false});
 
             function loadStores() {
                 window.displayFieldBinder($("#StoreSelect"), "/api/forms/inventory/stores/display-fields", true);
