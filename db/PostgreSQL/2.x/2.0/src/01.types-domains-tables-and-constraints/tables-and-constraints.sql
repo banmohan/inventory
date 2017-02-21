@@ -263,10 +263,6 @@ CREATE UNIQUE INDEX items_item_code_uix
 ON inventory.items(UPPER(item_code))
 WHERE NOT deleted;
 
-CREATE UNIQUE INDEX items_item_name_uix
-ON inventory.items(UPPER(item_name))
-WHERE NOT deleted;
-
 CREATE TABLE inventory.store_types
 (
     store_type_id                           SERIAL PRIMARY KEY,
