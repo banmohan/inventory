@@ -92,7 +92,7 @@
     function bindItems() {
         const url = "/api/forms/inventory/items/display-fields";
         const target = $("#ItemSelect");
-        window.ajaxDataBind(url, target, null, null, null, null, "Key", "Value");
+        window.ajaxDataBind(url, target, null, "Key", "Value");
     };
 
     function getAttributes() {

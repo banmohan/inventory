@@ -330,14 +330,18 @@
         };
 
         const model = getModel();
+
+        saveButton.addClass("loading");
         const ajax = request(model);
 
         ajax.success(function(response) {
+            saveButton.removeClass("loading");
             const url = "/dashboard/inventory/tasks/transfers/checklist/" + response;
             document.location = url;
         });
 
         ajax.fail(function (xhr) {
+            saveButton.removeClass("loading");
             window.logAjaxErrorMessage(xhr);
         });
     });

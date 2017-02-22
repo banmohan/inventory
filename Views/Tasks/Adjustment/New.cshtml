@@ -181,7 +181,7 @@
                 });
 
                 ajax.fail(function (xhr) {
-                    alert(JSON.stringify(xhr));
+                    window.logAjaxErrorMessage(xhr);
                 });
             });
         </script>
@@ -258,9 +258,11 @@
                     return;
                 };
 
+                saveButton.addClass("loading");
                 const ajax = request(model);
 
                 ajax.success(function(response) {
+                    saveButton.removeClass("loading");
                     const tranId = response;
 
                     if (tranId) {
@@ -269,7 +271,8 @@
                 });
 
                 ajax.fail(function (xhr) {
-                    alert(JSON.stringify(xhr));
+                    saveButton.removeClass("loading");
+                    window.logAjaxErrorMessage(xhr);
                 });
             });
 

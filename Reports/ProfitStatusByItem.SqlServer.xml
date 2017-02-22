@@ -60,9 +60,19 @@
 				sales_amount - ROUND(report.sales_qty * purchase_price, 2) AS profit_amount
 			FROM report
 		)
-		SELECT *, ROUND((profit_price / sales_price) * 100, 2) AS profit_ratio
+		SELECT 
+			item_id, 
+			inventory.get_item_name_by_item_id(item_id) AS item_name,
+			sales_qty,
+			sales_price,
+			sales_amount,
+			purchase_price,
+			purchase_amount,
+			profit_price,
+			profit_amount,
+			ROUND((profit_price / sales_price) * 100, 2) AS profit_ratio
 		FROM profit
-		ORDER BY 9 DESC;
+		ORDER BY 10 DESC;
       </Query>
       <Parameters>
         <Parameter Name="@From" FieldLabel="From Date" Type="System.DateTime" />

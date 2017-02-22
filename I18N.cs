@@ -673,5 +673,10 @@ namespace MixERP.Inventory
 		/// </summary>
 		public static string You => I18NResource.GetString(ResourceDirectory, "You");
 
+		/// <summary>
+		///Unverified
+		/// </summary>
+		public static string Unverified => I18NResource.GetString(ResourceDirectory, "Unverified");
+
 	}
 }
