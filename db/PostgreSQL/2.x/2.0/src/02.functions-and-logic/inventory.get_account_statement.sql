@@ -82,7 +82,7 @@ BEGIN
     ON inventory.checkouts.transaction_master_id = finance.transaction_master.transaction_master_id
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date < _value_date_from
-    AND (_store_id IS NULL OR inventory.checkout_details.store_id = _store_id)
+    AND (COALESCE(_store_id,0) = 0 OR inventory.checkout_details.store_id = _store_id)
     AND inventory.checkout_details.item_id = _item_id;
 
     DELETE FROM temp_account_statement
@@ -121,7 +121,7 @@ BEGIN
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date >= _value_date_from
     AND finance.transaction_master.value_date <= _value_date_to
-    AND (_store_id IS NULL OR inventory.checkout_details.store_id = _store_id)
+    AND (COALESCE(_store_id,0) = 0 OR inventory.checkout_details.store_id = _store_id)
     AND inventory.checkout_details.item_id = _item_id
     ORDER BY 
         finance.transaction_master.value_date,
