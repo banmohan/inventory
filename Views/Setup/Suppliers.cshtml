@@ -17,6 +17,7 @@
     scrudFactory.formTableName = "inventory.suppliers";
 
     scrudFactory.excludedColumns = ["AuditUserId", "AuditTs", "Deleted"];
+    scrudFactory.hiddenColumns = ["AccountId"];
 
 
     scrudFactory.allowDelete = true;
@@ -49,13 +50,6 @@
         {
             property: "SupplierTypeId",
             url: '/api/forms/inventory/supplier-types/display-fields',
-            data: null,
-            valueField: "Key",
-            textField: "Value"
-        },
-        {
-            property: "AccountId",
-            url: '/api/views/finance/payable-account-selector-view/display-fields',
             data: null,
             valueField: "Key",
             textField: "Value"

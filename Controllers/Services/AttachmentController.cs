@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Web.Mvc;
+using System.Web.UI;
 using Frapid.Areas;
+using Frapid.Areas.Authorization;
 using Frapid.Areas.Caching;
 using Frapid.Areas.Conventions.Attachments;
 using Frapid.Framework.Extensions;
@@ -13,6 +15,7 @@ namespace MixERP.Inventory.Controllers.Services
     [AntiForgery]
     public class AttachmentController : FrapidController
     {
+        [RestrictAnonymous]
         [Route("dashboard/inventory/services/attachments")]
         [HttpPost]
         public ActionResult Post()
@@ -37,7 +40,7 @@ namespace MixERP.Inventory.Controllers.Services
         }
 
         [Route("dashboard/inventory/services/attachments/{*path}")]
-        [FileOutputCache(Duration = 60 * 60)]
+        [FileOutputCache(ProfileName = "StaticFile.xml", Duration = 60 * 60, Location = OutputCacheLocation.Client)]
         public ActionResult AttachmentResult(string path)
         {
             int width = this.Request.QueryString["width"].To<int>();
