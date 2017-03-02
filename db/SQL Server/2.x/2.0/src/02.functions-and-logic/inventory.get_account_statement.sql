@@ -54,7 +54,7 @@ BEGIN
     ON inventory.checkouts.transaction_master_id = finance.transaction_master.transaction_master_id
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date < @value_date_from
-    AND (@store_id IS NULL OR inventory.checkout_details.store_id = @store_id)
+    AND (COALESCE(@store_id, 0) = 0 OR inventory.checkout_details.store_id = @store_id)
     AND inventory.checkout_details.item_id = @item_id;
 
     DELETE FROM @result
@@ -93,7 +93,7 @@ BEGIN
     WHERE finance.transaction_master.verification_status_id > 0
     AND finance.transaction_master.value_date >= @value_date_from
     AND finance.transaction_master.value_date <= @value_date_to
-    AND (@store_id IS NULL OR inventory.checkout_details.store_id = @store_id)
+    AND (COALESCE(@store_id, 0) = 0 OR inventory.checkout_details.store_id = @store_id)
     AND inventory.checkout_details.item_id = @item_id
     ORDER BY 
         finance.transaction_master.value_date,
