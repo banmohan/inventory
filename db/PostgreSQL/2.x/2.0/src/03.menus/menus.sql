@@ -57,6 +57,7 @@ SELECT * FROM core.create_menu('MixERP.Inventory', 'PhysicalCount', 'Physical Co
 SELECT * FROM core.create_menu('MixERP.Inventory', 'CustomerContacts', 'Customer Contacts', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/CustomerContacts.xml', 'users', 'Reports');
 SELECT * FROM core.create_menu('MixERP.Inventory', 'LowInventoryReport', 'Low Inventory Report', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/LowInventory.xml', 'battery low', 'Reports');
 SELECT * FROM core.create_menu('MixERP.Inventory', 'ProfitStatusByItem', 'Profit Status by Item', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/ProfitStatusByItem.xml', 'bar chart', 'Reports');
+SELECT * FROM core.create_menu('MixERP.Inventory', 'InventoryDailyReport', 'Inventory Daily Report', '/dashboard/reports/view/Areas/MixERP.Inventory/Reports/InventoryDailyReport.xml', 'sticky note outline icon', 'Reports');
 
 
 SELECT * FROM auth.create_app_menu_policy
