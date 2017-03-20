@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <FrapidReport>
   <Header />
-  <Title>Invoice Daily Report</Title>
+  <Title>Inventory Daily Report</Title>
   <Body>
     <Content>
       <div class='center aligned'>
@@ -32,6 +32,7 @@
 	        FROM inventory.checkout_detail_view
 	        JOIN finance.transaction_master ON checkout_detail_view.transaction_master_id = transaction_master.transaction_master_id
 	        WHERE transaction_master.verification_status_id > 0
+          AND transaction_master.office_id = @OfficeId
 	        AND transaction_master.value_date &lt;= @From
 	        AND (COALESCE(@StoreId, 0) = 0 OR checkout_detail_view.store_id = @StoreId)
 	        GROUP BY item_code, item_name, unit_code, transaction_type, store_name
@@ -48,6 +49,7 @@
 	        FROM inventory.checkout_detail_view
 	        JOIN finance.transaction_master ON checkout_detail_view.transaction_master_id = transaction_master.transaction_master_id
 	        WHERE transaction_master.verification_status_id > 0
+          AND transaction_master.office_id = @OfficeId
 	        AND transaction_master.value_date &lt;= @To
 	        AND (COALESCE(@StoreId,0) = 0 OR checkout_detail_view.store_id = @StoreId)
 	        GROUP BY item_code, item_name, unit_code, transaction_type, store_name
@@ -87,6 +89,7 @@
         ORDER BY item_code;
       </Query>
       <Parameters>
+        <Parameter Name="@OfficeId" FieldLabel="Office Id" Type="int"  DefaultValue="{Meta.OfficeId}" />
         <Parameter Name="@StoreId" FieldLabel="Store" Type="int" PopulateFrom="/api/forms/inventory/stores/display-fields" KeyField="Key" ValueField="Value" Optional="true" />
         <Parameter Name="@From" FieldLabel="From Date" Type="System.DateTime" />
         <Parameter Name="@To" FieldLabel="To Date" Type="System.DateTime" />
