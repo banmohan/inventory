@@ -1,5 +1,4 @@
-﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
-IF OBJECT_ID('inventory.get_cost_of_goods_sold') IS NOT NULL
+﻿IF OBJECT_ID('inventory.get_cost_of_goods_sold') IS NOT NULL
 DROP FUNCTION inventory.get_cost_of_goods_sold;
 
 GO
@@ -112,14 +111,22 @@ BEGIN
         --RAISERROR('Invalid configuration: COGS method.', 13, 1);
     END;
 
+	IF(@base_unit_cost IS NULL)
+	BEGIN
+		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @unit_id) * @base_quantity;
+	END;
+
     --APPLY decimal(30, 6) QUANTITY PROVISON
     SET @base_unit_cost = @base_unit_cost * (@backup_quantity / @base_quantity);
+
 
     RETURN @base_unit_cost;
 END;
 
 
 
---SELECT * FROM inventory.get_cost_of_goods_sold(1,1, 1, 3.5);
 
 GO
+
+--SELECT inventory.get_cost_of_goods_sold(158, 2, 2, 12);
+

@@ -1,4 +1,4 @@
-IF OBJECT_ID('inventory.get_total_supplier_due') IS NOT NULL
+﻿IF OBJECT_ID('inventory.get_total_supplier_due') IS NOT NULL
 DROP FUNCTION inventory.get_total_supplier_due;
 
 GO
@@ -24,7 +24,7 @@ BEGIN
 
     SELECT @credit = SUM(amount_in_local_currency)
     FROM finance.verified_transaction_view
-    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@supplier_id))
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@account_id))
     AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
     AND tran_type='Cr';
 
@@ -40,3 +40,18 @@ END
 GO
 
 --SELECT inventory.get_total_supplier_due(1, 1);
+--SELECT inventory.get_total_supplier_due(1, 13)
+
+--select inventory.get_account_id_by_supplier_id(13)
+
+--select * from finance.accounts
+--where account_id = 297
+
+--select * FROM finance.verified_transaction_view
+
+
+--SELECT SUM(amount_in_local_currency)
+--FROM finance.verified_transaction_view
+--WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(297))
+--AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(1))
+--AND tran_type='Cr';
