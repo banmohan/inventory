@@ -9,7 +9,7 @@
         <div class="ui huge header">@I18N.InventoryAdjustments</div>
 
         <div class="ui form segment">
-            <div class="fields">
+            <div class="six fields">
                 <div class="field">
                     <label for="ValueDateInputText">@I18N.ValueDate</label>
                     <input id="ValueDateInputText" class="date" type="text" />
@@ -87,18 +87,9 @@
             loadStores();
 
             function displayClosingInventory(model) {
-                function getCell(text, isDate) {
+                function getCell(text) {
                     const cell = $("<td />");
-
-                    cell.text(text);
-
-                    if (isDate) {
-                        if ((text || "").trim()) {
-                            cell.text(window.moment(new Date(text)).fromNow() || "");
-                            cell.attr("title", text);
-                        };
-                    };
-
+                    cell.html(text);
                     return cell;
                 };
 

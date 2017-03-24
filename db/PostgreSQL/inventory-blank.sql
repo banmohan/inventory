@@ -1599,6 +1599,10 @@ BEGIN
         USING ERRCODE='P6010';
     END IF;
 
+	IF(_base_unit_cost IS NULL) THEN
+		_base_unit_cost := inventory.get_item_cost_price(_item_id, _unit_id) * _base_quantity;
+	END IF;
+
     --APPLY decimal(30, 6) QUANTITY PROVISON
     _base_unit_cost := _base_unit_cost * (_backup_quantity / _base_quantity);
 
@@ -1607,7 +1611,7 @@ END
 $$
 LANGUAGE PLPGSQL;
 
---SELECT * FROM inventory.get_cost_of_goods_sold(1,1, 1, 3.5);
+--SELECT * FROM inventory.get_cost_of_goods_sold(1,1, 1, 3.324);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold_account_id.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold_account_id(_item_id integer);

@@ -1661,7 +1661,6 @@ GO
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
 IF OBJECT_ID('inventory.get_cost_of_goods_sold') IS NOT NULL
 DROP FUNCTION inventory.get_cost_of_goods_sold;
 
@@ -1775,17 +1774,26 @@ BEGIN
         --RAISERROR('Invalid configuration: COGS method.', 13, 1);
     END;
 
+	IF(@base_unit_cost IS NULL)
+	BEGIN
+		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @unit_id) * @base_quantity;
+	END;
+
     --APPLY decimal(30, 6) QUANTITY PROVISON
     SET @base_unit_cost = @base_unit_cost * (@backup_quantity / @base_quantity);
+
 
     RETURN @base_unit_cost;
 END;
 
 
 
---SELECT * FROM inventory.get_cost_of_goods_sold(1,1, 1, 3.5);
 
 GO
+
+--SELECT inventory.get_cost_of_goods_sold(158, 2, 2, 12);
+
+
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold_account_id.sql --<--<--
 IF OBJECT_ID('inventory.get_cost_of_goods_sold_account_id') IS NOT NULL
@@ -2882,7 +2890,7 @@ BEGIN
 
     SELECT @credit = SUM(amount_in_local_currency)
     FROM finance.verified_transaction_view
-    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@customer_id))
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@account_id))
     AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
     AND tran_type='Cr';
 
@@ -2927,7 +2935,7 @@ BEGIN
 
     SELECT @credit = SUM(amount_in_local_currency)
     FROM finance.verified_transaction_view
-    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@supplier_id))
+    WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(@account_id))
     AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(@office_id))
     AND tran_type='Cr';
 
@@ -2943,6 +2951,21 @@ END
 GO
 
 --SELECT inventory.get_total_supplier_due(1, 1);
+--SELECT inventory.get_total_supplier_due(1, 13)
+
+--select inventory.get_account_id_by_supplier_id(13)
+
+--select * from finance.accounts
+--where account_id = 297
+
+--select * FROM finance.verified_transaction_view
+
+
+--SELECT SUM(amount_in_local_currency)
+--FROM finance.verified_transaction_view
+--WHERE finance.verified_transaction_view.account_id IN (SELECT * FROM finance.get_account_ids(297))
+--AND finance.verified_transaction_view.office_id IN (SELECT * FROM core.get_office_ids(1))
+--AND tran_type='Cr';
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_unit_id_by_unit_code.sql --<--<--
