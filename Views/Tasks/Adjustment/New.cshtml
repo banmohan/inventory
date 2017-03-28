@@ -64,7 +64,7 @@
 
         </div>
         <script>
-            var showButotn = $("#ShowButton");
+            var showButton = $("#ShowButton");
             var storeHidden = $("#StoreHidden");
             var storeSelect = $("#StoreSelect");
             var closingInventoryGrid = $("#ClosingInventoryGrid");
@@ -77,8 +77,6 @@
             var bookDateInputText = $("#BookDateInputText");
             var errorLabel = $("#ErrorLabel");
 
-            //Todo: Remove Semantic UI Dropdown dependency 
-            //$(".dropdown").dropdown({forceSelection: false});
 
             function loadStores() {
                 window.displayFieldBinder($("#StoreSelect"), "/api/forms/inventory/stores/display-fields", true);
@@ -95,7 +93,7 @@
 
                 var tabIndex = 0;
                 var totalRows = model.length;
-
+                closingInventoryGrid.find("tbody").html("");
                 $.each(model, function () {
                     const row = $("<tr />");
                     tabIndex++;
@@ -111,7 +109,7 @@
                     row.append(getCell(`<input type='text' tabindex='${tabIndex + totalRows}' class='integer difference' />`));
 
 
-                    closingInventoryGrid.append(row);
+                    closingInventoryGrid.find("tbody").append(row);
                 });
             };
 
