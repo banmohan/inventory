@@ -134,7 +134,7 @@
         const itemCode = itemCodeInputText.val();
         const itemName = itemSelect.getSelectedText();
         const unitName = unitSelect.getSelectedText();
-        const quantity = parseInt(quantityInputText.val() || 0);
+        const quantity = window.parseInt2(quantityInputText.val() || 0);
 
         if (transactionTypeSelect.length) {
             if (window.isNullOrWhiteSpace(tranType) || tranType === "Select") {

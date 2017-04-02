@@ -155,7 +155,7 @@
                     return window.getAjaxRequest(url);
                 };
 
-                const storeId = parseInt(storeSelect.val());
+                const storeId = window.parseInt2(storeSelect.val());
 
                 if (!storeId) {
                     window.displayMessage(window.translate("PleaseSelectStore"));
@@ -207,7 +207,7 @@
                         return model;
                     };
 
-                    const storeId = parseInt(storeSelect.val());
+                    const storeId = window.parseInt2(storeSelect.val());
                     const valueDate = window.parseLocalizedDate(valueDateInputText.val());
                     const bookDate = window.parseLocalizedDate(bookDateInputText.val());
                     const referenceNumber = referenceNumberInputText.val();

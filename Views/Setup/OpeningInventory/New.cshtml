@@ -264,7 +264,7 @@ else
                 var itemName = el.attr("data-item-name");
                 var itemCode = el.attr("data-item-code");
                 var itemId = el.attr("data-item-id");
-                var price = parseFloat(costPrice || 0);
+                var price = window.parseFloat2(costPrice || 0);
 
                 if (!price) {
                     alert(window.translate("CannotAddItemBecausePriceZero"));
@@ -281,7 +281,7 @@ else
                     var existingQuantitySpan = existingEl.find("span.quantity");
                     var existingQuantityInput = existingEl.find("input.quantity");
 
-                    var quantity = parseInt(existingQuantitySpan.text() || 0);
+                    var quantity = window.parseInt2(existingQuantitySpan.text() || 0);
                     quantity++;
 
                     existingQuantitySpan.text(quantity);
@@ -339,9 +339,9 @@ else
                 function updateItemTotal(el) {
                     const quantityEl = el.find("input.quantity");
 
-                    const quantity = parseInt(quantityEl.val() || 0);
-                    const price = parseFloat(el.find("input.price").val());
-                    //var price = parseFloat(el.attr("data-price") || 0);
+                    const quantity = window.parseInt2(quantityEl.val() || 0);
+                    const price = window.parseFloat2(el.find("input.price").val());
+                    //var price = window.parseFloat2(el.attr("data-price") || 0);
 
                     const amount = (price * quantity).toFixed(2);
 
@@ -423,16 +423,16 @@ else
                 const el = $(this);
                 const quantityEl = el.find("input.quantity");
 
-                const quantity = parseInt(quantityEl.val() || 0);
-                const price = parseFloat(el.find("input.price").val());
-                //var price = parseFloat(el.attr("data-price") || 0);
+                const quantity = window.parseInt2(quantityEl.val() || 0);
+                const price = window.parseFloat2(el.find("input.price").val());
+                //var price = window.parseFloat2(el.attr("data-price") || 0);
 
                 const amount = price * quantity;
                 totalPrice += amount;
                 //totalQuantity += quantity;
             });
 
-            totalPrice = parseFloat(totalPrice.toFixed(2));
+            totalPrice = window.parseFloat2(totalPrice.toFixed(2));
 
             amountEl.html(totalPrice);
         };
@@ -578,10 +578,10 @@ else
 
                     $.each(items, function () {
                         const el = $(this);
-                        const itemId = parseInt(el.attr("data-item-id"));
-                        const quantity = parseInt(el.find("input.quantity").val());
-                        const unitId = parseInt(el.find("select.unit").val());
-                        const price = parseFloat(el.find("input.price").val() || 0);
+                        const itemId = window.parseInt2(el.attr("data-item-id"));
+                        const quantity = window.parseInt2(el.find("input.quantity").val());
+                        const unitId = window.parseInt2(el.find("select.unit").val());
+                        const price = window.parseFloat2(el.find("input.price").val() || 0);
 
                         model.push({
                             StoreId: $("#StoreSelect").val(),
@@ -687,7 +687,7 @@ else
 
     <script>
         setTimeout(function () {
-            $(".decimal").number(true, window.currencyDecimalPlaces, ".", "");
+            window.setRegionalFormat();
         }, 100);
 
         window.overridePath = "/dashboard/inventory/setup/opening-inventories";
