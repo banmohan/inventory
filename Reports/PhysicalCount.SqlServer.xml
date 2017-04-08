@@ -18,27 +18,36 @@
   <DataSources>
     <DataSource>
       <Query>
+		WITH summary
+		AS
+		(
+			SELECT
+				inventory.verified_checkout_details_view.store_id,
+				inventory.get_store_name_by_store_id(inventory.verified_checkout_details_view.store_id) AS store_name,
+				inventory.verified_checkout_details_view.item_id,
+				inventory.verified_checkout_details_view.base_unit_id,
+				SUM(CASE WHEN inventory.verified_checkout_details_view.transaction_type = 'Dr' 
+						THEN inventory.verified_checkout_details_view.base_quantity
+						ELSE inventory.verified_checkout_details_view.base_quantity * -1 END)
+				AS base_total_quantity
+			FROM inventory.verified_checkout_details_view
+			WHERE store_id = @StoreId OR 0 = @StoreId
+			AND value_date &lt;= @Date
+			GROUP BY 
+				inventory.verified_checkout_details_view.store_id, 
+				inventory.verified_checkout_details_view.item_id,
+				inventory.verified_checkout_details_view.base_unit_id
+		)
 		SELECT 
-			inventory.get_store_name_by_store_id(transaction_view.store_id) AS store_name,
-			items.item_code,
-			items.item_name,
-			SUM(COALESCE(t.debit,0)) - SUM(COALESCE(t.credit, 0)) quantity,
-			units.unit_name
-		FROM inventory.transaction_view
-		JOIN (
-			SELECT 
-				t.item_id,
-				t.unit_id,
-				CASE WHEN t.transaction_type = 'Dr' THEN t.quantity ELSE 0 END AS debit,
-				CASE WHEN t.transaction_type = 'Cr' THEN t.quantity ELSE 0 END AS credit
-			FROM inventory.transaction_view t
-			WHERE t.value_date BETWEEN '2000-01-01' AND @Date
-		) t ON transaction_view.item_id = t.item_id AND transaction_view.unit_id = t.unit_id
-		JOIN inventory.items ON transaction_view.item_id = items.item_id
-		JOIN inventory.units ON transaction_view.unit_id = units.unit_id
-		WHERE transaction_view.value_date BETWEEN '2000-01-01' AND @Date
-		AND transaction_view.store_id = @StoreId
-		GROUP BY transaction_view.store_id, items.item_code, items.item_name, units.unit_name;
+			store_id, 
+			store_name, 
+			item_id,
+			inventory.get_item_code_by_item_id(item_id) AS item_code,
+			inventory.get_item_name_by_item_id(item_id) AS item_name,
+			inventory.get_unit_name_by_unit_id(inventory.get_root_unit_id(base_unit_id)) AS unit,
+			inventory.convert_unit(base_unit_id, inventory.get_root_unit_id(base_unit_id)) *  base_total_quantity AS quantity
+		FROM summary
+		ORDER BY store_id, item_id;
       </Query>
       <Parameters>
         <Parameter Name="@Date" FieldLabel="Till Date" Type="System.DateTime" />
