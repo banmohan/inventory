@@ -105,8 +105,8 @@
                     row.append(getCell(this.UnitName));
                     row.append(getCell(this.Quantity));
 
-                    row.append(getCell(`<input type='text' tabindex='${tabIndex}' class='integer actual' />`));
-                    row.append(getCell(`<input type='text' tabindex='${tabIndex + totalRows}' class='integer difference' />`));
+                    row.append(getCell(`<input type='text' tabindex='${tabIndex}' class='decimal actual' />`));
+                    row.append(getCell(`<input type='text' tabindex='${tabIndex + totalRows}' class='decimal difference' />`));
 
 
                     closingInventoryGrid.find("tbody").append(row);

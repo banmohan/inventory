@@ -78,8 +78,8 @@
         <Parameter Name="@From" FieldLabel="From Date" Type="System.DateTime" />
         <Parameter Name="@To" FieldLabel="To Date" Type="System.DateTime" />
       </Parameters>
-      <RunningTotalTextColumnIndex>2</RunningTotalTextColumnIndex>
-      <RunningTotalFieldIndices>3, 5, 7</RunningTotalFieldIndices>
+      <RunningTotalTextColumnIndex>3</RunningTotalTextColumnIndex>
+      <RunningTotalFieldIndices>4, 6, 8</RunningTotalFieldIndices>
     </DataSource>
 	<DataSource>
 	  <Query>

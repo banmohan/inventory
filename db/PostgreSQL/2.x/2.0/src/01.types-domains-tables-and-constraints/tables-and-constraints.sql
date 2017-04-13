@@ -64,6 +64,7 @@ CREATE TABLE inventory.suppliers
     email                                   national character varying(128),
 	currency_code							national character varying(12) NOT NULL REFERENCES core.currencies,
     company_name                            national character varying(1000),
+	pan_number								national character varying(100),
     company_address_line_1                  national character varying(128),   
     company_address_line_2                  national character varying(128),
     company_street                          national character varying(1000),
