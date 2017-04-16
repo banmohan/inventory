@@ -3,10 +3,11 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Frapid.ApplicationState.Cache;
+using Frapid.Areas.CSRF;
 using Frapid.Dashboard;
 using MixERP.Inventory.DAL.Backend.Tasks;
+using MixERP.Inventory.QueryModels;
 using MixERP.Inventory.ViewModels;
-using Frapid.Areas.CSRF;
 
 namespace MixERP.Inventory.Controllers.Backend.Tasks
 {
@@ -18,6 +19,24 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
         public ActionResult Index()
         {
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Adjustment/Index.cshtml", this.Tenant));
+        }
+
+        [Route("dashboard/inventory/tasks/inventory-adjustments/search")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/tasks/inventory-adjustments")]
+        [HttpPost]
+        public async Task<ActionResult> SearchAsync(AdjustmentSearch search)
+        {
+            var meta = await AppUsers.GetCurrentAsync().ConfigureAwait(true);
+
+            try
+            {
+                var result = await InventoryAdjustments.GetSearchViewAsync(this.Tenant, meta.OfficeId, search).ConfigureAwait(true);
+                return this.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return this.Failed(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         [Route("dashboard/inventory/tasks/inventory-adjustments/verification")]
@@ -54,6 +73,7 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
 
             return this.Ok(model);
         }
+
         [Route("dashboard/inventory/tasks/inventory-adjustments")]
         [MenuPolicy]
         [HttpPost]
@@ -79,6 +99,5 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
                 return this.Failed(ex.Message, HttpStatusCode.InternalServerError);
             }
         }
-
     }
 }

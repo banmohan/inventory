@@ -5,34 +5,10 @@
     ViewBag.Title = I18N.InventoryTransfers;
     Layout = ViewBag.InventoryLayoutPath;
 }
-@Html.FinancePartialView("Shared/JournalView.cshtml", TenantConvention.GetTenant())
+
+@Html.FinancePartialView("Shared/SearchView.cshtml", TenantConvention.GetTenant())
+<script src="/Areas/MixERP.Inventory/scripts/tasks/transfer/index.js"></script>
 
 <script>
-    window.prepareView({
-        Title: window.translate("InventoryTransfers"),
-        AddNewText: window.translate("AddNew"),
-        AddNewUrl: "/dashboard/inventory/tasks/inventory-transfers/new",
-        Book: "Inventory Transfer",
-        ChecklistUrl: "/dashboard/inventory/tasks/transfers/checklist/{tranId}",
-        AdviceButtons: [
-            {
-                Title: window.translate("ViewTransfer"),
-                Href: "javascript:void(0);",
-                OnClick: "showTransfer({tranId});"
-            }
-        ],
-        NoJournalAdvice: true
-    });
-
-    function showTransfer(tranId) {
-        $(".advice.modal iframe").attr("src",
-            `/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Transfer.xml?transaction_master_id=${tranId}`);
-
-        setTimeout(function() {
-            $(".advice.modal")
-                .modal('setting', 'transition', 'horizontal flip')
-                .modal("show");
-
-        }, 300);
-    };
+    prepareView(model);
 </script>

@@ -8,6 +8,7 @@ using MixERP.Inventory.DAL.Backend.Service;
 using MixERP.Inventory.DAL.Backend.Tasks;
 using MixERP.Inventory.ViewModels;
 using Frapid.Areas.CSRF;
+using MixERP.Inventory.QueryModels;
 
 namespace MixERP.Inventory.Controllers.Backend.Tasks
 {
@@ -19,6 +20,24 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
         public ActionResult Index()
         {
             return this.FrapidView(this.GetRazorView<AreaRegistration>("Tasks/Transfer/Index.cshtml", this.Tenant));
+        }
+
+        [Route("dashboard/inventory/tasks/inventory-transfers/search")]
+        [MenuPolicy(OverridePath = "/dashboard/inventory/tasks/inventory-transfers")]
+        [HttpPost]
+        public async Task<ActionResult> SearchAsync(TransferSearch search)
+        {
+            var meta = await AppUsers.GetCurrentAsync().ConfigureAwait(true);
+
+            try
+            {
+                var result = await InventoryTransfers.GetSearchViewAsync(this.Tenant, meta.OfficeId, search).ConfigureAwait(true);
+                return this.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return this.Failed(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         [Route("dashboard/inventory/tasks/inventory-transfers/verification")]

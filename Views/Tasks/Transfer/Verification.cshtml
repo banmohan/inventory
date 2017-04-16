@@ -2,36 +2,23 @@
 @model dynamic
 
 @{
-    ViewBag.Title = I18N.InventoryTransferVerification;
+    ViewBag.Title = I18N.InventoryTransfers;
     Layout = ViewBag.InventoryLayoutPath;
 }
-@Html.FinancePartialView("Shared/Verification.cshtml", TenantConvention.GetTenant())
+
+@Html.FinancePartialView("Shared/SearchView.cshtml", TenantConvention.GetTenant())
+<script src="/Areas/MixERP.Inventory/scripts/tasks/transfer/index.js"></script>
 
 <script>
-    window.prepareVerification({
-        Title: window.translate("InventoryTransferVerification"),
-        AddNewText: window.translate("AddNew"),
-        AddNewUrl: "/dashboard/inventory/tasks/inventory-transfers/new",
-        Book: "Inventory Transfer",
-        ChecklistUrl: "/dashboard/inventory/tasks/transfers/checklist/{tranId}",
-        AdviceButtons: [
-            {
-                Title: window.translate("ViewTransfer"),
-                Href: "javascript:void(0);",
-                OnClick: "showTransfer({tranId});"
-            }
-        ]
-    });
+    var annotationStatus = window.Enumerable.From(window.model.Annotation).Where(function(x) {
+        return x.Id === "Status";
+    }).FirstOrDefault();
 
-    function showAdjustment(tranId) {
-        $(".advice.modal iframe").attr("src",
-            `/dashboard/reports/source/Areas/MixERP.Inventory/Reports/Transfer.xml?transaction_master_id=${tranId}`);
 
-        setTimeout(function() {
-            $(".advice.modal")
-                .modal('setting', 'transition', 'horizontal flip')
-                .modal("show");
+    annotationStatus.DefaultValue = "Unverified";
+    window.model.HasVerification = true;
+    window.model.Title = window.translate("InventoryTransferVerification");
 
-        }, 300);
-    };
+    prepareView(model);
 </script>
+

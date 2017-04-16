@@ -432,4 +432,13 @@
             };
         }, 200);
     });
+
+    function removeRow(el) {
+        if (!window.confirmAction()) {
+            return;
+        };
+
+        const row = $(el).closest("tr");
+        row.remove();
+    };
 </script>
