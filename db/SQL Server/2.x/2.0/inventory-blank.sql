@@ -314,9 +314,12 @@ CREATE TABLE inventory.stores
     fax                                     national character varying(50),
     cell                                    national character varying(50),
     allow_sales                             bit NOT NULL DEFAULT(1),    
+	sales_discount_account_id				integer NOT NULL REFERENCES finance.accounts DEFAULT(finance.get_account_id_by_account_number('40270')),
+	purchase_discount_account_id			integer NOT NULL REFERENCES finance.accounts DEFAULT(finance.get_account_id_by_account_number('30700')),
+	shipping_expense_account_id				integer NOT NULL REFERENCES finance.accounts DEFAULT(finance.get_account_id_by_account_number('43000')),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)    
+    deleted                                 bit DEFAULT(0)    
 );
 
 CREATE UNIQUE INDEX stores_store_code_uix
@@ -382,7 +385,7 @@ CREATE TABLE inventory.shippers
     account_id                              integer NOT NULL REFERENCES finance.accounts(account_id),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX shippers_shipper_code_uix
@@ -432,6 +435,7 @@ CREATE TABLE inventory.checkout_details
                                             CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   decimal(30, 6) NOT NULL,
+	discount_rate 							numeric(30, 6) NOT NULL DEFAULT(0),
     discount                                decimal(30, 6) NOT NULL DEFAULT(0),    
     cost_of_goods_sold                      decimal(30, 6) NOT NULL DEFAULT(0),
 	is_taxed								bit NOT NULL DEFAULT(1),
@@ -1675,6 +1679,11 @@ CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id inte
 RETURNS decimal(30, 6)
 AS
 BEGIN
+	IF(@quantity = 0)
+	BEGIN
+		RETURN 0;
+	END;
+
     DECLARE @backup_quantity            decimal(30, 6);
     DECLARE @base_quantity              decimal(30, 6);
     DECLARE @base_unit_id               integer;
@@ -1699,6 +1708,7 @@ BEGIN
     FROM inventory.verified_checkout_details_view
     WHERE transaction_type='Cr'
     AND item_id = @item_id;
+
 
     DECLARE @temp_cost_of_goods_sold TABLE
     (
@@ -1741,7 +1751,7 @@ BEGIN
         WHERE item_id = @item_id
         AND store_id = @store_id
     )
-        
+    
     INSERT INTO @temp_cost_of_goods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
     SELECT checkout_detail_id, audit_ts, value_date, price, transaction_type FROM stock_cte
     ORDER BY value_date, audit_ts, checkout_detail_id;
@@ -1781,7 +1791,7 @@ BEGIN
 
 	IF(@base_unit_cost IS NULL)
 	BEGIN
-		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @unit_id) * @base_quantity;
+		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @base_unit_id) * @base_quantity;
 	END;
 
     --APPLY decimal(30, 6) QUANTITY PROVISON

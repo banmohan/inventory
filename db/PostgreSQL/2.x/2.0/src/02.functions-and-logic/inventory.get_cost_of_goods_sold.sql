@@ -12,6 +12,10 @@ $$
     DECLARE _office_id                  integer = inventory.get_office_id_by_store_id($3);
     DECLARE _method                     text = inventory.get_cost_of_good_method(_office_id);
 BEGIN
+    IF(_quantity = 0) THEN
+        RETURN 0;
+    END IF;
+
     --backup base quantity in decimal(30, 6)
     _backup_quantity                := inventory.get_base_quantity_by_unit_id($2, $4);
     --convert base quantity to whole number
@@ -103,7 +107,7 @@ BEGIN
     END IF;
 
 	IF(_base_unit_cost IS NULL) THEN
-		_base_unit_cost := inventory.get_item_cost_price(_item_id, _unit_id) * _base_quantity;
+		_base_unit_cost := inventory.get_item_cost_price(_item_id, _base_unit_id) * _base_quantity;
 	END IF;
 
     --APPLY decimal(30, 6) QUANTITY PROVISON

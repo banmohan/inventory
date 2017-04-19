@@ -7,6 +7,11 @@ CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id inte
 RETURNS decimal(30, 6)
 AS
 BEGIN
+	IF(@quantity = 0)
+	BEGIN
+		RETURN 0;
+	END;
+
     DECLARE @backup_quantity            decimal(30, 6);
     DECLARE @base_quantity              decimal(30, 6);
     DECLARE @base_unit_id               integer;
@@ -31,6 +36,7 @@ BEGIN
     FROM inventory.verified_checkout_details_view
     WHERE transaction_type='Cr'
     AND item_id = @item_id;
+
 
     DECLARE @temp_cost_of_goods_sold TABLE
     (
@@ -73,7 +79,7 @@ BEGIN
         WHERE item_id = @item_id
         AND store_id = @store_id
     )
-        
+    
     INSERT INTO @temp_cost_of_goods_sold(checkout_detail_id, audit_ts, value_date, price, transaction_type)
     SELECT checkout_detail_id, audit_ts, value_date, price, transaction_type FROM stock_cte
     ORDER BY value_date, audit_ts, checkout_detail_id;
@@ -113,7 +119,7 @@ BEGIN
 
 	IF(@base_unit_cost IS NULL)
 	BEGIN
-		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @unit_id) * @base_quantity;
+		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @base_unit_id) * @base_quantity;
 	END;
 
     --APPLY decimal(30, 6) QUANTITY PROVISON

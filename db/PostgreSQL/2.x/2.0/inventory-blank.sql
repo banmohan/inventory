@@ -301,8 +301,11 @@ CREATE TABLE inventory.stores
     country                                 national character varying(50),
     phone                                   national character varying(50),
     fax                                     national character varying(50),
-    cell                                    national character varying(50),
-    allow_sales                             boolean NOT NULL DEFAULT(true),	
+    cell                                    national character varying(50),	
+    allow_sales                             boolean NOT NULL DEFAULT(true),
+	sales_discount_account_id				integer NOT NULL REFERENCES finance.accounts DEFAULT(finance.get_account_id_by_account_number('40270')),
+	purchase_discount_account_id			integer NOT NULL REFERENCES finance.accounts DEFAULT(finance.get_account_id_by_account_number('30700')),
+	shipping_expense_account_id				integer NOT NULL REFERENCES finance.accounts DEFAULT(finance.get_account_id_by_account_number('43000')),
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                TIMESTAMP WITH TIME ZONE DEFAULT(NOW()),
 	deleted									boolean DEFAULT(false)    
@@ -423,6 +426,7 @@ CREATE TABLE inventory.checkout_details
                                             CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   public.money_strict NOT NULL,
+	discount_rate 							numeric(30, 6) NOT NULL DEFAULT(0),
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
     cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
 	is_taxed								boolean NOT NULL DEFAULT(true),
@@ -1516,6 +1520,10 @@ $$
     DECLARE _office_id                  integer = inventory.get_office_id_by_store_id($3);
     DECLARE _method                     text = inventory.get_cost_of_good_method(_office_id);
 BEGIN
+    IF(_quantity = 0) THEN
+        RETURN 0;
+    END IF;
+
     --backup base quantity in decimal(30, 6)
     _backup_quantity                := inventory.get_base_quantity_by_unit_id($2, $4);
     --convert base quantity to whole number
@@ -1607,7 +1615,7 @@ BEGIN
     END IF;
 
 	IF(_base_unit_cost IS NULL) THEN
-		_base_unit_cost := inventory.get_item_cost_price(_item_id, _unit_id) * _base_quantity;
+		_base_unit_cost := inventory.get_item_cost_price(_item_id, _base_unit_id) * _base_quantity;
 	END IF;
 
     --APPLY decimal(30, 6) QUANTITY PROVISON
