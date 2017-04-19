@@ -20,7 +20,7 @@ BEGIN
         
     IF(_method = 'MAVCO') THEN
         --RAISE NOTICE '% % % %',_item_id, _store_id, _base_quantity, 1.00;
-        RETURN transactions.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
+        RETURN inventory.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
     END IF; 
 
 

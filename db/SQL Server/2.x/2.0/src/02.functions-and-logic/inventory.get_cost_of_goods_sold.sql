@@ -23,7 +23,7 @@ BEGIN
         
     IF(@method = 'MAVCO')
     BEGIN
-        RETURN transactions.get_mavcogs(@item_id, @store_id, @base_quantity, 1.00);
+        RETURN inventory.get_mavcogs(@item_id, @store_id, @base_quantity, 1.00);
     END; 
 
 

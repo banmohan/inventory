@@ -14,7 +14,6 @@ SELECT
     checkout_details.price,
     checkout_details.discount,
     checkout_details.cost_of_goods_sold,
-    checkout_details.tax,
     checkouts.shipper_id,
     checkout_details.shipping_charge,
     checkout_details.unit_id,

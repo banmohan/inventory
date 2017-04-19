@@ -17,3 +17,4 @@ AND finance.transaction_master.verification_status_id > 0;
 
 
 GO
+

@@ -390,7 +390,13 @@ CREATE TABLE inventory.checkouts
 	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
+
+	taxable_total							public.decimal_strict NOT NULL,
 	discount								public.decimal_strict2 DEFAULT(0),
+	tax_rate								public.decimal_strict2,
+	tax										public.decimal_strict2 NOT NULL,	
+	nontaxable_total						public.decimal_strict2 NOT NULL,
+	
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -419,7 +425,7 @@ CREATE TABLE inventory.checkout_details
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
     cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
-	tax										public.money_strict2 NOT NULL DEFAULT(0),
+	is_taxed								boolean NOT NULL DEFAULT(true),
     shipping_charge                         public.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.decimal_strict NOT NULL,
@@ -1518,7 +1524,7 @@ BEGIN
         
     IF(_method = 'MAVCO') THEN
         --RAISE NOTICE '% % % %',_item_id, _store_id, _base_quantity, 1.00;
-        RETURN transactions.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
+        RETURN inventory.get_mavcogs(_item_id, _store_id, _base_quantity, 1.00);
     END IF; 
 
 
@@ -2131,6 +2137,29 @@ BEGIN
 END
 $$
 LANGUAGE plpgsql;
+
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_return_type.sql --<--<--
+DROP FUNCTION IF EXISTS inventory.get_return_type(_checkout_id bigint);
+
+
+CREATE FUNCTION inventory.get_return_type(_checkout_id bigint)
+RETURNS national character varying(50)
+AS
+$$
+BEGIN
+	RETURN
+	(
+		SELECT inventory.checkout_details.transaction_type
+		FROM inventory.checkout_details
+		WHERE inventory.checkout_details.checkout_id = _checkout_id
+		LIMIT 1
+	);
+END
+$$
+LANGUAGE plpgsql;
+
 
 
 
@@ -3564,13 +3593,11 @@ SELECT
 	base_unit.unit_name AS base_unit_name,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
-	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
 	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
 	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
 	- COALESCE(inventory.checkout_details.discount, 0) AS amount,
 	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
-	+ COALESCE(inventory.checkout_details.tax, 0) 
 	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
 	- COALESCE(inventory.checkout_details.discount, 0) AS total
 FROM inventory.checkout_details
@@ -3619,12 +3646,10 @@ SELECT
 	inventory.checkout_details.base_unit_id,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
-	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
 	(
 		inventory.checkout_details.price 
 		- inventory.checkout_details.discount 
-		+ COALESCE(inventory.checkout_details.tax, 0)
 		+ COALESCE(inventory.checkout_details.shipping_charge, 0)
 	) * inventory.checkout_details.quantity AS amount
 FROM inventory.checkout_details
@@ -3693,7 +3718,6 @@ SELECT
     checkout_details.price,
     checkout_details.discount,
     checkout_details.cost_of_goods_sold,
-    checkout_details.tax,
     checkouts.shipper_id,
     checkout_details.shipping_charge,
     checkout_details.unit_id,

@@ -139,7 +139,7 @@ else
     </script>
 
     <script>
-        var itemTemplate = `<div class="item" id="pos-{ItemId}" data-cost-price="{CostPrice}" data-photo="{Photo}" data-unit-id="{UnitId}" data-valid-units="{ValidUnits}" data-brand="{BrandName}" data-item-group="{ItemGroupName}" data-item-name="{ItemName}" data-item-code="{ItemCode}" data-item-id="{ItemId}" data-price="{Price}">
+        var itemTemplate = `<div class="item" id="pos-{ItemId}" data-cost-price="{CostPrice}" data-photo="{Photo}" data-unit-id="{UnitId}" data-valid-units="{ValidUnits}" data-brand="{BrandName}" data-item-group="{ItemGroupName}" data-item-name="{ItemName}" data-item-code="{ItemCode}" data-item-id="{ItemId}" data-price="{Price}" data-is-taxable-item="{isTaxableItem}">
 	<div class="photo block">
 		<img src="{Photo}">
 	</div>
@@ -265,6 +265,7 @@ else
                 var itemCode = el.attr("data-item-code");
                 var itemId = window.parseInt2(el.attr("data-item-id"));
                 var price = window.parseFloat2(costPrice || 0);
+                var isTaxableItem = el.attr("data-is-taxable-item") === "true";
 
                 if (!price) {
                     alert(window.translate("CannotAddItemBecausePriceZero"));
@@ -304,6 +305,7 @@ else
                 template = template.replace(/{Price}/g, price);
                 template = template.replace(/{UnitId}/g, unitId);
                 template = template.replace(/{ValidUnits}/g, validUnits);
+                template = template.replace(/{IsTaxableItem}/g, isTaxableItem.toString());
 
                 var item = $(template);
                 var quantityInput = item.find("input.quantity");

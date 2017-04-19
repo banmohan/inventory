@@ -396,12 +396,16 @@ WHERE deleted = 0;
 CREATE TABLE inventory.checkouts
 (
     checkout_id                             bigint IDENTITY PRIMARY KEY,
-    value_date                                date NOT NULL,
-    book_date                                date NOT NULL,
-    transaction_master_id                    bigint NOT NULL REFERENCES finance.transaction_master,
+    value_date                              date NOT NULL,
+    book_date                               date NOT NULL,
+    transaction_master_id                   bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
-    discount                                decimal(30, 6) DEFAULT(0),
+	taxable_total							decimal(30, 6) NOT NULL,
+	discount								decimal(30, 6) DEFAULT(0),
+	tax_rate								decimal(30, 6),
+	tax										decimal(30, 6) NOT NULL,	
+	nontaxable_total						decimal(30, 6) NOT NULL,
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -422,15 +426,15 @@ CREATE TABLE inventory.checkout_details
     checkout_detail_id                      bigint IDENTITY PRIMARY KEY,
     checkout_id                             bigint NOT NULL REFERENCES inventory.checkouts,
     store_id                                integer NOT NULL REFERENCES inventory.stores,
-    value_date                                date NOT NULL,
-    book_date                                date NOT NULL,
+    value_date                              date NOT NULL,
+    book_date                               date NOT NULL,
     transaction_type                        national character varying(2) NOT NULL
                                             CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
     price                                   decimal(30, 6) NOT NULL,
     discount                                decimal(30, 6) NOT NULL DEFAULT(0),    
     cost_of_goods_sold                      decimal(30, 6) NOT NULL DEFAULT(0),
-    tax                                        decimal(30, 6) NOT NULL DEFAULT(0),
+	is_taxed								bit NOT NULL DEFAULT(1),
     shipping_charge                         decimal(30, 6) NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                decimal(30, 6) NOT NULL,
@@ -1687,7 +1691,7 @@ BEGIN
         
     IF(@method = 'MAVCO')
     BEGIN
-        RETURN transactions.get_mavcogs(@item_id, @store_id, @base_quantity, 1.00);
+        RETURN inventory.get_mavcogs(@item_id, @store_id, @base_quantity, 1.00);
     END; 
 
 
@@ -2469,6 +2473,33 @@ END;
 
 
 
+
+GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/02.functions-and-logic/inventory.get_return_type.sql --<--<--
+IF OBJECT_ID('inventory.get_return_type') IS NOT NULL
+DROP FUNCTION inventory.get_return_type;
+
+GO
+
+
+CREATE FUNCTION inventory.get_return_type(@checkout_id bigint)
+RETURNS national character varying(50)
+AS
+BEGIN
+	RETURN
+	(
+		SELECT TOP 1 inventory.checkout_details.transaction_type
+		FROM inventory.checkout_details
+		WHERE inventory.checkout_details.checkout_id = @checkout_id
+	)
+END;
+
+
+GO
+
+GRANT EXECUTE ON inventory.get_return_type TO report_user;
 
 GO
 
@@ -4143,13 +4174,11 @@ SELECT
     base_unit.unit_name AS base_unit_name,
     inventory.checkout_details.price,
     inventory.checkout_details.discount,
-    inventory.checkout_details.tax,
     inventory.checkout_details.shipping_charge,
     (inventory.checkout_details.price * inventory.checkout_details.quantity) 
     + COALESCE(inventory.checkout_details.shipping_charge, 0)
     - COALESCE(inventory.checkout_details.discount, 0) AS amount,
     (inventory.checkout_details.price * inventory.checkout_details.quantity) 
-    + COALESCE(inventory.checkout_details.tax, 0) 
     + COALESCE(inventory.checkout_details.shipping_charge, 0)
     - COALESCE(inventory.checkout_details.discount, 0) AS total
 FROM inventory.checkout_details
@@ -4206,12 +4235,10 @@ SELECT
     inventory.checkout_details.base_unit_id,
     inventory.checkout_details.price,
     inventory.checkout_details.discount,
-    inventory.checkout_details.tax,
     inventory.checkout_details.shipping_charge,
     (
         inventory.checkout_details.price 
         - inventory.checkout_details.discount 
-        + COALESCE(inventory.checkout_details.tax, 0)
         + COALESCE(inventory.checkout_details.shipping_charge, 0)
     ) * inventory.checkout_details.quantity AS amount
 FROM inventory.checkout_details
@@ -4294,7 +4321,6 @@ SELECT
     checkout_details.price,
     checkout_details.discount,
     checkout_details.cost_of_goods_sold,
-    checkout_details.tax,
     checkouts.shipper_id,
     checkout_details.shipping_charge,
     checkout_details.unit_id,
@@ -4378,6 +4404,7 @@ AND finance.transaction_master.verification_status_id > 0;
 
 
 GO
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.views/inventory.verified_checkout_view.sql --<--<--

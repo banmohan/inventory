@@ -389,7 +389,13 @@ CREATE TABLE inventory.checkouts
 	transaction_master_id					bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
+
+	taxable_total							public.decimal_strict NOT NULL,
 	discount								public.decimal_strict2 DEFAULT(0),
+	tax_rate								public.decimal_strict2,
+	tax										public.decimal_strict2 NOT NULL,	
+	nontaxable_total						public.decimal_strict2 NOT NULL,
+	
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -418,7 +424,7 @@ CREATE TABLE inventory.checkout_details
     price                                   public.money_strict NOT NULL,
     discount                                public.money_strict2 NOT NULL DEFAULT(0),    
     cost_of_goods_sold                      public.money_strict2 NOT NULL DEFAULT(0),
-	tax										public.money_strict2 NOT NULL DEFAULT(0),
+	is_taxed								boolean NOT NULL DEFAULT(true),
     shipping_charge                         public.money_strict2 NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     quantity                                public.decimal_strict NOT NULL,

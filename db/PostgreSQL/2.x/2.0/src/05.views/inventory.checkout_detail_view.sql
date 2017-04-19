@@ -24,13 +24,11 @@ SELECT
 	base_unit.unit_name AS base_unit_name,
 	inventory.checkout_details.price,
 	inventory.checkout_details.discount,
-	inventory.checkout_details.tax,
 	inventory.checkout_details.shipping_charge,
 	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
 	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
 	- COALESCE(inventory.checkout_details.discount, 0) AS amount,
 	(inventory.checkout_details.price * inventory.checkout_details.quantity) 
-	+ COALESCE(inventory.checkout_details.tax, 0) 
 	+ COALESCE(inventory.checkout_details.shipping_charge, 0)
 	- COALESCE(inventory.checkout_details.discount, 0) AS total
 FROM inventory.checkout_details
