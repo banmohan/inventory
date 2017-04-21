@@ -566,7 +566,8 @@ CREATE TABLE inventory.inventory_setup
 	cogs_calculation_method					national character varying(50) NOT NULL
 											CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO')),
 	allow_multiple_opening_inventory		boolean NOT NULL DEFAULT(false),
-	default_discount_account_id				integer NOT NULL REFERENCES finance.accounts
+	default_discount_account_id				integer NOT NULL REFERENCES finance.accounts,
+	use_pos_checkout_screen					boolean NOT NULL DEFAULT(true)
 );
 
 CREATE TYPE inventory.transfer_type

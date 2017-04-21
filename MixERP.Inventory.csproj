@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaRegistration.cs" />
+    <Compile Include="Cache\Setup.cs" />
     <Compile Include="Controllers\Backend\HomeController.cs" />
     <Compile Include="Controllers\Backend\Services\ItemController.cs" />
     <Compile Include="Controllers\Backend\Services\UnitController.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="Controllers\Backend\Tasks\TransferController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
     <Compile Include="Controllers\Services\AttachmentController.cs" />
+    <Compile Include="DAL\Backend\Setup\InventorySetup.cs" />
     <Compile Include="DAL\Backend\Setup\ItemVariants.cs" />
     <Compile Include="DAL\Backend\Setup\Variants\IItemVariant.cs" />
     <Compile Include="DAL\Backend\Setup\Inventory.cs" />
@@ -195,6 +197,7 @@
     <Compile Include="DAL\Backend\Tasks\TransferEntry\SqlServer.cs" />
     <Compile Include="DTO\AssociatedUnit.cs" />
     <Compile Include="DTO\ClosingInventory.cs" />
+    <Compile Include="DTO\InventorySetup.cs" />
     <Compile Include="DTO\Item.cs" />
     <Compile Include="DTO\ItemVariantInfo.cs" />
     <Compile Include="DTO\ItemView.cs" />
@@ -259,6 +262,7 @@
     <Content Include="Views\Setup\OpeningInventory\Index.cshtml" />
     <Content Include="Views\Setup\OpeningInventory\Verification.cshtml" />
     <Content Include="Views\Setup\OpeningInventory\Checklist.cshtml" />
+    <Content Include="Views\Shared\ClassicCheckout.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

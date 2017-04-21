@@ -282,7 +282,7 @@ else
                     var existingQuantitySpan = existingEl.find("span.quantity");
                     var existingQuantityInput = existingEl.find("input.quantity");
 
-                    var quantity = window.parseInt2(existingQuantitySpan.text() || 0);
+                    var quantity = window.parseFloat2(existingQuantitySpan.text() || 0);
                     quantity++;
 
                     existingQuantitySpan.text(quantity);
@@ -341,7 +341,7 @@ else
                 function updateItemTotal(el) {
                     const quantityEl = el.find("input.quantity");
 
-                    const quantity = window.parseInt2(quantityEl.val() || 0);
+                    const quantity = window.parseFloat2(quantityEl.val() || 0);
                     const price = window.parseFloat2(el.find("input.price").val());
                     //var price = window.parseFloat2(el.attr("data-price") || 0);
 
@@ -425,7 +425,7 @@ else
                 const el = $(this);
                 const quantityEl = el.find("input.quantity");
 
-                const quantity = window.parseInt2(quantityEl.val() || 0);
+                const quantity = window.parseFloat2(quantityEl.val() || 0);
                 const price = window.parseFloat2(el.find("input.price").val());
                 //var price = window.parseFloat2(el.attr("data-price") || 0);
 
@@ -581,7 +581,7 @@ else
                     $.each(items, function () {
                         const el = $(this);
                         const itemId = window.parseInt2(el.attr("data-item-id"));
-                        const quantity = window.parseInt2(el.find("input.quantity").val());
+                        const quantity = window.parseFloat2(el.find("input.quantity").val());
                         const unitId = window.parseInt2(el.find("select.unit").val());
                         const price = window.parseFloat2(el.find("input.price").val() || 0);
 

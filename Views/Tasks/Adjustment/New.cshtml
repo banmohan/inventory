@@ -115,7 +115,7 @@
 
             function initializeCalculator() {
                 $("input.actual").blur(function () {
-                    const quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
+                    const quantity = window.parseFloat2($(this).parent().parent().find("td:nth-last-child(3)").html());
                     var actual = ($(this).val());
 
                     if (window.isNullOrWhiteSpace(actual)) {
@@ -134,7 +134,7 @@
                 });
 
                 $("input.difference").blur(function () {
-                    const quantity = window.parseInt2($(this).parent().parent().find("td:nth-last-child(3)").html());
+                    const quantity = window.parseFloat2($(this).parent().parent().find("td:nth-last-child(3)").html());
                     const difference = window.parseInt2($(this).val());
 
                     if (difference > quantity) {
@@ -189,7 +189,7 @@
 
                         closingInventoryGrid.find("tbody tr").each(function () {
                             const itemCode = $(this).find("td:nth-child(2)").html();
-                            const quantity = window.parseInt2($(this).find("td:nth-child(8)").find("input").val());
+                            const quantity = window.parseFloat2($(this).find("td:nth-child(8)").find("input").val());
                             const unitName = $(this).find("td:nth-child(5)").html();
 
                             if (quantity) {

@@ -526,7 +526,7 @@ CREATE TABLE inventory.attributes
     attribute_name                          national character varying(100) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX attributes_attribute_code_uix
@@ -546,7 +546,7 @@ CREATE TABLE inventory.variants
     attribute_value                         national character varying(200) NOT NULL,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE UNIQUE INDEX variants_variant_code_uix
@@ -564,18 +564,19 @@ CREATE TABLE inventory.item_variants
     variant_id                              integer NOT NULL REFERENCES inventory.variants,
     audit_user_id                           integer REFERENCES account.users,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE()),
-    deleted                                    bit DEFAULT(0)
+    deleted                                 bit DEFAULT(0)
 );
 
 CREATE TABLE inventory.inventory_setup
 (
-    office_id                                integer NOT NULL PRIMARY KEY REFERENCES core.offices,
+    office_id                               integer NOT NULL PRIMARY KEY REFERENCES core.offices,
     inventory_system                        national character varying(50) NOT NULL
                                             CHECK(inventory_system IN('Periodic', 'Perpetual')),
-    cogs_calculation_method                    national character varying(50) NOT NULL
+    cogs_calculation_method                 national character varying(50) NOT NULL
                                             CHECK(cogs_calculation_method IN('FIFO', 'LIFO', 'MAVCO')),
     allow_multiple_opening_inventory        bit NOT NULL DEFAULT(0),
-    default_discount_account_id                integer NOT NULL REFERENCES finance.accounts
+    default_discount_account_id             integer NOT NULL REFERENCES finance.accounts,
+	use_pos_checkout_screen					bit NOT NULL DEFAULT(1)
 );
 
 CREATE TYPE inventory.transfer_type
