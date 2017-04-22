@@ -563,11 +563,11 @@
             $("span.total.amount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 4)));
             $("input.total.amount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 4)));
 
-            $("span.total.discount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 5)));
-            $("input.total.discount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 5)));
-
-            $("span.total.shipping").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 6)));
-            $("input.total.shipping").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 6)));
+            $("span.total.shipping").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 5)));
+            $("input.total.shipping").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 5)));
+			
+            $("span.total.discount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 6)));
+            $("input.total.discount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 6)));
 
             $("span.line.total").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 7)));
             $("input.line.total").val(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 7)));
@@ -676,9 +676,9 @@
 
                 const cell = $("<td/>");
                 const editAnchor = getAnchor("edit", "Edit").appendTo(cell);
-                const negativeAnchor = getAnchor("check mark", "Edit").appendTo(cell);
-                const positiveAnchor = getAnchor("thumbs up", "Edit").appendTo(cell);
-                const deleteAnchor = getAnchor("delete", "Edit").appendTo(cell);
+                const negativeAnchor = getAnchor("check mark", "").appendTo(cell);
+                const positiveAnchor = getAnchor("thumbs up", "").appendTo(cell);
+                const deleteAnchor = getAnchor("delete", "Delete").appendTo(cell);
 
                 deleteAnchor.off("click").on("click", function () {
                     if (!window.confirmAction()) {
@@ -699,6 +699,12 @@
                 editAnchor.off("click").on("click", function () {
                     const row = $(this).closest("tr");
                     row.removeClass("negative positive").toggleClass("editing indicator");
+
+                    if (!row.is(".editing")) {
+                        $("#ItemSelect").prop("disabled", false);
+                        return;
+                    };
+
                     $("#CheckoutGrid tr.editing.indicator").not(row).removeClass("editing indicator");
 
                     const itemId = row.attr("data-item-id");

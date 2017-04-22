@@ -20,10 +20,8 @@
 			customer_name,
 			currency_code, 
 			company_name,
+			pan_number,
 			company_address_line_1,
-			company_address_line_2,
-			contact_address_line_1,
-			contact_address_line_1,
 			contact_phone_numbers,
 			contact_fax
 		FROM inventory.customers
