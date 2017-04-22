@@ -14,7 +14,7 @@ RETURNS TABLE
     item_name               national character varying(1000),
     unit_id                 integer,
     unit_name               national character varying(1000),
-    quantity                decimal(30, 6)
+    quantity                numeric(30, 6)
 )
 AS
 $$
@@ -28,9 +28,9 @@ BEGIN
         base_unit_id        integer,
 		unit_id				integer,
         unit_name           national character varying(1000),
-        base_quantity       decimal(30, 6),
-        quantity			decimal(30, 6),
-		unit_conversion		decimal(30, 6),
+        base_quantity       numeric(30, 6),
+        quantity			numeric(30, 6),
+		unit_conversion		numeric(30, 6),
         maintain_inventory  boolean
     ) ON COMMIT DROP;
 

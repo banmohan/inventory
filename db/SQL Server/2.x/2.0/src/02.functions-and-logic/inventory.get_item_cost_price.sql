@@ -5,12 +5,12 @@ DROP FUNCTION inventory.get_item_cost_price;
 GO
 
 CREATE FUNCTION inventory.get_item_cost_price(@item_id integer, @unit_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS  
 BEGIN    
-    DECLARE @price              decimal(30, 6);
+    DECLARE @price              numeric(30, 6);
     DECLARE @costing_unit_id    integer;
-    DECLARE @factor             decimal(30, 6);
+    DECLARE @factor             numeric(30, 6);
 
     SELECT 
         @price = cost_price, 

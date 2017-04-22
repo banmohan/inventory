@@ -347,12 +347,31 @@
 
             const defaultUnitId = window.parseInt2(option.attr("data-unit-id"));
             const selectedUnitId = window.parseInt2(unitSelect.val());
+            const supplierId = window.parseInt2($("#SupplierSelect").val());
+            const customerId = window.parseInt2($("#CustomerSelect").val());
 
-            if (defaultUnitId === selectedUnitId) {
-                const costPrice = window.parseFloat2(option.attr("data-cost-price"));
-                const sellingPrice = window.parseFloat2(option.attr("data-selling-price"));
+            if (!(supplierId || customerId) && defaultUnitId === selectedUnitId) {
+                const salesTaxRate = window.parseFloat2(option.attr("data-sales-tax-rate"));
+
+                const costPriceIncludesTax = option.attr("data-cost-price-includes-tax") === "true";
+                const sellingPriceIncludesTax = option.attr("data-selling-price-includes-tax") === "true";
+
+                var costPrice = window.parseFloat2(option.attr("data-cost-price"));
+                var sellingPrice = window.parseFloat2(option.attr("data-selling-price"));
+
+                if (sellingPriceIncludesTax) {
+                    sellingPrice = (100 * sellingPrice) / (100 + window.parseFloat2(salesTaxRate));
+                    sellingPrice = window.round(sellingPrice, 2);
+                };
+
+                if (costPriceIncludesTax) {
+                    costPrice = (100 * costPrice) / (100 + window.parseFloat2(salesTaxRate));
+                    costPrice = window.round(costPrice, 2);
+                };
 
                 const price = costPrice || sellingPrice;
+
+
                 priceInputEl.val(price).trigger("keyup").trigger("change");
 
                 return;
@@ -371,10 +390,16 @@
             displayPrice(itemSelect, unitSelect);
         });
 
-        $("#ItemSelect").off("change").on("change", function () {
+        $("#ItemSelect").off("blur").on("blur", function () {
             const unitSelect = $("#UnitSelect");
             const itemSelect = $("#ItemSelect");
+
+
             const option = itemSelect.find("option:selected");
+
+            if (!option.attr("value")) {
+                return;
+            };
 
             const unitId = option.attr("data-unit-id");
             const validUnits = option.attr("data-valid-units");
@@ -413,8 +438,14 @@
                     option.attr("data-valid-units", product.ValidUnits);
                     option.attr("data-unit-id", product.UnitId);
                     option.attr("data-unit-id", product.UnitId);
-                    option.attr("data-selling-price", product.CostPrice);
-                    option.attr("data-cost-price", product.SellingPrice);
+
+                    option.attr("data-selling-price-includes-tax", product.SellingPriceIncludesTax);
+                    option.attr("data-selling-price", product.SellingPrice);
+
+                    option.attr("data-cost-price-includes-tax", product.CostPriceIncludesTax);
+                    option.attr("data-cost-price", product.CostPrice);
+
+                    option.attr("data-sales-tax-rate", product.SalesTaxRate);
                     option.attr("data-is-taxable-item", product.IsTaxableItem);
 
                     target.append(option);

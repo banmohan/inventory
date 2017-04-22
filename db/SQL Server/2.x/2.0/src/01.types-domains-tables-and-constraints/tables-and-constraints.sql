@@ -254,12 +254,12 @@ CREATE TABLE inventory.items
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     hot_item                                bit NOT NULL DEFAULT(0),
     is_taxable_item                         bit NOT NULL DEFAULT(1),
-    cost_price                              decimal(30, 6),
+    cost_price                              numeric(30, 6),
     cost_price_includes_tax                 bit NOT NULL DEFAULT(0),
-    selling_price                           decimal(30, 6),
+    selling_price                           numeric(30, 6),
     selling_price_includes_tax              bit NOT NULL DEFAULT(0),
     reorder_level                           integer NOT NULL DEFAULT(0),
-    reorder_quantity                        decimal(30, 6) NOT NULL DEFAULT(0),
+    reorder_quantity                        numeric(30, 6) NOT NULL DEFAULT(0),
     reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
     maintain_inventory                      bit NOT NULL DEFAULT(1),
     photo                                   dbo.photo,
@@ -403,11 +403,11 @@ CREATE TABLE inventory.checkouts
     transaction_master_id                   bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
-	taxable_total							decimal(30, 6) NOT NULL,
-	discount								decimal(30, 6) DEFAULT(0),
-	tax_rate								decimal(30, 6),
-	tax										decimal(30, 6) NOT NULL,	
-	nontaxable_total						decimal(30, 6) NOT NULL,
+	taxable_total							numeric(30, 6) NOT NULL,
+	discount								numeric(30, 6) DEFAULT(0),
+	tax_rate								numeric(30, 6),
+	tax										numeric(30, 6) NOT NULL,	
+	nontaxable_total						numeric(30, 6) NOT NULL,
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -433,14 +433,14 @@ CREATE TABLE inventory.checkout_details
     transaction_type                        national character varying(2) NOT NULL
                                             CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    price                                   decimal(30, 6) NOT NULL,
+    price                                   numeric(30, 6) NOT NULL,
 	discount_rate 							numeric(30, 6) NOT NULL DEFAULT(0),
-    discount                                decimal(30, 6) NOT NULL DEFAULT(0),    
-    cost_of_goods_sold                      decimal(30, 6) NOT NULL DEFAULT(0),
+    discount                                numeric(30, 6) NOT NULL DEFAULT(0),    
+    cost_of_goods_sold                      numeric(30, 6) NOT NULL DEFAULT(0),
 	is_taxed								bit NOT NULL DEFAULT(1),
-    shipping_charge                         decimal(30, 6) NOT NULL DEFAULT(0),    
+    shipping_charge                         numeric(30, 6) NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
-    quantity                                decimal(30, 6) NOT NULL,
+    quantity                                numeric(30, 6) NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE())
@@ -483,10 +483,10 @@ CREATE TABLE inventory.inventory_transfer_request_details
     inventory_transfer_request_id           bigint NOT NULL REFERENCES inventory.inventory_transfer_requests,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                decimal(30, 6) NOT NULL,
+    quantity                                numeric(30, 6) NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           decimal(30, 6) NOT NULL
+    base_quantity                           numeric(30, 6) NOT NULL
 );
 
 CREATE TABLE inventory.inventory_transfer_deliveries
@@ -512,10 +512,10 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
     inventory_transfer_delivery_id          bigint NOT NULL REFERENCES inventory.inventory_transfer_deliveries,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                decimal(30, 6) NOT NULL,
+    quantity                                numeric(30, 6) NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           decimal(30, 6) NOT NULL
+    base_quantity                           numeric(30, 6) NOT NULL
 );
 
 
@@ -586,8 +586,8 @@ AS TABLE
     store_name      national character varying(500),
     item_code       national character varying(24),
     unit_name       national character varying(500),
-    quantity        decimal(30, 6),
-    rate            decimal(30, 6)
+    quantity        numeric(30, 6),
+    rate            numeric(30, 6)
 );
 
 CREATE TYPE inventory.adjustment_type 
@@ -596,7 +596,7 @@ AS TABLE
     tran_type       national character varying(2),
     item_code       national character varying(24),
     unit_name       national character varying(500),
-    quantity        decimal(30, 6)
+    quantity        numeric(30, 6)
 );
 
 
@@ -605,12 +605,12 @@ AS TABLE
 (
     store_id            integer,
     item_id               integer,
-    quantity            decimal(30, 6),
+    quantity            numeric(30, 6),
     unit_id               national character varying(50),
-    price               decimal(30, 6),
-    discount            decimal(30, 6),
-    tax                 decimal(30, 6),
-    shipping_charge     decimal(30, 6)
+    price               numeric(30, 6),
+    discount            numeric(30, 6),
+    tax                 numeric(30, 6),
+    shipping_charge     numeric(30, 6)
 );
 
 
@@ -619,9 +619,9 @@ AS TABLE
 (
     store_id            integer,
     item_id               integer,
-    quantity            decimal(30, 6),
+    quantity            numeric(30, 6),
     unit_id               integer,
-    price                  decimal(30, 6)
+    price                  numeric(30, 6)
 );
 
 

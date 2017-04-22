@@ -7,12 +7,12 @@ DROP FUNCTION inventory.get_base_quantity_by_unit_name;
 GO
 
 CREATE FUNCTION inventory.get_base_quantity_by_unit_name(@unit_name national character varying(500), @multiplier numeric(30, 6))
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @unit_id integer;
     DECLARE @root_unit_id integer;
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     SET @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
     SET @root_unit_id = inventory.get_root_unit_id(@unit_id);

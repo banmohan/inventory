@@ -12,18 +12,18 @@ RETURNS @results TABLE
 (
     currency_code               national character varying(12), 
     currency_symbol             national character varying(12), 
-    total_due_amount            decimal(30, 6), 
-    office_due_amount           decimal(30, 6)
+    total_due_amount            numeric(30, 6), 
+    office_due_amount           numeric(30, 6)
 )
 AS
 BEGIN
     DECLARE @root_office_id		integer = 0;
     DECLARE @currency_code		national character varying(12); 
     DECLARE @currency_symbol    national character varying(12);
-    DECLARE @total_due_amount   decimal(30, 6); 
-    DECLARE @office_due_amount  decimal(30, 6); 
+    DECLARE @total_due_amount   numeric(30, 6); 
+    DECLARE @office_due_amount  numeric(30, 6); 
     DECLARE @last_receipt_date  date;
-    DECLARE @transaction_value  decimal(30, 6);
+    DECLARE @transaction_value  numeric(30, 6);
 
     SET @currency_code = inventory.get_currency_code_by_supplier_id(@supplier_id);
 

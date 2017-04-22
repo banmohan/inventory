@@ -8,13 +8,13 @@ RETURNS DECIMAL(24, 4)
 AS
 BEGIN
     DECLARE @account_id                     integer							= inventory.get_account_id_by_customer_id(@customer_id);
-    DECLARE @debit                          decimal(30, 6)					= 0;
-    DECLARE @credit                         decimal(30, 6)					= 0;
+    DECLARE @debit                          numeric(30, 6)					= 0;
+    DECLARE @credit                         numeric(30, 6)					= 0;
     DECLARE @local_currency_code            national character varying(12)	= core.get_currency_code_by_office_id(@office_id); 
     DECLARE @base_currency_code             national character varying(12)	= inventory.get_currency_code_by_customer_id(@customer_id);
-    DECLARE @amount_in_local_currency       decimal(30, 6)					= 0;
-    DECLARE @amount_in_base_currency        decimal(30, 6)					= 0;
-    DECLARE @er								decimal(30, 6)					= 0;
+    DECLARE @amount_in_local_currency       numeric(30, 6)					= 0;
+    DECLARE @amount_in_base_currency        numeric(30, 6)					= 0;
+    DECLARE @er								numeric(30, 6)					= 0;
 
     SELECT @debit = SUM(amount_in_local_currency)
     FROM finance.verified_transaction_view

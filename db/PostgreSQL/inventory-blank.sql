@@ -622,11 +622,11 @@ AS
 DROP FUNCTION IF EXISTS inventory.convert_unit(from_unit integer, to_unit integer);
 
 CREATE FUNCTION inventory.convert_unit(from_unit integer, to_unit integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
-    DECLARE _factor decimal(30, 6);
+    DECLARE _factor numeric(30, 6);
 BEGIN
     IF(inventory.get_root_unit_id($1) != inventory.get_root_unit_id($2)) THEN
         RETURN 0;
@@ -687,13 +687,13 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS inventory.count_item_in_stock(_item_id integer, _unit_id integer, _store_id integer);
 
 CREATE FUNCTION inventory.count_item_in_stock(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
-    DECLARE _debit decimal(30, 6);
-    DECLARE _credit decimal(30, 6);
-    DECLARE _balance decimal(30, 6);
+    DECLARE _debit numeric(30, 6);
+    DECLARE _credit numeric(30, 6);
+    DECLARE _balance numeric(30, 6);
 BEGIN
 
     _debit := inventory.count_purchases($1, $2, $3);
@@ -712,13 +712,13 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer);
 
 CREATE FUNCTION inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _debit decimal(30, 6);
-    DECLARE _factor decimal(30, 6);
+    DECLARE _debit numeric(30, 6);
+    DECLARE _factor numeric(30, 6);
 BEGIN
     --Get the base item unit
     SELECT 
@@ -752,13 +752,13 @@ LANGUAGE plpgsql;
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.count_sales.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer);
 CREATE FUNCTION inventory.count_sales(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _credit decimal(30, 6);
-    DECLARE _factor decimal(30, 6);
+    DECLARE _credit numeric(30, 6);
+    DECLARE _factor numeric(30, 6);
 BEGIN
     --Get the base item unit
     SELECT 
@@ -1357,12 +1357,12 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_id(integer, numeric(30, 6));
 
 CREATE FUNCTION inventory.get_base_quantity_by_unit_id(integer, numeric(30, 6))
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
 	DECLARE _root_unit_id integer;
-	DECLARE _factor decimal(30, 6);
+	DECLARE _factor numeric(30, 6);
 BEGIN
     _root_unit_id = inventory.get_root_unit_id($1);
     _factor = inventory.convert_unit($1, _root_unit_id);
@@ -1377,13 +1377,13 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, numeric(30, 6));
 
 CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, numeric(30, 6))
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
 	DECLARE _unit_id integer;
 	DECLARE _root_unit_id integer;
-	DECLARE _factor decimal(30, 6);
+	DECLARE _factor numeric(30, 6);
 BEGIN
     _unit_id := inventory.get_unit_id_by_unit_name($1);
     _root_unit_id = inventory.get_root_unit_id(_unit_id);
@@ -1507,14 +1507,14 @@ LANGUAGE plpgsql;
 --SELECT * FROM inventory.get_cost_of_good_method(1);
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_cost_of_goods_sold.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal(30, 6));
+DROP FUNCTION IF EXISTS inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity numeric(30, 6));
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity decimal(30, 6))
+CREATE FUNCTION inventory.get_cost_of_goods_sold(_item_id integer, _unit_id integer, _store_id integer, _quantity numeric(30, 6))
 RETURNS money_strict
 AS
 $$
-    DECLARE _backup_quantity            decimal(30, 6);
-    DECLARE _base_quantity              decimal(30, 6);
+    DECLARE _backup_quantity            numeric(30, 6);
+    DECLARE _base_quantity              numeric(30, 6);
     DECLARE _base_unit_id               integer;
     DECLARE _base_unit_cost             money_strict;
     DECLARE _total_sold                 integer;
@@ -1525,7 +1525,7 @@ BEGIN
         RETURN 0;
     END IF;
 
-    --backup base quantity in decimal(30, 6)
+    --backup base quantity in numeric(30, 6)
     _backup_quantity                := inventory.get_base_quantity_by_unit_id($2, $4);
     --convert base quantity to whole number
     _base_quantity                  := CEILING(_backup_quantity);
@@ -1619,7 +1619,7 @@ BEGIN
 		_base_unit_cost := inventory.get_item_cost_price(_item_id, _base_unit_id) * _base_quantity;
 	END IF;
 
-    --APPLY decimal(30, 6) QUANTITY PROVISON
+    --APPLY numeric(30, 6) QUANTITY PROVISON
     _base_unit_cost := _base_unit_cost * (_backup_quantity / _base_quantity);
 
     RETURN _base_unit_cost;
@@ -1748,18 +1748,18 @@ RETURNS TABLE
 (
     currency_code               national character varying(12), 
     currency_symbol             national character varying(12), 
-    total_due_amount            decimal(30, 6), 
-    office_due_amount           decimal(30, 6)
+    total_due_amount            numeric(30, 6), 
+    office_due_amount           numeric(30, 6)
 )
 AS
 $$
     DECLARE root_office_id      integer = 0;
     DECLARE _currency_code      national character varying(12); 
     DECLARE _currency_symbol    national character varying(12);
-    DECLARE _total_due_amount   decimal(30, 6); 
-    DECLARE _office_due_amount  decimal(30, 6); 
+    DECLARE _total_due_amount   numeric(30, 6); 
+    DECLARE _office_due_amount  numeric(30, 6); 
     DECLARE _last_receipt_date  date;
-    DECLARE _transaction_value  decimal(30, 6);
+    DECLARE _transaction_value  numeric(30, 6);
 BEGIN
     _currency_code := inventory.get_currency_code_by_customer_id(customer_id);
 
@@ -1865,7 +1865,7 @@ AS
 $$
     DECLARE _price              public.money_strict2;
     DECLARE _costing_unit_id    integer;
-    DECLARE _factor             decimal(30, 6);
+    DECLARE _factor             numeric(30, 6);
   
 BEGIN    
     SELECT 
@@ -1955,9 +1955,9 @@ LANGUAGE plpgsql;
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/02.functions-and-logic/inventory.get_mavcogs.sql --<--<--
-DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6));
+DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity numeric(30, 6), _factor numeric(30, 6));
 
-CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6))
+CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity numeric(30, 6), _factor numeric(30, 6))
 RETURNS numeric(30, 6)
 AS
 $$
@@ -1968,8 +1968,8 @@ BEGIN
             id              SERIAL NOT NULL,
             value_date      date,
             audit_ts        TIMESTAMP WITH TIME ZONE,
-            base_quantity   decimal(30, 6),
-            price           decimal(30, 6)
+            base_quantity   numeric(30, 6),
+            price           numeric(30, 6)
             
     ) ON COMMIT DROP;
 
@@ -2405,18 +2405,18 @@ RETURNS TABLE
 (
     currency_code               national character varying(12), 
     currency_symbol             national character varying(12), 
-    total_due_amount            decimal(30, 6), 
-    office_due_amount           decimal(30, 6)
+    total_due_amount            numeric(30, 6), 
+    office_due_amount           numeric(30, 6)
 )
 AS
 $$
     DECLARE root_office_id      integer = 0;
     DECLARE _currency_code      national character varying(12); 
     DECLARE _currency_symbol    national character varying(12);
-    DECLARE _total_due_amount   decimal(30, 6); 
-    DECLARE _office_due_amount  decimal(30, 6); 
+    DECLARE _total_due_amount   numeric(30, 6); 
+    DECLARE _office_due_amount  numeric(30, 6); 
     DECLARE _last_receipt_date  date;
-    DECLARE _transaction_value  decimal(30, 6);
+    DECLARE _transaction_value  numeric(30, 6);
 BEGIN
     _currency_code := inventory.get_currency_code_by_supplier_id(supplier_id);
 
@@ -2468,12 +2468,12 @@ RETURNS DECIMAL(24, 4)
 AS
 $$
     DECLARE _account_id                     integer         = inventory.get_account_id_by_customer_id($2);
-    DECLARE _debit                          decimal(30, 6)  = 0;
-    DECLARE _credit                         decimal(30, 6)  = 0;
+    DECLARE _debit                          numeric(30, 6)  = 0;
+    DECLARE _credit                         numeric(30, 6)  = 0;
     DECLARE _local_currency_code            national character varying(12) = core.get_currency_code_by_office_id($1); 
     DECLARE _base_currency_code             national character varying(12) = inventory.get_currency_code_by_customer_id($2);
-    DECLARE _amount_in_local_currency       decimal(30, 6)= 0;
-    DECLARE _amount_in_base_currency        decimal(30, 6)= 0;
+    DECLARE _amount_in_local_currency       numeric(30, 6)= 0;
+    DECLARE _amount_in_base_currency        numeric(30, 6)= 0;
     DECLARE _er decimal_strict2 = 0;
 BEGIN
 
@@ -2520,12 +2520,12 @@ RETURNS DECIMAL(24, 4)
 AS
 $$
     DECLARE _account_id                     integer         = inventory.get_account_id_by_supplier_id($2);
-    DECLARE _debit                          decimal(30, 6)  = 0;
-    DECLARE _credit                         decimal(30, 6)  = 0;
+    DECLARE _debit                          numeric(30, 6)  = 0;
+    DECLARE _credit                         numeric(30, 6)  = 0;
     DECLARE _local_currency_code            national character varying(12) = core.get_currency_code_by_office_id($1); 
     DECLARE _base_currency_code             national character varying(12) = inventory.get_currency_code_by_customer_id($2);
-    DECLARE _amount_in_local_currency       decimal(30, 6)= 0;
-    DECLARE _amount_in_base_currency        decimal(30, 6)= 0;
+    DECLARE _amount_in_local_currency       numeric(30, 6)= 0;
+    DECLARE _amount_in_base_currency        numeric(30, 6)= 0;
     DECLARE _er decimal_strict2 = 0;
 BEGIN
 
@@ -2620,7 +2620,7 @@ RETURNS money_strict2
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _factor decimal(30, 6);
+    DECLARE _factor numeric(30, 6);
 BEGIN
     _base_unit_id    = inventory.get_root_unit_id(_unit_id);
     _factor          = inventory.convert_unit(_unit_id, _base_unit_id);
@@ -2773,7 +2773,7 @@ RETURNS TABLE
     item_name               national character varying(1000),
     unit_id                 integer,
     unit_name               national character varying(1000),
-    quantity                decimal(30, 6)
+    quantity                numeric(30, 6)
 )
 AS
 $$
@@ -2787,9 +2787,9 @@ BEGIN
         base_unit_id        integer,
 		unit_id				integer,
         unit_name           national character varying(1000),
-        base_quantity       decimal(30, 6),
-        quantity			decimal(30, 6),
-		unit_conversion		decimal(30, 6),
+        base_quantity       numeric(30, 6),
+        quantity			numeric(30, 6),
+		unit_conversion		numeric(30, 6),
         maintain_inventory  boolean
     ) ON COMMIT DROP;
 
@@ -3122,7 +3122,7 @@ BEGIN
         item_id                         integer, 
         quantity                        integer_strict,
         unit_id                         integer,
-        base_quantity                   decimal(30, 6),
+        base_quantity                   numeric(30, 6),
         base_unit_id                    integer,                
         price                           money_strict
     ) ON COMMIT DROP;

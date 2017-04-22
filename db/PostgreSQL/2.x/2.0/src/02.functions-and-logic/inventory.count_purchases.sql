@@ -1,13 +1,13 @@
 ﻿DROP FUNCTION IF EXISTS inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer);
 
 CREATE FUNCTION inventory.count_purchases(_item_id integer, _unit_id integer, _store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
     DECLARE _base_unit_id integer;
-    DECLARE _debit decimal(30, 6);
-    DECLARE _factor decimal(30, 6);
+    DECLARE _debit numeric(30, 6);
+    DECLARE _factor numeric(30, 6);
 BEGIN
     --Get the base item unit
     SELECT 

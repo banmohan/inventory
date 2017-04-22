@@ -4,10 +4,10 @@ DROP FUNCTION inventory.convert_unit;
 GO
 
 CREATE FUNCTION inventory.convert_unit(@from_unit integer, @to_unit integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     IF(inventory.get_root_unit_id(@from_unit) != inventory.get_root_unit_id(@to_unit))
     BEGIN

@@ -33,11 +33,11 @@ BEGIN
         tran_type                           national character varying(2),
         store_id                            integer,
         item_id                             integer, 
-        quantity                            decimal(30, 6),
+        quantity                            numeric(30, 6),
         unit_id                             integer,
-        base_quantity                       decimal(30, 6),
+        base_quantity                       numeric(30, 6),
         base_unit_id                        integer,                
-        price                               decimal(30, 6)
+        price                               numeric(30, 6)
     ) ;
 
     BEGIN TRY

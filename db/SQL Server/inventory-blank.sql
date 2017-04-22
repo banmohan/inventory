@@ -255,12 +255,12 @@ CREATE TABLE inventory.items
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     hot_item                                bit NOT NULL DEFAULT(0),
     is_taxable_item                         bit NOT NULL DEFAULT(1),
-    cost_price                              decimal(30, 6),
+    cost_price                              numeric(30, 6),
     cost_price_includes_tax                 bit NOT NULL DEFAULT(0),
-    selling_price                           decimal(30, 6),
+    selling_price                           numeric(30, 6),
     selling_price_includes_tax              bit NOT NULL DEFAULT(0),
     reorder_level                           integer NOT NULL DEFAULT(0),
-    reorder_quantity                        decimal(30, 6) NOT NULL DEFAULT(0),
+    reorder_quantity                        numeric(30, 6) NOT NULL DEFAULT(0),
     reorder_unit_id                         integer NOT NULL REFERENCES inventory.units,
     maintain_inventory                      bit NOT NULL DEFAULT(1),
     photo                                   dbo.photo,
@@ -404,11 +404,11 @@ CREATE TABLE inventory.checkouts
     transaction_master_id                   bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
-	taxable_total							decimal(30, 6) NOT NULL,
-	discount								decimal(30, 6) DEFAULT(0),
-	tax_rate								decimal(30, 6),
-	tax										decimal(30, 6) NOT NULL,	
-	nontaxable_total						decimal(30, 6) NOT NULL,
+	taxable_total							numeric(30, 6) NOT NULL,
+	discount								numeric(30, 6) DEFAULT(0),
+	tax_rate								numeric(30, 6),
+	tax										numeric(30, 6) NOT NULL,	
+	nontaxable_total						numeric(30, 6) NOT NULL,
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
@@ -434,14 +434,14 @@ CREATE TABLE inventory.checkout_details
     transaction_type                        national character varying(2) NOT NULL
                                             CHECK(transaction_type IN('Dr', 'Cr')),
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    price                                   decimal(30, 6) NOT NULL,
+    price                                   numeric(30, 6) NOT NULL,
 	discount_rate 							numeric(30, 6) NOT NULL DEFAULT(0),
-    discount                                decimal(30, 6) NOT NULL DEFAULT(0),    
-    cost_of_goods_sold                      decimal(30, 6) NOT NULL DEFAULT(0),
+    discount                                numeric(30, 6) NOT NULL DEFAULT(0),    
+    cost_of_goods_sold                      numeric(30, 6) NOT NULL DEFAULT(0),
 	is_taxed								bit NOT NULL DEFAULT(1),
-    shipping_charge                         decimal(30, 6) NOT NULL DEFAULT(0),    
+    shipping_charge                         numeric(30, 6) NOT NULL DEFAULT(0),    
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
-    quantity                                decimal(30, 6) NOT NULL,
+    quantity                                numeric(30, 6) NOT NULL,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
     base_quantity                           numeric(30, 6) NOT NULL,
     audit_ts                                DATETIMEOFFSET DEFAULT(GETUTCDATE())
@@ -484,10 +484,10 @@ CREATE TABLE inventory.inventory_transfer_request_details
     inventory_transfer_request_id           bigint NOT NULL REFERENCES inventory.inventory_transfer_requests,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                decimal(30, 6) NOT NULL,
+    quantity                                numeric(30, 6) NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           decimal(30, 6) NOT NULL
+    base_quantity                           numeric(30, 6) NOT NULL
 );
 
 CREATE TABLE inventory.inventory_transfer_deliveries
@@ -513,10 +513,10 @@ CREATE TABLE inventory.inventory_transfer_delivery_details
     inventory_transfer_delivery_id          bigint NOT NULL REFERENCES inventory.inventory_transfer_deliveries,
     request_date                            date NOT NULL,
     item_id                                 integer NOT NULL REFERENCES inventory.items,
-    quantity                                decimal(30, 6) NOT NULL,
+    quantity                                numeric(30, 6) NOT NULL,
     unit_id                                 integer NOT NULL REFERENCES inventory.units,
     base_unit_id                            integer NOT NULL REFERENCES inventory.units,
-    base_quantity                           decimal(30, 6) NOT NULL
+    base_quantity                           numeric(30, 6) NOT NULL
 );
 
 
@@ -587,8 +587,8 @@ AS TABLE
     store_name      national character varying(500),
     item_code       national character varying(24),
     unit_name       national character varying(500),
-    quantity        decimal(30, 6),
-    rate            decimal(30, 6)
+    quantity        numeric(30, 6),
+    rate            numeric(30, 6)
 );
 
 CREATE TYPE inventory.adjustment_type 
@@ -597,7 +597,7 @@ AS TABLE
     tran_type       national character varying(2),
     item_code       national character varying(24),
     unit_name       national character varying(500),
-    quantity        decimal(30, 6)
+    quantity        numeric(30, 6)
 );
 
 
@@ -606,12 +606,12 @@ AS TABLE
 (
     store_id            integer,
     item_id               integer,
-    quantity            decimal(30, 6),
+    quantity            numeric(30, 6),
     unit_id               national character varying(50),
-    price               decimal(30, 6),
-    discount            decimal(30, 6),
-    tax                 decimal(30, 6),
-    shipping_charge     decimal(30, 6)
+    price               numeric(30, 6),
+    discount            numeric(30, 6),
+    tax                 numeric(30, 6),
+    shipping_charge     numeric(30, 6)
 );
 
 
@@ -620,9 +620,9 @@ AS TABLE
 (
     store_id            integer,
     item_id               integer,
-    quantity            decimal(30, 6),
+    quantity            numeric(30, 6),
     unit_id               integer,
-    price                  decimal(30, 6)
+    price                  numeric(30, 6)
 );
 
 
@@ -637,10 +637,10 @@ DROP FUNCTION inventory.convert_unit;
 GO
 
 CREATE FUNCTION inventory.convert_unit(@from_unit integer, @to_unit integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     IF(inventory.get_root_unit_id(@from_unit) != inventory.get_root_unit_id(@to_unit))
     BEGIN
@@ -712,12 +712,12 @@ DROP FUNCTION inventory.count_item_in_stock;
 GO
 
 CREATE FUNCTION inventory.count_item_in_stock(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
-    DECLARE @debit decimal(30, 6);
-    DECLARE @credit decimal(30, 6);
-    DECLARE @balance decimal(30, 6);
+    DECLARE @debit numeric(30, 6);
+    DECLARE @credit numeric(30, 6);
+    DECLARE @balance numeric(30, 6);
 
     SET @debit = inventory.count_purchases(@item_id, @unit_id, @store_id);
     SET @credit = inventory.count_sales(@item_id, @unit_id, @store_id);
@@ -741,12 +741,12 @@ DROP FUNCTION inventory.count_purchases;
 GO
 
 CREATE FUNCTION inventory.count_purchases(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @debit decimal(30, 6);
-    DECLARE @factor decimal(30, 6);
+    DECLARE @debit numeric(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     --Get the base item unit
     SELECT @base_unit_id= inventory.get_root_unit_id(inventory.items.unit_id) 
@@ -781,12 +781,12 @@ DROP FUNCTION inventory.count_sales;
 GO
 
 CREATE FUNCTION inventory.count_sales(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @credit decimal(30, 6);
-    DECLARE @factor decimal(30, 6);
+    DECLARE @credit numeric(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     --Get the base item unit
     SELECT @base_unit_id =  inventory.get_root_unit_id(inventory.items.unit_id) 
@@ -1480,11 +1480,11 @@ DROP FUNCTION inventory.get_base_quantity_by_unit_id;
 GO
 
 CREATE FUNCTION inventory.get_base_quantity_by_unit_id(@unit_id integer, @multiplier numeric(30, 6))
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @root_unit_id integer;
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     SET @root_unit_id = inventory.get_root_unit_id(@unit_id);
     SET @factor = inventory.convert_unit(@unit_id, @root_unit_id);
@@ -1505,12 +1505,12 @@ DROP FUNCTION inventory.get_base_quantity_by_unit_name;
 GO
 
 CREATE FUNCTION inventory.get_base_quantity_by_unit_name(@unit_name national character varying(500), @multiplier numeric(30, 6))
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @unit_id integer;
     DECLARE @root_unit_id integer;
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     SET @unit_id = inventory.get_unit_id_by_unit_name(@unit_name);
     SET @root_unit_id = inventory.get_root_unit_id(@unit_id);
@@ -1676,8 +1676,8 @@ DROP FUNCTION inventory.get_cost_of_goods_sold;
 
 GO
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity decimal(30, 6))
-RETURNS decimal(30, 6)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity numeric(30, 6))
+RETURNS numeric(30, 6)
 AS
 BEGIN
 	IF(@quantity = 0)
@@ -1685,15 +1685,15 @@ BEGIN
 		RETURN 0;
 	END;
 
-    DECLARE @backup_quantity            decimal(30, 6);
-    DECLARE @base_quantity              decimal(30, 6);
+    DECLARE @backup_quantity            numeric(30, 6);
+    DECLARE @base_quantity              numeric(30, 6);
     DECLARE @base_unit_id               integer;
-    DECLARE @base_unit_cost             decimal(30, 6);
+    DECLARE @base_unit_cost             numeric(30, 6);
     DECLARE @total_sold                 integer;
     DECLARE @office_id                  integer = inventory.get_office_id_by_store_id(@store_id);
     DECLARE @method                     national character varying(1000) = inventory.get_cost_of_good_method(@office_id);
 
-    --backup base quantity in decimal(30, 6)
+    --backup base quantity in numeric(30, 6)
     SET @backup_quantity                = inventory.get_base_quantity_by_unit_id(@unit_id, @quantity);
     --convert base quantity to whole number
     SET @base_quantity                  = CEILING(@backup_quantity);
@@ -1717,7 +1717,7 @@ BEGIN
         checkout_detail_id     bigint,
         audit_ts               DATETIMEOFFSET,
         value_date             date,
-        price                  decimal(30, 6),
+        price                  numeric(30, 6),
         transaction_type       national character varying(1000)
                     
     ) ;
@@ -1795,7 +1795,7 @@ BEGIN
 		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @base_unit_id) * @base_quantity;
 	END;
 
-    --APPLY decimal(30, 6) QUANTITY PROVISON
+    --APPLY numeric(30, 6) QUANTITY PROVISON
     SET @base_unit_cost = @base_unit_cost * (@backup_quantity / @base_quantity);
 
 
@@ -1973,18 +1973,18 @@ RETURNS @results TABLE
 (
     currency_code               national character varying(12), 
     currency_symbol             national character varying(12), 
-    total_due_amount            decimal(30, 6), 
-    office_due_amount           decimal(30, 6)
+    total_due_amount            numeric(30, 6), 
+    office_due_amount           numeric(30, 6)
 )
 AS
 BEGIN
     DECLARE @root_office_id		integer = 0;
     DECLARE @currency_code		national character varying(12); 
     DECLARE @currency_symbol    national character varying(12);
-    DECLARE @total_due_amount   decimal(30, 6); 
-    DECLARE @office_due_amount  decimal(30, 6); 
+    DECLARE @total_due_amount   numeric(30, 6); 
+    DECLARE @office_due_amount  numeric(30, 6); 
     DECLARE @last_receipt_date  date;
-    DECLARE @transaction_value  decimal(30, 6);
+    DECLARE @transaction_value  numeric(30, 6);
 
     SET @currency_code = inventory.get_currency_code_by_customer_id(@customer_id);
 
@@ -2121,12 +2121,12 @@ DROP FUNCTION inventory.get_item_cost_price;
 GO
 
 CREATE FUNCTION inventory.get_item_cost_price(@item_id integer, @unit_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS  
 BEGIN    
-    DECLARE @price              decimal(30, 6);
+    DECLARE @price              numeric(30, 6);
     DECLARE @costing_unit_id    integer;
-    DECLARE @factor             decimal(30, 6);
+    DECLARE @factor             numeric(30, 6);
 
     SELECT 
         @price = cost_price, 
@@ -2258,7 +2258,7 @@ CREATE FUNCTION inventory.get_mavcogs(@item_id integer, @store_id integer, @base
 RETURNS numeric(30, 6)
 AS
 BEGIN
-    DECLARE @base_unit_cost decimal(30, 6);
+    DECLARE @base_unit_cost numeric(30, 6);
 
     DECLARE @temp_staging TABLE
     (
@@ -2844,18 +2844,18 @@ RETURNS @results TABLE
 (
     currency_code               national character varying(12), 
     currency_symbol             national character varying(12), 
-    total_due_amount            decimal(30, 6), 
-    office_due_amount           decimal(30, 6)
+    total_due_amount            numeric(30, 6), 
+    office_due_amount           numeric(30, 6)
 )
 AS
 BEGIN
     DECLARE @root_office_id		integer = 0;
     DECLARE @currency_code		national character varying(12); 
     DECLARE @currency_symbol    national character varying(12);
-    DECLARE @total_due_amount   decimal(30, 6); 
-    DECLARE @office_due_amount  decimal(30, 6); 
+    DECLARE @total_due_amount   numeric(30, 6); 
+    DECLARE @office_due_amount  numeric(30, 6); 
     DECLARE @last_receipt_date  date;
-    DECLARE @transaction_value  decimal(30, 6);
+    DECLARE @transaction_value  numeric(30, 6);
 
     SET @currency_code = inventory.get_currency_code_by_supplier_id(@supplier_id);
 
@@ -2917,13 +2917,13 @@ RETURNS DECIMAL(24, 4)
 AS
 BEGIN
     DECLARE @account_id                     integer							= inventory.get_account_id_by_customer_id(@customer_id);
-    DECLARE @debit                          decimal(30, 6)					= 0;
-    DECLARE @credit                         decimal(30, 6)					= 0;
+    DECLARE @debit                          numeric(30, 6)					= 0;
+    DECLARE @credit                         numeric(30, 6)					= 0;
     DECLARE @local_currency_code            national character varying(12)	= core.get_currency_code_by_office_id(@office_id); 
     DECLARE @base_currency_code             national character varying(12)	= inventory.get_currency_code_by_customer_id(@customer_id);
-    DECLARE @amount_in_local_currency       decimal(30, 6)					= 0;
-    DECLARE @amount_in_base_currency        decimal(30, 6)					= 0;
-    DECLARE @er								decimal(30, 6)					= 0;
+    DECLARE @amount_in_local_currency       numeric(30, 6)					= 0;
+    DECLARE @amount_in_base_currency        numeric(30, 6)					= 0;
+    DECLARE @er								numeric(30, 6)					= 0;
 
     SELECT @debit = SUM(amount_in_local_currency)
     FROM finance.verified_transaction_view
@@ -2962,13 +2962,13 @@ RETURNS DECIMAL(24, 4)
 AS
 BEGIN
     DECLARE @account_id                     integer							= inventory.get_account_id_by_supplier_id(@supplier_id);
-    DECLARE @debit                          decimal(30, 6)					= 0;
-    DECLARE @credit                         decimal(30, 6)					= 0;
+    DECLARE @debit                          numeric(30, 6)					= 0;
+    DECLARE @credit                         numeric(30, 6)					= 0;
     DECLARE @local_currency_code            national character varying(12)	= core.get_currency_code_by_office_id(@office_id); 
     DECLARE @base_currency_code             national character varying(12)	= inventory.get_currency_code_by_supplier_id(@supplier_id);
-    DECLARE @amount_in_local_currency       decimal(30, 6)					= 0;
-    DECLARE @amount_in_base_currency        decimal(30, 6)					= 0;
-    DECLARE @er								decimal(30, 6)					= 0;
+    DECLARE @amount_in_local_currency       numeric(30, 6)					= 0;
+    DECLARE @amount_in_base_currency        numeric(30, 6)					= 0;
+    DECLARE @er								numeric(30, 6)					= 0;
 
     SELECT @debit = SUM(amount_in_local_currency)
     FROM finance.verified_transaction_view
@@ -3094,11 +3094,11 @@ DROP FUNCTION inventory.get_write_off_cost_of_goods_sold;
 GO
 
 CREATE FUNCTION inventory.get_write_off_cost_of_goods_sold(@checkout_id bigint, @item_id integer, @unit_id integer, @quantity integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     SET @base_unit_id    = inventory.get_root_unit_id(@unit_id);
     SET @factor          = inventory.convert_unit(@unit_id, @base_unit_id);
@@ -3272,7 +3272,7 @@ RETURNS @result TABLE
     item_name               national character varying(1000),
     unit_id                 integer,
     unit_name               national character varying(1000),
-    quantity                decimal(30, 6)
+    quantity                numeric(30, 6)
 )
 AS
 
@@ -3285,9 +3285,9 @@ BEGIN
         base_unit_id        integer,
 		unit_id				integer,
         unit_name           national character varying(1000),
-        base_quantity       decimal(30, 6),
-        quantity			decimal(30, 6),
-		unit_conversion		decimal(30, 6),
+        base_quantity       numeric(30, 6),
+        quantity			numeric(30, 6),
+		unit_conversion		numeric(30, 6),
         maintain_inventory  bit
     ) ;
 
@@ -3391,10 +3391,10 @@ BEGIN
         unit_id                             integer,
         base_unit_id                        integer,
         unit_name                           national character varying(50),
-        quantity                            decimal(30, 6),
-        base_quantity                       decimal(30, 6),                
-        price                               decimal(30, 6),
-        cost_of_goods_sold                  decimal(30, 6) DEFAULT(0),
+        quantity                            numeric(30, 6),
+        base_quantity                       numeric(30, 6),                
+        price                               numeric(30, 6),
+        cost_of_goods_sold                  numeric(30, 6) DEFAULT(0),
         inventory_account_id                integer,
         cost_of_goods_sold_account_id       integer
     ); 
@@ -3406,10 +3406,10 @@ BEGIN
         statement_reference                 national character varying(2000), 
         cash_repository_id                  integer, 
         currency_code                       national character varying(12), 
-        amount_in_currency                  decimal(30, 6), 
+        amount_in_currency                  numeric(30, 6), 
         local_currency_code                 national character varying(12), 
-        er                                  decimal(30, 6), 
-        amount_in_local_currency            decimal(30, 6)
+        er                                  numeric(30, 6), 
+        amount_in_local_currency            numeric(30, 6)
     );
 
 
@@ -3631,11 +3631,11 @@ BEGIN
         tran_type                           national character varying(2),
         store_id                            integer,
         item_id                             integer, 
-        quantity                            decimal(30, 6),
+        quantity                            numeric(30, 6),
         unit_id                             integer,
-        base_quantity                       decimal(30, 6),
+        base_quantity                       numeric(30, 6),
         base_unit_id                        integer,                
-        price                               decimal(30, 6)
+        price                               numeric(30, 6)
     ) ;
 
     BEGIN TRY
@@ -3768,9 +3768,9 @@ BEGIN
         unit_id                             integer,
         base_unit_id                        integer,
         unit_name                           national character varying(500),
-        quantity                            decimal(30, 6),
-        base_quantity                       decimal(30, 6),                
-        price                               decimal(30, 6)
+        quantity                            numeric(30, 6),
+        base_quantity                       numeric(30, 6),                
+        price                               numeric(30, 6)
     ); 
 
     BEGIN TRY

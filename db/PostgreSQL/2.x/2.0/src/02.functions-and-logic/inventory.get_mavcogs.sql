@@ -1,6 +1,6 @@
-﻿DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6));
+﻿DROP FUNCTION IF EXISTS inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity numeric(30, 6), _factor numeric(30, 6));
 
-CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity decimal(30, 6), _factor numeric(30, 6))
+CREATE FUNCTION inventory.get_mavcogs(_item_id integer, _store_id integer, _base_quantity numeric(30, 6), _factor numeric(30, 6))
 RETURNS numeric(30, 6)
 AS
 $$
@@ -11,8 +11,8 @@ BEGIN
             id              SERIAL NOT NULL,
             value_date      date,
             audit_ts        TIMESTAMP WITH TIME ZONE,
-            base_quantity   decimal(30, 6),
-            price           decimal(30, 6)
+            base_quantity   numeric(30, 6),
+            price           numeric(30, 6)
             
     ) ON COMMIT DROP;
 

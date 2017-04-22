@@ -38,10 +38,10 @@ BEGIN
         unit_id                             integer,
         base_unit_id                        integer,
         unit_name                           national character varying(50),
-        quantity                            decimal(30, 6),
-        base_quantity                       decimal(30, 6),                
-        price                               decimal(30, 6),
-        cost_of_goods_sold                  decimal(30, 6) DEFAULT(0),
+        quantity                            numeric(30, 6),
+        base_quantity                       numeric(30, 6),                
+        price                               numeric(30, 6),
+        cost_of_goods_sold                  numeric(30, 6) DEFAULT(0),
         inventory_account_id                integer,
         cost_of_goods_sold_account_id       integer
     ); 
@@ -53,10 +53,10 @@ BEGIN
         statement_reference                 national character varying(2000), 
         cash_repository_id                  integer, 
         currency_code                       national character varying(12), 
-        amount_in_currency                  decimal(30, 6), 
+        amount_in_currency                  numeric(30, 6), 
         local_currency_code                 national character varying(12), 
-        er                                  decimal(30, 6), 
-        amount_in_local_currency            decimal(30, 6)
+        er                                  numeric(30, 6), 
+        amount_in_local_currency            numeric(30, 6)
     );
 
 

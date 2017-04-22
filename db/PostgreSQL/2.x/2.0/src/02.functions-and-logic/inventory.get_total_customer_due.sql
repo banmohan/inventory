@@ -5,12 +5,12 @@ RETURNS DECIMAL(24, 4)
 AS
 $$
     DECLARE _account_id                     integer         = inventory.get_account_id_by_customer_id($2);
-    DECLARE _debit                          decimal(30, 6)  = 0;
-    DECLARE _credit                         decimal(30, 6)  = 0;
+    DECLARE _debit                          numeric(30, 6)  = 0;
+    DECLARE _credit                         numeric(30, 6)  = 0;
     DECLARE _local_currency_code            national character varying(12) = core.get_currency_code_by_office_id($1); 
     DECLARE _base_currency_code             national character varying(12) = inventory.get_currency_code_by_customer_id($2);
-    DECLARE _amount_in_local_currency       decimal(30, 6)= 0;
-    DECLARE _amount_in_base_currency        decimal(30, 6)= 0;
+    DECLARE _amount_in_local_currency       numeric(30, 6)= 0;
+    DECLARE _amount_in_base_currency        numeric(30, 6)= 0;
     DECLARE _er decimal_strict2 = 0;
 BEGIN
 

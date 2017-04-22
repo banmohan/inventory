@@ -5,12 +5,12 @@ DROP FUNCTION inventory.count_sales;
 GO
 
 CREATE FUNCTION inventory.count_sales(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @credit decimal(30, 6);
-    DECLARE @factor decimal(30, 6);
+    DECLARE @credit numeric(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     --Get the base item unit
     SELECT @base_unit_id =  inventory.get_root_unit_id(inventory.items.unit_id) 

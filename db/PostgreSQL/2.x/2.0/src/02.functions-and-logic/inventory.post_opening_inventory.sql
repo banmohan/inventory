@@ -45,7 +45,7 @@ BEGIN
         item_id                         integer, 
         quantity                        integer_strict,
         unit_id                         integer,
-        base_quantity                   decimal(30, 6),
+        base_quantity                   numeric(30, 6),
         base_unit_id                    integer,                
         price                           money_strict
     ) ON COMMIT DROP;

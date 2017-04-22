@@ -3,8 +3,8 @@ DROP FUNCTION inventory.get_cost_of_goods_sold;
 
 GO
 
-CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity decimal(30, 6))
-RETURNS decimal(30, 6)
+CREATE FUNCTION inventory.get_cost_of_goods_sold(@item_id integer, @unit_id integer, @store_id integer, @quantity numeric(30, 6))
+RETURNS numeric(30, 6)
 AS
 BEGIN
 	IF(@quantity = 0)
@@ -12,15 +12,15 @@ BEGIN
 		RETURN 0;
 	END;
 
-    DECLARE @backup_quantity            decimal(30, 6);
-    DECLARE @base_quantity              decimal(30, 6);
+    DECLARE @backup_quantity            numeric(30, 6);
+    DECLARE @base_quantity              numeric(30, 6);
     DECLARE @base_unit_id               integer;
-    DECLARE @base_unit_cost             decimal(30, 6);
+    DECLARE @base_unit_cost             numeric(30, 6);
     DECLARE @total_sold                 integer;
     DECLARE @office_id                  integer = inventory.get_office_id_by_store_id(@store_id);
     DECLARE @method                     national character varying(1000) = inventory.get_cost_of_good_method(@office_id);
 
-    --backup base quantity in decimal(30, 6)
+    --backup base quantity in numeric(30, 6)
     SET @backup_quantity                = inventory.get_base_quantity_by_unit_id(@unit_id, @quantity);
     --convert base quantity to whole number
     SET @base_quantity                  = CEILING(@backup_quantity);
@@ -44,7 +44,7 @@ BEGIN
         checkout_detail_id     bigint,
         audit_ts               DATETIMEOFFSET,
         value_date             date,
-        price                  decimal(30, 6),
+        price                  numeric(30, 6),
         transaction_type       national character varying(1000)
                     
     ) ;
@@ -122,7 +122,7 @@ BEGIN
 		SET @base_unit_cost = inventory.get_item_cost_price(@item_id, @base_unit_id) * @base_quantity;
 	END;
 
-    --APPLY decimal(30, 6) QUANTITY PROVISON
+    --APPLY numeric(30, 6) QUANTITY PROVISON
     SET @base_unit_cost = @base_unit_cost * (@backup_quantity / @base_quantity);
 
 

@@ -35,9 +35,9 @@ BEGIN
         unit_id                             integer,
         base_unit_id                        integer,
         unit_name                           national character varying(500),
-        quantity                            decimal(30, 6),
-        base_quantity                       decimal(30, 6),                
-        price                               decimal(30, 6)
+        quantity                            numeric(30, 6),
+        base_quantity                       numeric(30, 6),                
+        price                               numeric(30, 6)
     ); 
 
     BEGIN TRY

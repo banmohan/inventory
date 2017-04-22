@@ -1,13 +1,13 @@
 ﻿DROP FUNCTION IF EXISTS inventory.get_base_quantity_by_unit_name(text, numeric(30, 6));
 
 CREATE FUNCTION inventory.get_base_quantity_by_unit_name(text, numeric(30, 6))
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 STABLE
 AS
 $$
 	DECLARE _unit_id integer;
 	DECLARE _root_unit_id integer;
-	DECLARE _factor decimal(30, 6);
+	DECLARE _factor numeric(30, 6);
 BEGIN
     _unit_id := inventory.get_unit_id_by_unit_name($1);
     _root_unit_id = inventory.get_root_unit_id(_unit_id);

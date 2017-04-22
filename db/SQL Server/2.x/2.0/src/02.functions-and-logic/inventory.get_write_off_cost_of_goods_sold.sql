@@ -4,11 +4,11 @@ DROP FUNCTION inventory.get_write_off_cost_of_goods_sold;
 GO
 
 CREATE FUNCTION inventory.get_write_off_cost_of_goods_sold(@checkout_id bigint, @item_id integer, @unit_id integer, @quantity integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @factor decimal(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     SET @base_unit_id    = inventory.get_root_unit_id(@unit_id);
     SET @factor          = inventory.convert_unit(@unit_id, @base_unit_id);

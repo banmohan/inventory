@@ -4,12 +4,12 @@ DROP FUNCTION inventory.count_purchases;
 GO
 
 CREATE FUNCTION inventory.count_purchases(@item_id integer, @unit_id integer, @store_id integer)
-RETURNS decimal(30, 6)
+RETURNS numeric(30, 6)
 AS
 BEGIN
     DECLARE @base_unit_id integer;
-    DECLARE @debit decimal(30, 6);
-    DECLARE @factor decimal(30, 6);
+    DECLARE @debit numeric(30, 6);
+    DECLARE @factor numeric(30, 6);
 
     --Get the base item unit
     SELECT @base_unit_id= inventory.get_root_unit_id(inventory.items.unit_id) 

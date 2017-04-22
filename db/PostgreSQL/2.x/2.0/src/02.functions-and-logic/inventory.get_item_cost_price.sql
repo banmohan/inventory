@@ -7,7 +7,7 @@ AS
 $$
     DECLARE _price              public.money_strict2;
     DECLARE _costing_unit_id    integer;
-    DECLARE _factor             decimal(30, 6);
+    DECLARE _factor             numeric(30, 6);
   
 BEGIN    
     SELECT 
