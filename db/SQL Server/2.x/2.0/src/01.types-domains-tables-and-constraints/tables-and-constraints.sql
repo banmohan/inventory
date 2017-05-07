@@ -625,5 +625,18 @@ AS TABLE
 );
 
 
+CREATE TABLE inventory.serial_numbers
+(
+	serial_number_id					BIGINT IDENTITY NOT NULL PRIMARY KEY,
+	item_id								int NOT NULL REFERENCES inventory.items,
+	unit_id								int NOT NULL REFERENCES inventory.units,
+	store_id							int NOT NULL REFERENCES inventory.stores,
+	transaction_type					national character varying(2) NOT NULL,
+	checkout_id							bigint NOT NULL REFERENCES inventory.checkouts,
+	batch_number						national character varying(50) NOT NULL,
+	serial_number						national character varying(150) NOT NULL,
+	expiry_date							datetime,
+	deleted								bit NOT NULL DEFAULT(0)
+);
 
 GO
