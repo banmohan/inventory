@@ -615,3 +615,16 @@ AS
     price          		public.money_strict
 );
 
+CREATE TABLE inventory.serial_numbers
+(
+	serial_number_id					BIGSERIAL NOT NULL PRIMARY KEY,
+	item_id								int NOT NULL REFERENCES inventory.items,
+	unit_id								int NOT NULL REFERENCES inventory.units,
+	store_id							int NOT NULL REFERENCES inventory.stores,
+	transaction_type					national character varying(2) NOT NULL,
+	checkout_id							bigint NOT NULL REFERENCES inventory.checkouts,
+	batch_number						national character varying(50) NOT NULL,
+	serial_number						national character varying(150) NOT NULL,
+	expiry_date							DATE,
+	deleted								boolean NOT NULL DEFAULT(false)
+);

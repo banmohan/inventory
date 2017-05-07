@@ -626,6 +626,19 @@ AS TABLE
 );
 
 
+CREATE TABLE inventory.serial_numbers
+(
+	serial_number_id					BIGINT IDENTITY NOT NULL PRIMARY KEY,
+	item_id								int NOT NULL REFERENCES inventory.items,
+	unit_id								int NOT NULL REFERENCES inventory.units,
+	store_id							int NOT NULL REFERENCES inventory.stores,
+	transaction_type					national character varying(2) NOT NULL,
+	checkout_id							bigint NOT NULL REFERENCES inventory.checkouts,
+	batch_number						national character varying(50) NOT NULL,
+	serial_number						national character varying(150) NOT NULL,
+	expiry_date							datetime,
+	deleted								bit NOT NULL DEFAULT(0)
+);
 
 GO
 
@@ -3887,9 +3900,8 @@ BEGIN
 
         SET @transaction_master_id = SCOPE_IDENTITY();
 
-
-        INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
-        SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
+        INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id, taxable_total, discount, tax_rate, tax, nontaxable_total)
+        SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id, 1, 0, 0, 0, 0;
         SET @checkout_id                = SCOPE_IDENTITY();
 
         INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)
