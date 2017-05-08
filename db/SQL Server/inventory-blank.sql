@@ -3900,8 +3900,9 @@ BEGIN
 
         SET @transaction_master_id = SCOPE_IDENTITY();
 
-        INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id, taxable_total, discount, tax_rate, tax, nontaxable_total)
-        SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id, 1, 0, 0, 0, 0;
+
+        INSERT INTO inventory.checkouts(transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
+        SELECT @transaction_master_id, @book_name, @value_date, @book_date, @user_id, @office_id;
         SET @checkout_id                = SCOPE_IDENTITY();
 
         INSERT INTO inventory.checkout_details(checkout_id, value_date, book_date, transaction_type, store_id, item_id, quantity, unit_id, base_quantity, base_unit_id, price)

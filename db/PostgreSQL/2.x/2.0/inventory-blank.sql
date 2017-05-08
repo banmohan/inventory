@@ -3241,11 +3241,6 @@ $$
     DECLARE _transaction_master_id          bigint;
     DECLARE _checkout_id                    bigint;
     DECLARE _book_name                      text='Inventory Transfer';
-
-	DECLARE _taxable_total					numeric(30, 6);
-    DECLARE _tax_total                      public.money_strict2;
-	DECLARE _nontaxable_total				numeric(30, 6);
-    DECLARE _tax_account_id                 integer;
 BEGIN
     IF NOT finance.can_post_transaction(_login_id, _user_id, _office_id, _book_name, _value_date) THEN
         RETURN 0;
@@ -3264,8 +3259,8 @@ BEGIN
         quantity        public.decimal_strict,
         base_quantity   public.decimal_strict,                
         price           money_strict
-    )
-    ON COMMIT DROP;
+    ) 
+    ON COMMIT DROP; 
 
     INSERT INTO temp_stock_details(tran_type, store_name, item_code, unit_name, quantity, price)
     SELECT tran_type, store_name, item_code, unit_name, quantity, rate * quantity
@@ -3346,7 +3341,6 @@ BEGIN
         USING ERRCODE='P5001';
     END IF;
 
-
     INSERT INTO finance.transaction_master(transaction_master_id, transaction_counter, transaction_code, book, value_date, book_date, login_id, user_id, office_id, reference_number, statement_reference)
     SELECT
             nextval(pg_get_serial_sequence('finance.transaction_master', 'transaction_master_id')), 
@@ -3365,9 +3359,8 @@ BEGIN
     _transaction_master_id  := currval(pg_get_serial_sequence('finance.transaction_master', 'transaction_master_id'));
 
 
-    INSERT INTO inventory.checkouts(checkout_id, transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id, taxable_total, discount, tax_rate, tax, nontaxable_total)
-    SELECT nextval(pg_get_serial_sequence('inventory.checkouts', 'checkout_id')), _transaction_master_id, _book_name, _value_date, _book_date, _user_id, _office_id
-    , 1, 0, 0, 0, 0; --> Could not understand this one.
+    INSERT INTO inventory.checkouts(checkout_id, transaction_master_id, transaction_book, value_date, book_date, posted_by, office_id)
+    SELECT nextval(pg_get_serial_sequence('inventory.checkouts', 'checkout_id')), _transaction_master_id, _book_name, _value_date, _book_date, _user_id, _office_id;
 
     _checkout_id  := currval(pg_get_serial_sequence('inventory.checkouts', 'checkout_id'));
 

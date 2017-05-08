@@ -1,12 +1,7 @@
 ﻿var model = {
     Title: window.translate("InventoryTransfers"),
     JournalAdviceExpression: function (data) {
-        const tranId = data.TranId;
-        if (!tranId) {
-            return null;
-        }
-
-        return tranId;
+        return null;
     },
     DocumentExpression: function (data) {
         const documents = data.Documents;
