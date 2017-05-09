@@ -627,6 +627,7 @@ CREATE TABLE inventory.serial_numbers
 	batch_number						national character varying(50) NOT NULL,
 	serial_number						national character varying(150) NOT NULL,
 	expiry_date							DATE,
+	sales_transaction_id				bigint REFERENCES finance.transaction_master,
 	deleted								boolean NOT NULL DEFAULT(false)
 );
 
@@ -3722,6 +3723,34 @@ ON inventory.brands.brand_id = inventory.items.brand_id
 INNER JOIN inventory.units
 ON inventory.units.unit_id = inventory.items.unit_id
 WHERE NOT inventory.items.deleted;
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.views/inventory.serial_numbers_view.sql --<--<--
+
+DROP VIEW IF EXISTS inventory.serial_numbers_view;
+CREATE VIEW inventory.serial_numbers_view
+AS
+SELECT 
+    serial_numbers.serial_number_id,
+    serial_numbers.item_id,
+    items.item_name,
+    serial_numbers.unit_id,
+    units.unit_code,
+    serial_numbers.store_id,
+    stores.store_name,
+    serial_numbers.transaction_type,
+    serial_numbers.checkout_id,
+    checkouts.transaction_master_id,
+    serial_numbers.batch_number,
+    serial_numbers.serial_number,
+    serial_numbers.expiry_date
+FROM inventory.serial_numbers
+JOIN inventory.items ON serial_numbers.item_id = items.item_id
+JOIN inventory.units ON serial_numbers.unit_id = units.unit_id
+JOIN inventory.stores ON serial_numbers.store_id = stores.store_id
+JOIN inventory.checkouts ON serial_numbers.checkout_id = checkouts.checkout_id
+WHERE NOT serial_numbers.deleted;
+
+
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x/2.0/src/05.views/inventory.transaction_view.sql --<--<--
 DROP VIEW IF EXISTS inventory.transaction_view CASCADE;

@@ -219,6 +219,24 @@
     </div>
 </div>
 
+<div class="ui serial-number modal" style="padding:2em;">
+    <div class="ui big grey header">Serial Numbers#<span></span></div>
+    <div class="ui divider"></div>
+    <div id="AddSerialButton" class="ui blue small button">Add</div>
+    <table class="ui basic selectable table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Serial Number</th>
+                <th>Batch Number</th>
+                <th>Expiry Date</th>
+                <th>Unit</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
 <script>
 
@@ -596,7 +614,7 @@
 
             $("span.total.shipping").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 5)));
             $("input.total.shipping").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 5)));
-			
+
             $("span.total.discount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 6)));
             $("input.total.discount").text(window.getFormattedNumber(sumOfColumn($("#CheckoutGrid"), 6)));
 
@@ -645,8 +663,79 @@
 
 
         $("#DiscountInputText, #DiscountTypeSelect, #QuantityInputText, #PriceInputText, #LineDiscountInputText, #ShippingChargeInputText")
-            .off("keyup change blur").on("keyup change blur", function () {
+            .off("keyup change").on("keyup change", function () {
                 updateTotal();
+            });
+
+        $("#DiscountInputText, #DiscountTypeSelect, #QuantityInputText, #LineDiscountInputText, #ShippingChargeInputText")
+            .off("blur").on("blur", function () {
+                updateTotal();
+            });
+
+        $("#PriceInputText")
+            .off("blur").on("blur", function () {
+                updateTotal();
+
+                function getCell(data) {
+                    const cell = $("<td/>");
+                    if (data) {
+                        cell.append(data);
+                    }
+
+                    return cell;
+                }
+
+                //Serial Number
+                const storeId = parseInt2($("#StoreSelect").val() || 0);
+                const itemId = parseInt2($("#ItemSelect").val() || 0);
+                const unitId = parseInt2($("#UnitSelect").val() || 0);
+                var quantity = parseInt2($("#QuantityInputText").val() || 0);
+
+                var url = "/dashboard/sales/items/serial-numbers/{itemId}/{unitId}/{storeId}";
+                url = url.replace("{itemId}", itemId);
+                url = url.replace("{unitId}", unitId);
+                url = url.replace("{storeId}", storeId); 
+
+                const ajax = window.getAjaxRequest(url);
+                ajax.success(function (response) {
+                    if (response.length <= 0) {
+                        return;
+                    };
+
+                    const el = $(".serial-number.modal");
+                    el.find(".header .span").html(response[0].ItemName);
+
+                    const table = el.find("table tbody");
+                    table.html("");
+
+                    $.each(response, function (index, item) {
+                        const row = $("<tr/>");
+                        const checkbox = $(`<input type="checkbox" data-id="${item.SerialNumberId}"/>`);
+                        if (quantity > 0) {
+                            checkbox.attr("checked", "checked");
+                        }
+
+                        const actionCell = getCell(checkbox);
+                        actionCell.addClass("center aligned")
+                        row.append(actionCell);
+
+                        row.append(getCell(item.SerialNumber));
+                        row.append(getCell(item.BatchNumber));
+                        if (item.ExpiryDate) {
+                            var date = window.moment(new Date(item.ExpiryDate)).fromNow();
+                            row.append(getCell(date));
+                        } else {
+                            row.append(getCell());
+                        }
+                        row.append(getCell(item.UnitCode));
+
+                        quantity = quantity - 1;
+                        table.append(row);
+                    });
+
+                    el.modal({closable:false}).modal("show");
+                });
+
             });
 
         function setHeader() {
@@ -847,7 +936,12 @@
 
 
             row.append(getCell(model.ItemName, "item", model.ItemId));
-            row.append(getCell(model.Quantity));
+            const quantityCell = getCell(model.Quantity)
+            var serials = $("#QuantityInputText").attr("data-serials");
+            quantityCell.attr("data-serials", serials);
+            row.append(quantityCell);
+            $("#QuantityInputText").attr("data-serials", "");
+
             row.append(getCell(model.UnitName, "unit", model.UnitId));
             row.append(getCell(window.getFormattedNumber(model.Price)));
             row.append(getCell(window.getFormattedNumber(model.Amount)));
@@ -896,5 +990,22 @@
         }).disableSelection();
     };
 
+    $("#AddSerialButton").off("click").on("click", function () {
+        const modal = $(".serial-number.modal");
+        const items = modal.find("table tbody input:checked");
+
+        const input = $("#QuantityInputText");
+        var serialIds = [];
+
+        $.each(items, function () {
+            const item = $(this);
+            serialIds.push(item.attr("data-id"));
+        });
+
+        input.attr("data-serials", serialIds.toString());
+
+        modal.find("table tbody").html("");
+        modal.modal("hide");
+    });
 
 </script>

@@ -636,6 +636,7 @@ CREATE TABLE inventory.serial_numbers
 	batch_number						national character varying(50) NOT NULL,
 	serial_number						national character varying(150) NOT NULL,
 	expiry_date							datetime,
+	sales_transaction_id				bigint REFERENCES finance.transaction_master,
 	deleted								bit NOT NULL DEFAULT(0)
 );
 
