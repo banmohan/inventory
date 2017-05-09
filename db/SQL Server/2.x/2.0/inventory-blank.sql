@@ -637,6 +637,7 @@ CREATE TABLE inventory.serial_numbers
 	batch_number						national character varying(50) NOT NULL,
 	serial_number						national character varying(150) NOT NULL,
 	expiry_date							datetime,
+	sales_transaction_id				bigint REFERENCES finance.transaction_master,
 	deleted								bit NOT NULL DEFAULT(0)
 );
 
@@ -4322,6 +4323,40 @@ ON inventory.units.unit_id = inventory.items.unit_id
 WHERE inventory.items.deleted = 0;
 
 GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.views/inventory.serial_numbers_view.sql --<--<--
+IF OBJECT_ID('inventory.serial_numbers_view') IS NOT NULL
+DROP VIEW inventory.serial_numbers_view;
+GO
+
+CREATE VIEW inventory.serial_numbers_view
+AS
+SELECT 
+    serial_numbers.serial_number_id,
+    serial_numbers.item_id,
+    items.item_name,
+    serial_numbers.unit_id,
+    units.unit_code,
+    serial_numbers.store_id,
+    stores.store_name,
+    serial_numbers.transaction_type,
+    serial_numbers.checkout_id,
+    checkouts.transaction_master_id,
+    serial_numbers.batch_number,
+    serial_numbers.serial_number,
+    serial_numbers.expiry_date,
+	CASE WHEN COALESCE(transaction_master.verification_status_id, 0) > 0 THEN
+		serial_numbers.sales_transaction_id END AS sales_transaction_id
+FROM inventory.serial_numbers
+JOIN inventory.items ON serial_numbers.item_id = items.item_id
+JOIN inventory.units ON serial_numbers.unit_id = units.unit_id
+JOIN inventory.stores ON serial_numbers.store_id = stores.store_id
+JOIN inventory.checkouts ON serial_numbers.checkout_id = checkouts.checkout_id
+LEFT JOIN finance.transaction_master ON serial_numbers.sales_transaction_id = transaction_master.transaction_master_id
+WHERE serial_numbers.deleted = 0
+GO
+
 
 
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x/2.0/src/05.views/inventory.transaction_view.sql --<--<--
