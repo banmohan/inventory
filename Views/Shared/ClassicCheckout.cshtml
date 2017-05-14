@@ -400,7 +400,6 @@
             };
         };
 
-
         $("#UnitSelect").off("change").on("change", function () {
             const unitSelect = $("#UnitSelect");
             const itemSelect = $("#ItemSelect");
@@ -691,6 +690,11 @@
                 const unitId = parseInt2($("#UnitSelect").val() || 0);
                 var quantity = parseInt2($("#QuantityInputText").val() || 0);
 
+                var serials = $("#QuantityInputText").attr("data-serials");
+                if (serials) {
+                    serials = serials.split(",");
+                }
+
                 var url = "/dashboard/sales/items/serial-numbers/{itemId}/{unitId}/{storeId}";
                 url = url.replace("{itemId}", itemId);
                 url = url.replace("{unitId}", unitId);
@@ -711,7 +715,13 @@
                     $.each(response, function (index, item) {
                         const row = $("<tr/>");
                         const checkbox = $(`<input type="checkbox" data-id="${item.SerialNumberId}"/>`);
-                        if (quantity > 0) {
+                        if (!serials) {
+                            if (quantity > 0) {
+                                checkbox.attr("checked", "checked");
+                            }
+                        }
+
+                        if (serials && serials.includes(item.SerialNumberId.toString())) {
                             checkbox.attr("checked", "checked");
                         }
 
@@ -733,7 +743,7 @@
                         table.append(row);
                     });
 
-                    el.modal({closable:false}).modal("show");
+                    el.modal("show");
                 });
 
             });

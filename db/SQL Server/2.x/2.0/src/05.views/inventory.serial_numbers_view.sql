@@ -18,7 +18,7 @@ SELECT
     serial_numbers.batch_number,
     serial_numbers.serial_number,
     serial_numbers.expiry_date,
-	CASE WHEN COALESCE(transaction_master.verification_status_id, 0) > 0 THEN
+	CASE WHEN COALESCE(transaction_master.verification_status_id, 0) >= 0 THEN
 		serial_numbers.sales_transaction_id END AS sales_transaction_id
 FROM inventory.serial_numbers
 JOIN inventory.items ON serial_numbers.item_id = items.item_id
