@@ -393,11 +393,11 @@ CREATE TABLE inventory.checkouts
     transaction_timestamp                   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT(NOW()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
 
-	taxable_total							public.decimal_strict NOT NULL,
+	taxable_total							public.decimal_strict2 DEFAULT(0),
 	discount								public.decimal_strict2 DEFAULT(0),
-	tax_rate								public.decimal_strict2,
-	tax										public.decimal_strict2 NOT NULL,	
-	nontaxable_total						public.decimal_strict2 NOT NULL,
+	tax_rate								public.decimal_strict2 DEFAULT(0),
+	tax										public.decimal_strict2 DEFAULT(0),	
+	nontaxable_total						public.decimal_strict2 DEFAULT(0),
 	
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */

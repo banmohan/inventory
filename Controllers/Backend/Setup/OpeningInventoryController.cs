@@ -5,6 +5,8 @@ using Frapid.Dashboard;
 using MixERP.Inventory.Models;
 using MixERP.Inventory.ViewModels;
 using Frapid.Areas.CSRF;
+using System;
+using System.Net;
 
 namespace MixERP.Inventory.Controllers.Backend.Setup
 {
@@ -53,9 +55,15 @@ namespace MixERP.Inventory.Controllers.Backend.Setup
             model.UserId = meta.UserId;
             model.OfficeId = meta.OfficeId;
             model.LoginId = meta.LoginId;
-
-            long tranId = await DAL.Backend.Setup.OpeningInventories.PostAsync(this.Tenant, model).ConfigureAwait(true);
-            return this.Ok(tranId);
+            try
+            {
+                long tranId = await DAL.Backend.Setup.OpeningInventories.PostAsync(this.Tenant, model).ConfigureAwait(true);
+                return this.Ok(tranId);
+            }
+            catch (Exception ex)
+            {
+                return this.Failed(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
     }
 }
