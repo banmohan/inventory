@@ -51,7 +51,7 @@ BEGIN
     FROM inventory.items
     WHERE temp_closing_stock.item_id = inventory.items.item_id;
 
-    DELETE FROM temp_closing_stock WHERE maintain_inventory;
+    DELETE FROM temp_closing_stock WHERE NOT maintain_inventory;
 
 	UPDATE temp_closing_stock
 	SET unit_id = inventory.items.unit_id

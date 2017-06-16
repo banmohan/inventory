@@ -403,11 +403,11 @@ CREATE TABLE inventory.checkouts
     transaction_master_id                   bigint NOT NULL REFERENCES finance.transaction_master,
     transaction_timestamp                   DATETIMEOFFSET NOT NULL DEFAULT(GETUTCDATE()),
     transaction_book                        national character varying(100) NOT NULL, --SALES, PURCHASE, INVENTORY TRANSFER, DAMAGE
-	taxable_total							numeric(30, 6) NOT NULL,
+	taxable_total							numeric(30, 6) DEFAULT(0),
 	discount								numeric(30, 6) DEFAULT(0),
-	tax_rate								numeric(30, 6),
-	tax										numeric(30, 6) NOT NULL,	
-	nontaxable_total						numeric(30, 6) NOT NULL,
+	tax_rate								numeric(30, 6) DEFAULT(0),
+	tax										numeric(30, 6) DEFAULT(0),	
+	nontaxable_total						numeric(30, 6) DEFAULT(0),
     posted_by                               integer NOT NULL REFERENCES account.users,
     /*LOOKUP FIELDS, ONLY TO SPEED UP THE QUERY */
     office_id                               integer NOT NULL REFERENCES core.offices,
