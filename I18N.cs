@@ -29,684 +29,9 @@ namespace MixERP.Inventory
 		public static string Inventory => I18NResource.GetString(ResourceDirectory, "Inventory");
 
 		/// <summary>
-		///Is Taxed
-		/// </summary>
-		public static string IsTaxed => I18NResource.GetString(ResourceDirectory, "IsTaxed");
-
-		/// <summary>
-		///Cost Of Goods Sold
-		/// </summary>
-		public static string CostOfGoodsSold => I18NResource.GetString(ResourceDirectory, "CostOfGoodsSold");
-
-		/// <summary>
-		///Factory Address
-		/// </summary>
-		public static string FactoryAddress => I18NResource.GetString(ResourceDirectory, "FactoryAddress");
-
-		/// <summary>
-		///Status
-		/// </summary>
-		public static string Status => I18NResource.GetString(ResourceDirectory, "Status");
-
-		/// <summary>
-		///Cell
-		/// </summary>
-		public static string Cell => I18NResource.GetString(ResourceDirectory, "Cell");
-
-		/// <summary>
-		///Verified By User Id
-		/// </summary>
-		public static string VerifiedByUserId => I18NResource.GetString(ResourceDirectory, "VerifiedByUserId");
-
-		/// <summary>
-		///Nontaxable Total
-		/// </summary>
-		public static string NontaxableTotal => I18NResource.GetString(ResourceDirectory, "NontaxableTotal");
-
-		/// <summary>
-		///Purchase Discount Account Id
-		/// </summary>
-		public static string PurchaseDiscountAccountId => I18NResource.GetString(ResourceDirectory, "PurchaseDiscountAccountId");
-
-		/// <summary>
-		///Exclude From Purchase
-		/// </summary>
-		public static string ExcludeFromPurchase => I18NResource.GetString(ResourceDirectory, "ExcludeFromPurchase");
-
-		/// <summary>
-		///Tax Rate
-		/// </summary>
-		public static string TaxRate => I18NResource.GetString(ResourceDirectory, "TaxRate");
-
-		/// <summary>
-		///Pan Number
-		/// </summary>
-		public static string PanNumber => I18NResource.GetString(ResourceDirectory, "PanNumber");
-
-		/// <summary>
-		///Company City
-		/// </summary>
-		public static string CompanyCity => I18NResource.GetString(ResourceDirectory, "CompanyCity");
-
-		/// <summary>
-		///Selling Price Includes Tax
-		/// </summary>
-		public static string SellingPriceIncludesTax => I18NResource.GetString(ResourceDirectory, "SellingPriceIncludesTax");
-
-		/// <summary>
-		///Item Type Code
-		/// </summary>
-		public static string ItemTypeCode => I18NResource.GetString(ResourceDirectory, "ItemTypeCode");
-
-		/// <summary>
-		///Is Variant Of
-		/// </summary>
-		public static string IsVariantOf => I18NResource.GetString(ResourceDirectory, "IsVariantOf");
-
-		/// <summary>
-		///Office
-		/// </summary>
-		public static string Office => I18NResource.GetString(ResourceDirectory, "Office");
-
-		/// <summary>
-		///Discount
-		/// </summary>
-		public static string Discount => I18NResource.GetString(ResourceDirectory, "Discount");
-
-		/// <summary>
-		///Is Component
-		/// </summary>
-		public static string IsComponent => I18NResource.GetString(ResourceDirectory, "IsComponent");
-
-		/// <summary>
-		///Customer
-		/// </summary>
-		public static string Customer => I18NResource.GetString(ResourceDirectory, "Customer");
-
-		/// <summary>
-		///Transaction Type
-		/// </summary>
-		public static string TransactionType => I18NResource.GetString(ResourceDirectory, "TransactionType");
-
-		/// <summary>
-		///Expiry Date
-		/// </summary>
-		public static string ExpiryDate => I18NResource.GetString(ResourceDirectory, "ExpiryDate");
-
-		/// <summary>
-		///Allow Purchase
-		/// </summary>
-		public static string AllowPurchase => I18NResource.GetString(ResourceDirectory, "AllowPurchase");
-
-		/// <summary>
-		///Received
-		/// </summary>
-		public static string Received => I18NResource.GetString(ResourceDirectory, "Received");
-
-		/// <summary>
-		///Email
-		/// </summary>
-		public static string Email => I18NResource.GetString(ResourceDirectory, "Email");
-
-		/// <summary>
-		///Cost Price Includes Tax
-		/// </summary>
-		public static string CostPriceIncludesTax => I18NResource.GetString(ResourceDirectory, "CostPriceIncludesTax");
-
-		/// <summary>
-		///Value
-		/// </summary>
-		public static string Value => I18NResource.GetString(ResourceDirectory, "Value");
-
-		/// <summary>
-		///Delivery Memo
-		/// </summary>
-		public static string DeliveryMemo => I18NResource.GetString(ResourceDirectory, "DeliveryMemo");
-
-		/// <summary>
-		///Store Code
-		/// </summary>
-		public static string StoreCode => I18NResource.GetString(ResourceDirectory, "StoreCode");
-
-		/// <summary>
-		///Customer Type Code
-		/// </summary>
-		public static string CustomerTypeCode => I18NResource.GetString(ResourceDirectory, "CustomerTypeCode");
-
-		/// <summary>
-		///Shipper Code
-		/// </summary>
-		public static string ShipperCode => I18NResource.GetString(ResourceDirectory, "ShipperCode");
-
-		/// <summary>
-		///Supplier Type Id
-		/// </summary>
-		public static string SupplierTypeId => I18NResource.GetString(ResourceDirectory, "SupplierTypeId");
-
-		/// <summary>
-		///Verification Reason
-		/// </summary>
-		public static string VerificationReason => I18NResource.GetString(ResourceDirectory, "VerificationReason");
-
-		/// <summary>
-		///Shipper Id
-		/// </summary>
-		public static string ShipperId => I18NResource.GetString(ResourceDirectory, "ShipperId");
-
-		/// <summary>
-		///Base Unit Id
-		/// </summary>
-		public static string BaseUnitId => I18NResource.GetString(ResourceDirectory, "BaseUnitId");
-
-		/// <summary>
-		///Company Street
-		/// </summary>
-		public static string CompanyStreet => I18NResource.GetString(ResourceDirectory, "CompanyStreet");
-
-		/// <summary>
-		///Attribute Code
-		/// </summary>
-		public static string AttributeCode => I18NResource.GetString(ResourceDirectory, "AttributeCode");
-
-		/// <summary>
-		///Reason
-		/// </summary>
-		public static string Reason => I18NResource.GetString(ResourceDirectory, "Reason");
-
-		/// <summary>
-		///Purchase Account Id
-		/// </summary>
-		public static string PurchaseAccountId => I18NResource.GetString(ResourceDirectory, "PurchaseAccountId");
-
-		/// <summary>
-		///Brand Id
-		/// </summary>
-		public static string BrandId => I18NResource.GetString(ResourceDirectory, "BrandId");
-
-		/// <summary>
-		///Allow Multiple Opening Inventory
-		/// </summary>
-		public static string AllowMultipleOpeningInventory => I18NResource.GetString(ResourceDirectory, "AllowMultipleOpeningInventory");
-
-		/// <summary>
-		///Photo
-		/// </summary>
-		public static string Photo => I18NResource.GetString(ResourceDirectory, "Photo");
-
-		/// <summary>
-		///Book
-		/// </summary>
-		public static string Book => I18NResource.GetString(ResourceDirectory, "Book");
-
-		/// <summary>
-		///Hot Item
-		/// </summary>
-		public static string HotItem => I18NResource.GetString(ResourceDirectory, "HotItem");
-
-		/// <summary>
-		///Received On
-		/// </summary>
-		public static string ReceivedOn => I18NResource.GetString(ResourceDirectory, "ReceivedOn");
-
-		/// <summary>
-		///Cost Center Id
-		/// </summary>
-		public static string CostCenterId => I18NResource.GetString(ResourceDirectory, "CostCenterId");
-
-		/// <summary>
-		///Reorder Level
-		/// </summary>
-		public static string ReorderLevel => I18NResource.GetString(ResourceDirectory, "ReorderLevel");
-
-		/// <summary>
-		///Item Code
-		/// </summary>
-		public static string ItemCode => I18NResource.GetString(ResourceDirectory, "ItemCode");
-
-		/// <summary>
-		///Reorder Unit Id
-		/// </summary>
-		public static string ReorderUnitId => I18NResource.GetString(ResourceDirectory, "ReorderUnitId");
-
-		/// <summary>
-		///Transaction Counter
-		/// </summary>
-		public static string TransactionCounter => I18NResource.GetString(ResourceDirectory, "TransactionCounter");
-
-		/// <summary>
-		///Attribute Id
-		/// </summary>
-		public static string AttributeId => I18NResource.GetString(ResourceDirectory, "AttributeId");
-
-		/// <summary>
-		///State
-		/// </summary>
-		public static string State => I18NResource.GetString(ResourceDirectory, "State");
-
-		/// <summary>
-		///Counter Name
-		/// </summary>
-		public static string CounterName => I18NResource.GetString(ResourceDirectory, "CounterName");
-
-		/// <summary>
-		///Authorized
-		/// </summary>
-		public static string Authorized => I18NResource.GetString(ResourceDirectory, "Authorized");
-
-		/// <summary>
-		///Default Cash Repository Id
-		/// </summary>
-		public static string DefaultCashRepositoryId => I18NResource.GetString(ResourceDirectory, "DefaultCashRepositoryId");
-
-		/// <summary>
-		///Selling Price
-		/// </summary>
-		public static string SellingPrice => I18NResource.GetString(ResourceDirectory, "SellingPrice");
-
-		/// <summary>
-		///Exclude From Sales
-		/// </summary>
-		public static string ExcludeFromSales => I18NResource.GetString(ResourceDirectory, "ExcludeFromSales");
-
-		/// <summary>
-		///Batch Number
-		/// </summary>
-		public static string BatchNumber => I18NResource.GetString(ResourceDirectory, "BatchNumber");
-
-		/// <summary>
-		///Variant Id
-		/// </summary>
-		public static string VariantId => I18NResource.GetString(ResourceDirectory, "VariantId");
-
-		/// <summary>
-		///Allow Sales
-		/// </summary>
-		public static string AllowSales => I18NResource.GetString(ResourceDirectory, "AllowSales");
-
-		/// <summary>
-		///Unit Id
-		/// </summary>
-		public static string UnitId => I18NResource.GetString(ResourceDirectory, "UnitId");
-
-		/// <summary>
-		///Contact Address Line 1
-		/// </summary>
-		public static string ContactAddressLine1 => I18NResource.GetString(ResourceDirectory, "ContactAddressLine1");
-
-		/// <summary>
-		///Statement Reference
-		/// </summary>
-		public static string StatementReference => I18NResource.GetString(ResourceDirectory, "StatementReference");
-
-		/// <summary>
-		///Taxable Total
-		/// </summary>
-		public static string TaxableTotal => I18NResource.GetString(ResourceDirectory, "TaxableTotal");
-
-		/// <summary>
-		///City
-		/// </summary>
-		public static string City => I18NResource.GetString(ResourceDirectory, "City");
-
-		/// <summary>
-		///Currency Code
-		/// </summary>
-		public static string CurrencyCode => I18NResource.GetString(ResourceDirectory, "CurrencyCode");
-
-		/// <summary>
-		///Company Address Line 2
-		/// </summary>
-		public static string CompanyAddressLine2 => I18NResource.GetString(ResourceDirectory, "CompanyAddressLine2");
-
-		/// <summary>
-		///Customer Code
-		/// </summary>
-		public static string CustomerCode => I18NResource.GetString(ResourceDirectory, "CustomerCode");
-
-		/// <summary>
-		///Base Quantity
-		/// </summary>
-		public static string BaseQuantity => I18NResource.GetString(ResourceDirectory, "BaseQuantity");
-
-		/// <summary>
-		///Compound Unit Id
-		/// </summary>
-		public static string CompoundUnitId => I18NResource.GetString(ResourceDirectory, "CompoundUnitId");
-
-		/// <summary>
-		///Customer Type
-		/// </summary>
-		public static string CustomerType => I18NResource.GetString(ResourceDirectory, "CustomerType");
-
-		/// <summary>
-		///Contact Po Box
-		/// </summary>
-		public static string ContactPoBox => I18NResource.GetString(ResourceDirectory, "ContactPoBox");
-
-		/// <summary>
-		///Preferred Supplier Id
-		/// </summary>
-		public static string PreferredSupplierId => I18NResource.GetString(ResourceDirectory, "PreferredSupplierId");
-
-		/// <summary>
-		///Deleted
-		/// </summary>
-		public static string Deleted => I18NResource.GetString(ResourceDirectory, "Deleted");
-
-		/// <summary>
-		///Delivered
-		/// </summary>
-		public static string Delivered => I18NResource.GetString(ResourceDirectory, "Delivered");
-
-		/// <summary>
-		///Cancellation Reason
-		/// </summary>
-		public static string CancellationReason => I18NResource.GetString(ResourceDirectory, "CancellationReason");
-
-		/// <summary>
-		///Item Group Id
-		/// </summary>
-		public static string ItemGroupId => I18NResource.GetString(ResourceDirectory, "ItemGroupId");
-
-		/// <summary>
-		///Contact Address Line 2
-		/// </summary>
-		public static string ContactAddressLine2 => I18NResource.GetString(ResourceDirectory, "ContactAddressLine2");
-
-		/// <summary>
-		///Brand Name
-		/// </summary>
-		public static string BrandName => I18NResource.GetString(ResourceDirectory, "BrandName");
-
-		/// <summary>
-		///Contact Last Name
-		/// </summary>
-		public static string ContactLastName => I18NResource.GetString(ResourceDirectory, "ContactLastName");
-
-		/// <summary>
-		///Checkout Id
-		/// </summary>
-		public static string CheckoutId => I18NResource.GetString(ResourceDirectory, "CheckoutId");
-
-		/// <summary>
-		///Contact Phone
-		/// </summary>
-		public static string ContactPhone => I18NResource.GetString(ResourceDirectory, "ContactPhone");
-
-		/// <summary>
-		///Tran Id
-		/// </summary>
-		public static string TranId => I18NResource.GetString(ResourceDirectory, "TranId");
-
-		/// <summary>
-		///Base Unit Name
-		/// </summary>
-		public static string BaseUnitName => I18NResource.GetString(ResourceDirectory, "BaseUnitName");
-
-		/// <summary>
-		///Company Name
-		/// </summary>
-		public static string CompanyName => I18NResource.GetString(ResourceDirectory, "CompanyName");
-
-		/// <summary>
-		///Valid Units
-		/// </summary>
-		public static string ValidUnits => I18NResource.GetString(ResourceDirectory, "ValidUnits");
-
-		/// <summary>
-		///Default Discount Account Id
-		/// </summary>
-		public static string DefaultDiscountAccountId => I18NResource.GetString(ResourceDirectory, "DefaultDiscountAccountId");
-
-		/// <summary>
-		///Supplier Type Code
-		/// </summary>
-		public static string SupplierTypeCode => I18NResource.GetString(ResourceDirectory, "SupplierTypeCode");
-
-		/// <summary>
-		///Transaction Timestamp
-		/// </summary>
-		public static string TransactionTimestamp => I18NResource.GetString(ResourceDirectory, "TransactionTimestamp");
-
-		/// <summary>
-		///Destination Store Id
-		/// </summary>
-		public static string DestinationStoreId => I18NResource.GetString(ResourceDirectory, "DestinationStoreId");
-
-		/// <summary>
-		///Fax
-		/// </summary>
-		public static string Fax => I18NResource.GetString(ResourceDirectory, "Fax");
-
-		/// <summary>
-		///Unit Name
-		/// </summary>
-		public static string UnitName => I18NResource.GetString(ResourceDirectory, "UnitName");
-
-		/// <summary>
-		///Authorized On
-		/// </summary>
-		public static string AuthorizedOn => I18NResource.GetString(ResourceDirectory, "AuthorizedOn");
-
-		/// <summary>
-		///Rejected On
-		/// </summary>
-		public static string RejectedOn => I18NResource.GetString(ResourceDirectory, "RejectedOn");
-
-		/// <summary>
-		///Country
-		/// </summary>
-		public static string Country => I18NResource.GetString(ResourceDirectory, "Country");
-
-		/// <summary>
-		///Authorization Reason
-		/// </summary>
-		public static string AuthorizationReason => I18NResource.GetString(ResourceDirectory, "AuthorizationReason");
-
-		/// <summary>
-		///Compare Unit Name
-		/// </summary>
-		public static string CompareUnitName => I18NResource.GetString(ResourceDirectory, "CompareUnitName");
-
-		/// <summary>
-		///Company Fax
-		/// </summary>
-		public static string CompanyFax => I18NResource.GetString(ResourceDirectory, "CompanyFax");
-
-		/// <summary>
-		///Logo
-		/// </summary>
-		public static string Logo => I18NResource.GetString(ResourceDirectory, "Logo");
-
-		/// <summary>
-		///Store Name
-		/// </summary>
-		public static string StoreName => I18NResource.GetString(ResourceDirectory, "StoreName");
-
-		/// <summary>
-		///Shipping Charge
-		/// </summary>
-		public static string ShippingCharge => I18NResource.GetString(ResourceDirectory, "ShippingCharge");
-
-		/// <summary>
-		///Is Taxable Item
-		/// </summary>
-		public static string IsTaxableItem => I18NResource.GetString(ResourceDirectory, "IsTaxableItem");
-
-		/// <summary>
-		///Received By User Id
-		/// </summary>
-		public static string ReceivedByUserId => I18NResource.GetString(ResourceDirectory, "ReceivedByUserId");
-
-		/// <summary>
-		///Street
-		/// </summary>
-		public static string Street => I18NResource.GetString(ResourceDirectory, "Street");
-
-		/// <summary>
-		///Company Country
-		/// </summary>
-		public static string CompanyCountry => I18NResource.GetString(ResourceDirectory, "CompanyCountry");
-
-		/// <summary>
-		///Sales Discount Account Id
-		/// </summary>
-		public static string SalesDiscountAccountId => I18NResource.GetString(ResourceDirectory, "SalesDiscountAccountId");
-
-		/// <summary>
-		///Contact State
-		/// </summary>
-		public static string ContactState => I18NResource.GetString(ResourceDirectory, "ContactState");
-
-		/// <summary>
-		///Maintain Inventory
-		/// </summary>
-		public static string MaintainInventory => I18NResource.GetString(ResourceDirectory, "MaintainInventory");
-
-		/// <summary>
-		///Cancelled
-		/// </summary>
-		public static string Cancelled => I18NResource.GetString(ResourceDirectory, "Cancelled");
-
-		/// <summary>
-		///Supplier Id
-		/// </summary>
-		public static string SupplierId => I18NResource.GetString(ResourceDirectory, "SupplierId");
-
-		/// <summary>
-		///Item Group Name
-		/// </summary>
-		public static string ItemGroupName => I18NResource.GetString(ResourceDirectory, "ItemGroupName");
-
-		/// <summary>
-		///Delivery Date
-		/// </summary>
-		public static string DeliveryDate => I18NResource.GetString(ResourceDirectory, "DeliveryDate");
-
-		/// <summary>
-		///Audit Ts
-		/// </summary>
-		public static string AuditTs => I18NResource.GetString(ResourceDirectory, "AuditTs");
-
-		/// <summary>
-		///Address Line 2
-		/// </summary>
-		public static string AddressLine2 => I18NResource.GetString(ResourceDirectory, "AddressLine2");
-
-		/// <summary>
-		///Customer Id
-		/// </summary>
-		public static string CustomerId => I18NResource.GetString(ResourceDirectory, "CustomerId");
-
-		/// <summary>
-		///Store Id
-		/// </summary>
-		public static string StoreId => I18NResource.GetString(ResourceDirectory, "StoreId");
-
-		/// <summary>
-		///Value Date
-		/// </summary>
-		public static string ValueDate => I18NResource.GetString(ResourceDirectory, "ValueDate");
-
-		/// <summary>
-		///Supplier Code
-		/// </summary>
-		public static string SupplierCode => I18NResource.GetString(ResourceDirectory, "SupplierCode");
-
-		/// <summary>
-		///Default Account Id For Checks
-		/// </summary>
-		public static string DefaultAccountIdForChecks => I18NResource.GetString(ResourceDirectory, "DefaultAccountIdForChecks");
-
-		/// <summary>
-		///Item Name
-		/// </summary>
-		public static string ItemName => I18NResource.GetString(ResourceDirectory, "ItemName");
-
-		/// <summary>
-		///Contact Zip Code
-		/// </summary>
-		public static string ContactZipCode => I18NResource.GetString(ResourceDirectory, "ContactZipCode");
-
-		/// <summary>
-		///Inventory Account Id
-		/// </summary>
-		public static string InventoryAccountId => I18NResource.GetString(ResourceDirectory, "InventoryAccountId");
-
-		/// <summary>
-		///Transaction Book
-		/// </summary>
-		public static string TransactionBook => I18NResource.GetString(ResourceDirectory, "TransactionBook");
-
-		/// <summary>
-		///Inventory Transfer Delivery Id
-		/// </summary>
-		public static string InventoryTransferDeliveryId => I18NResource.GetString(ResourceDirectory, "InventoryTransferDeliveryId");
-
-		/// <summary>
-		///Counter Id
-		/// </summary>
-		public static string CounterId => I18NResource.GetString(ResourceDirectory, "CounterId");
-
-		/// <summary>
-		///Item Type Name
-		/// </summary>
-		public static string ItemTypeName => I18NResource.GetString(ResourceDirectory, "ItemTypeName");
-
-		/// <summary>
-		///Delivered By User Id
-		/// </summary>
-		public static string DeliveredByUserId => I18NResource.GetString(ResourceDirectory, "DeliveredByUserId");
-
-		/// <summary>
-		///Transaction Master Id
-		/// </summary>
-		public static string TransactionMasterId => I18NResource.GetString(ResourceDirectory, "TransactionMasterId");
-
-		/// <summary>
-		///Last Verified On
-		/// </summary>
-		public static string LastVerifiedOn => I18NResource.GetString(ResourceDirectory, "LastVerifiedOn");
-
-		/// <summary>
-		///Inventory Transfer Request Id
-		/// </summary>
-		public static string InventoryTransferRequestId => I18NResource.GetString(ResourceDirectory, "InventoryTransferRequestId");
-
-		/// <summary>
 		///Account Id
 		/// </summary>
 		public static string AccountId => I18NResource.GetString(ResourceDirectory, "AccountId");
-
-		/// <summary>
-		///Po Box
-		/// </summary>
-		public static string PoBox => I18NResource.GetString(ResourceDirectory, "PoBox");
-
-		/// <summary>
-		///Sales Account Id
-		/// </summary>
-		public static string SalesAccountId => I18NResource.GetString(ResourceDirectory, "SalesAccountId");
-
-		/// <summary>
-		///Rejected By User Id
-		/// </summary>
-		public static string RejectedByUserId => I18NResource.GetString(ResourceDirectory, "RejectedByUserId");
-
-		/// <summary>
-		///Request Date
-		/// </summary>
-		public static string RequestDate => I18NResource.GetString(ResourceDirectory, "RequestDate");
-
-		/// <summary>
-		///User Id
-		/// </summary>
-		public static string UserId => I18NResource.GetString(ResourceDirectory, "UserId");
-
-		/// <summary>
-		///Rejected
-		/// </summary>
-		public static string Rejected => I18NResource.GetString(ResourceDirectory, "Rejected");
 
 		/// <summary>
 		///Address Line 1
@@ -714,169 +39,89 @@ namespace MixERP.Inventory
 		public static string AddressLine1 => I18NResource.GetString(ResourceDirectory, "AddressLine1");
 
 		/// <summary>
-		///Customer Type Name
+		///Address Line 2
 		/// </summary>
-		public static string CustomerTypeName => I18NResource.GetString(ResourceDirectory, "CustomerTypeName");
+		public static string AddressLine2 => I18NResource.GetString(ResourceDirectory, "AddressLine2");
 
 		/// <summary>
-		///Tax
+		///Allow Multiple Opening Inventory
 		/// </summary>
-		public static string Tax => I18NResource.GetString(ResourceDirectory, "Tax");
+		public static string AllowMultipleOpeningInventory => I18NResource.GetString(ResourceDirectory, "AllowMultipleOpeningInventory");
 
 		/// <summary>
-		///Supplier Name
+		///Allow Purchase
 		/// </summary>
-		public static string SupplierName => I18NResource.GetString(ResourceDirectory, "SupplierName");
+		public static string AllowPurchase => I18NResource.GetString(ResourceDirectory, "AllowPurchase");
 
 		/// <summary>
-		///Cost Of Goods Sold Account Id
+		///Allow Sales
 		/// </summary>
-		public static string CostOfGoodsSoldAccountId => I18NResource.GetString(ResourceDirectory, "CostOfGoodsSoldAccountId");
+		public static string AllowSales => I18NResource.GetString(ResourceDirectory, "AllowSales");
 
 		/// <summary>
-		///Store Type Name
+		///Amount
 		/// </summary>
-		public static string StoreTypeName => I18NResource.GetString(ResourceDirectory, "StoreTypeName");
+		public static string Amount => I18NResource.GetString(ResourceDirectory, "Amount");
 
 		/// <summary>
-		///Delivered On
+		///Attribute Code
 		/// </summary>
-		public static string DeliveredOn => I18NResource.GetString(ResourceDirectory, "DeliveredOn");
+		public static string AttributeCode => I18NResource.GetString(ResourceDirectory, "AttributeCode");
 
 		/// <summary>
-		///Supplier Type Name
+		///Attribute Id
 		/// </summary>
-		public static string SupplierTypeName => I18NResource.GetString(ResourceDirectory, "SupplierTypeName");
+		public static string AttributeId => I18NResource.GetString(ResourceDirectory, "AttributeId");
 
 		/// <summary>
-		///Use Pos Checkout Screen
+		///Attribute Name
 		/// </summary>
-		public static string UsePosCheckoutScreen => I18NResource.GetString(ResourceDirectory, "UsePosCheckoutScreen");
+		public static string AttributeName => I18NResource.GetString(ResourceDirectory, "AttributeName");
 
 		/// <summary>
-		///Variant Code
+		///Attribute Value
 		/// </summary>
-		public static string VariantCode => I18NResource.GetString(ResourceDirectory, "VariantCode");
+		public static string AttributeValue => I18NResource.GetString(ResourceDirectory, "AttributeValue");
 
 		/// <summary>
-		///Cogs Calculation Method
+		///Audit Ts
 		/// </summary>
-		public static string CogsCalculationMethod => I18NResource.GetString(ResourceDirectory, "CogsCalculationMethod");
+		public static string AuditTs => I18NResource.GetString(ResourceDirectory, "AuditTs");
 
 		/// <summary>
-		///Contact Person
+		///Audit User Id
 		/// </summary>
-		public static string ContactPerson => I18NResource.GetString(ResourceDirectory, "ContactPerson");
+		public static string AuditUserId => I18NResource.GetString(ResourceDirectory, "AuditUserId");
 
 		/// <summary>
-		///Contact Country
+		///Authorization Reason
 		/// </summary>
-		public static string ContactCountry => I18NResource.GetString(ResourceDirectory, "ContactCountry");
+		public static string AuthorizationReason => I18NResource.GetString(ResourceDirectory, "AuthorizationReason");
 
 		/// <summary>
-		///Variant Name
+		///Authorized
 		/// </summary>
-		public static string VariantName => I18NResource.GetString(ResourceDirectory, "VariantName");
+		public static string Authorized => I18NResource.GetString(ResourceDirectory, "Authorized");
 
 		/// <summary>
-		///Contact Street
+		///Authorized By User Id
 		/// </summary>
-		public static string ContactStreet => I18NResource.GetString(ResourceDirectory, "ContactStreet");
+		public static string AuthorizedByUserId => I18NResource.GetString(ResourceDirectory, "AuthorizedByUserId");
 
 		/// <summary>
-		///Price
+		///Authorized On
 		/// </summary>
-		public static string Price => I18NResource.GetString(ResourceDirectory, "Price");
+		public static string AuthorizedOn => I18NResource.GetString(ResourceDirectory, "AuthorizedOn");
 
 		/// <summary>
-		///Customer Type Id
+		///Barcode
 		/// </summary>
-		public static string CustomerTypeId => I18NResource.GetString(ResourceDirectory, "CustomerTypeId");
+		public static string Barcode => I18NResource.GetString(ResourceDirectory, "Barcode");
 
 		/// <summary>
-		///Posted By
+		///Base Quantity
 		/// </summary>
-		public static string PostedBy => I18NResource.GetString(ResourceDirectory, "PostedBy");
-
-		/// <summary>
-		///Serial Number Id
-		/// </summary>
-		public static string SerialNumberId => I18NResource.GetString(ResourceDirectory, "SerialNumberId");
-
-		/// <summary>
-		///Company Address Line 1
-		/// </summary>
-		public static string CompanyAddressLine1 => I18NResource.GetString(ResourceDirectory, "CompanyAddressLine1");
-
-		/// <summary>
-		///Serial Number
-		/// </summary>
-		public static string SerialNumber => I18NResource.GetString(ResourceDirectory, "SerialNumber");
-
-		/// <summary>
-		///Parent Item Group Id
-		/// </summary>
-		public static string ParentItemGroupId => I18NResource.GetString(ResourceDirectory, "ParentItemGroupId");
-
-		/// <summary>
-		///Brand Code
-		/// </summary>
-		public static string BrandCode => I18NResource.GetString(ResourceDirectory, "BrandCode");
-
-		/// <summary>
-		///Default Cash Account Id
-		/// </summary>
-		public static string DefaultCashAccountId => I18NResource.GetString(ResourceDirectory, "DefaultCashAccountId");
-
-		/// <summary>
-		///Inventory System
-		/// </summary>
-		public static string InventorySystem => I18NResource.GetString(ResourceDirectory, "InventorySystem");
-
-		/// <summary>
-		///Receipt Memo
-		/// </summary>
-		public static string ReceiptMemo => I18NResource.GetString(ResourceDirectory, "ReceiptMemo");
-
-		/// <summary>
-		///Shipper Name
-		/// </summary>
-		public static string ShipperName => I18NResource.GetString(ResourceDirectory, "ShipperName");
-
-		/// <summary>
-		///Transaction Ts
-		/// </summary>
-		public static string TransactionTs => I18NResource.GetString(ResourceDirectory, "TransactionTs");
-
-		/// <summary>
-		///Inventory Transfer Delivery Detail Id
-		/// </summary>
-		public static string InventoryTransferDeliveryDetailId => I18NResource.GetString(ResourceDirectory, "InventoryTransferDeliveryDetailId");
-
-		/// <summary>
-		///Contact Phone Numbers
-		/// </summary>
-		public static string ContactPhoneNumbers => I18NResource.GetString(ResourceDirectory, "ContactPhoneNumbers");
-
-		/// <summary>
-		///Compare Unit Id
-		/// </summary>
-		public static string CompareUnitId => I18NResource.GetString(ResourceDirectory, "CompareUnitId");
-
-		/// <summary>
-		///Shipping Expense Account Id
-		/// </summary>
-		public static string ShippingExpenseAccountId => I18NResource.GetString(ResourceDirectory, "ShippingExpenseAccountId");
-
-		/// <summary>
-		///Item Type Id
-		/// </summary>
-		public static string ItemTypeId => I18NResource.GetString(ResourceDirectory, "ItemTypeId");
-
-		/// <summary>
-		///Cst Number
-		/// </summary>
-		public static string CstNumber => I18NResource.GetString(ResourceDirectory, "CstNumber");
+		public static string BaseQuantity => I18NResource.GetString(ResourceDirectory, "BaseQuantity");
 
 		/// <summary>
 		///Base Unit Code
@@ -884,24 +129,24 @@ namespace MixERP.Inventory
 		public static string BaseUnitCode => I18NResource.GetString(ResourceDirectory, "BaseUnitCode");
 
 		/// <summary>
-		///Verification Status Id
+		///Base Unit Id
 		/// </summary>
-		public static string VerificationStatusId => I18NResource.GetString(ResourceDirectory, "VerificationStatusId");
+		public static string BaseUnitId => I18NResource.GetString(ResourceDirectory, "BaseUnitId");
 
 		/// <summary>
-		///Office Id
+		///Base Unit Name
 		/// </summary>
-		public static string OfficeId => I18NResource.GetString(ResourceDirectory, "OfficeId");
+		public static string BaseUnitName => I18NResource.GetString(ResourceDirectory, "BaseUnitName");
 
 		/// <summary>
-		///Discount Rate
+		///Batch Number
 		/// </summary>
-		public static string DiscountRate => I18NResource.GetString(ResourceDirectory, "DiscountRate");
+		public static string BatchNumber => I18NResource.GetString(ResourceDirectory, "BatchNumber");
 
 		/// <summary>
-		///Tran Code
+		///Book
 		/// </summary>
-		public static string TranCode => I18NResource.GetString(ResourceDirectory, "TranCode");
+		public static string Book => I18NResource.GetString(ResourceDirectory, "Book");
 
 		/// <summary>
 		///Book Date
@@ -909,14 +154,134 @@ namespace MixERP.Inventory
 		public static string BookDate => I18NResource.GetString(ResourceDirectory, "BookDate");
 
 		/// <summary>
+		///Brand Code
+		/// </summary>
+		public static string BrandCode => I18NResource.GetString(ResourceDirectory, "BrandCode");
+
+		/// <summary>
+		///Brand Id
+		/// </summary>
+		public static string BrandId => I18NResource.GetString(ResourceDirectory, "BrandId");
+
+		/// <summary>
+		///Brand Name
+		/// </summary>
+		public static string BrandName => I18NResource.GetString(ResourceDirectory, "BrandName");
+
+		/// <summary>
+		///Cancellation Reason
+		/// </summary>
+		public static string CancellationReason => I18NResource.GetString(ResourceDirectory, "CancellationReason");
+
+		/// <summary>
+		///Cancelled
+		/// </summary>
+		public static string Cancelled => I18NResource.GetString(ResourceDirectory, "Cancelled");
+
+		/// <summary>
+		///Cell
+		/// </summary>
+		public static string Cell => I18NResource.GetString(ResourceDirectory, "Cell");
+
+		/// <summary>
+		///Checkout Detail Id
+		/// </summary>
+		public static string CheckoutDetailId => I18NResource.GetString(ResourceDirectory, "CheckoutDetailId");
+
+		/// <summary>
+		///Checkout Id
+		/// </summary>
+		public static string CheckoutId => I18NResource.GetString(ResourceDirectory, "CheckoutId");
+
+		/// <summary>
+		///City
+		/// </summary>
+		public static string City => I18NResource.GetString(ResourceDirectory, "City");
+
+		/// <summary>
+		///Cogs Calculation Method
+		/// </summary>
+		public static string CogsCalculationMethod => I18NResource.GetString(ResourceDirectory, "CogsCalculationMethod");
+
+		/// <summary>
+		///Company Address Line 1
+		/// </summary>
+		public static string CompanyAddressLine1 => I18NResource.GetString(ResourceDirectory, "CompanyAddressLine1");
+
+		/// <summary>
+		///Company Address Line 2
+		/// </summary>
+		public static string CompanyAddressLine2 => I18NResource.GetString(ResourceDirectory, "CompanyAddressLine2");
+
+		/// <summary>
+		///Company City
+		/// </summary>
+		public static string CompanyCity => I18NResource.GetString(ResourceDirectory, "CompanyCity");
+
+		/// <summary>
+		///Company Country
+		/// </summary>
+		public static string CompanyCountry => I18NResource.GetString(ResourceDirectory, "CompanyCountry");
+
+		/// <summary>
+		///Company Fax
+		/// </summary>
+		public static string CompanyFax => I18NResource.GetString(ResourceDirectory, "CompanyFax");
+
+		/// <summary>
+		///Company Name
+		/// </summary>
+		public static string CompanyName => I18NResource.GetString(ResourceDirectory, "CompanyName");
+
+		/// <summary>
+		///Company Phone Numbers
+		/// </summary>
+		public static string CompanyPhoneNumbers => I18NResource.GetString(ResourceDirectory, "CompanyPhoneNumbers");
+
+		/// <summary>
+		///Company Po Box
+		/// </summary>
+		public static string CompanyPoBox => I18NResource.GetString(ResourceDirectory, "CompanyPoBox");
+
+		/// <summary>
 		///Company State
 		/// </summary>
 		public static string CompanyState => I18NResource.GetString(ResourceDirectory, "CompanyState");
 
 		/// <summary>
-		///Sales Transaction Id
+		///Company Street
 		/// </summary>
-		public static string SalesTransactionId => I18NResource.GetString(ResourceDirectory, "SalesTransactionId");
+		public static string CompanyStreet => I18NResource.GetString(ResourceDirectory, "CompanyStreet");
+
+		/// <summary>
+		///Company Zip Code
+		/// </summary>
+		public static string CompanyZipCode => I18NResource.GetString(ResourceDirectory, "CompanyZipCode");
+
+		/// <summary>
+		///Compare Unit Id
+		/// </summary>
+		public static string CompareUnitId => I18NResource.GetString(ResourceDirectory, "CompareUnitId");
+
+		/// <summary>
+		///Compare Unit Name
+		/// </summary>
+		public static string CompareUnitName => I18NResource.GetString(ResourceDirectory, "CompareUnitName");
+
+		/// <summary>
+		///Compound Unit Id
+		/// </summary>
+		public static string CompoundUnitId => I18NResource.GetString(ResourceDirectory, "CompoundUnitId");
+
+		/// <summary>
+		///Contact Address Line 1
+		/// </summary>
+		public static string ContactAddressLine1 => I18NResource.GetString(ResourceDirectory, "ContactAddressLine1");
+
+		/// <summary>
+		///Contact Address Line 2
+		/// </summary>
+		public static string ContactAddressLine2 => I18NResource.GetString(ResourceDirectory, "ContactAddressLine2");
 
 		/// <summary>
 		///Contact Cell
@@ -929,19 +294,9 @@ namespace MixERP.Inventory
 		public static string ContactCity => I18NResource.GetString(ResourceDirectory, "ContactCity");
 
 		/// <summary>
-		///Store Type Code
+		///Contact Country
 		/// </summary>
-		public static string StoreTypeCode => I18NResource.GetString(ResourceDirectory, "StoreTypeCode");
-
-		/// <summary>
-		///Amount
-		/// </summary>
-		public static string Amount => I18NResource.GetString(ResourceDirectory, "Amount");
-
-		/// <summary>
-		///Attribute Value
-		/// </summary>
-		public static string AttributeValue => I18NResource.GetString(ResourceDirectory, "AttributeValue");
+		public static string ContactCountry => I18NResource.GetString(ResourceDirectory, "ContactCountry");
 
 		/// <summary>
 		///Contact Email
@@ -949,99 +304,9 @@ namespace MixERP.Inventory
 		public static string ContactEmail => I18NResource.GetString(ResourceDirectory, "ContactEmail");
 
 		/// <summary>
-		///Company Phone Numbers
-		/// </summary>
-		public static string CompanyPhoneNumbers => I18NResource.GetString(ResourceDirectory, "CompanyPhoneNumbers");
-
-		/// <summary>
-		///Reference Number
-		/// </summary>
-		public static string ReferenceNumber => I18NResource.GetString(ResourceDirectory, "ReferenceNumber");
-
-		/// <summary>
-		///Reorder Quantity
-		/// </summary>
-		public static string ReorderQuantity => I18NResource.GetString(ResourceDirectory, "ReorderQuantity");
-
-		/// <summary>
-		///Total
-		/// </summary>
-		public static string Total => I18NResource.GetString(ResourceDirectory, "Total");
-
-		/// <summary>
-		///Login Id
-		/// </summary>
-		public static string LoginId => I18NResource.GetString(ResourceDirectory, "LoginId");
-
-		/// <summary>
-		///Store Type Id
-		/// </summary>
-		public static string StoreTypeId => I18NResource.GetString(ResourceDirectory, "StoreTypeId");
-
-		/// <summary>
-		///Barcode
-		/// </summary>
-		public static string Barcode => I18NResource.GetString(ResourceDirectory, "Barcode");
-
-		/// <summary>
-		///Attribute Name
-		/// </summary>
-		public static string AttributeName => I18NResource.GetString(ResourceDirectory, "AttributeName");
-
-		/// <summary>
-		///Sst Number
-		/// </summary>
-		public static string SstNumber => I18NResource.GetString(ResourceDirectory, "SstNumber");
-
-		/// <summary>
-		///Item Group Code
-		/// </summary>
-		public static string ItemGroupCode => I18NResource.GetString(ResourceDirectory, "ItemGroupCode");
-
-		/// <summary>
-		///Transaction Code
-		/// </summary>
-		public static string TransactionCode => I18NResource.GetString(ResourceDirectory, "TransactionCode");
-
-		/// <summary>
-		///Authorized By User Id
-		/// </summary>
-		public static string AuthorizedByUserId => I18NResource.GetString(ResourceDirectory, "AuthorizedByUserId");
-
-		/// <summary>
-		///Item Variant Id
-		/// </summary>
-		public static string ItemVariantId => I18NResource.GetString(ResourceDirectory, "ItemVariantId");
-
-		/// <summary>
-		///Company Zip Code
-		/// </summary>
-		public static string CompanyZipCode => I18NResource.GetString(ResourceDirectory, "CompanyZipCode");
-
-		/// <summary>
 		///Contact Fax
 		/// </summary>
 		public static string ContactFax => I18NResource.GetString(ResourceDirectory, "ContactFax");
-
-		/// <summary>
-		///Sales Return Account Id
-		/// </summary>
-		public static string SalesReturnAccountId => I18NResource.GetString(ResourceDirectory, "SalesReturnAccountId");
-
-		/// <summary>
-		///Rejection Reason
-		/// </summary>
-		public static string RejectionReason => I18NResource.GetString(ResourceDirectory, "RejectionReason");
-
-		/// <summary>
-		///Audit User Id
-		/// </summary>
-		public static string AuditUserId => I18NResource.GetString(ResourceDirectory, "AuditUserId");
-
-		/// <summary>
-		///Quantity
-		/// </summary>
-		public static string Quantity => I18NResource.GetString(ResourceDirectory, "Quantity");
 
 		/// <summary>
 		///Contact First Name
@@ -1049,59 +314,9 @@ namespace MixERP.Inventory
 		public static string ContactFirstName => I18NResource.GetString(ResourceDirectory, "ContactFirstName");
 
 		/// <summary>
-		///Unit Code
+		///Contact Last Name
 		/// </summary>
-		public static string UnitCode => I18NResource.GetString(ResourceDirectory, "UnitCode");
-
-		/// <summary>
-		///Company Po Box
-		/// </summary>
-		public static string CompanyPoBox => I18NResource.GetString(ResourceDirectory, "CompanyPoBox");
-
-		/// <summary>
-		///Lead Time In Days
-		/// </summary>
-		public static string LeadTimeInDays => I18NResource.GetString(ResourceDirectory, "LeadTimeInDays");
-
-		/// <summary>
-		///Checkout Detail Id
-		/// </summary>
-		public static string CheckoutDetailId => I18NResource.GetString(ResourceDirectory, "CheckoutDetailId");
-
-		/// <summary>
-		///Verified By
-		/// </summary>
-		public static string VerifiedBy => I18NResource.GetString(ResourceDirectory, "VerifiedBy");
-
-		/// <summary>
-		///Phone
-		/// </summary>
-		public static string Phone => I18NResource.GetString(ResourceDirectory, "Phone");
-
-		/// <summary>
-		///Inventory Transfer Request Detail Id
-		/// </summary>
-		public static string InventoryTransferRequestDetailId => I18NResource.GetString(ResourceDirectory, "InventoryTransferRequestDetailId");
-
-		/// <summary>
-		///Customer Name
-		/// </summary>
-		public static string CustomerName => I18NResource.GetString(ResourceDirectory, "CustomerName");
-
-		/// <summary>
-		///Item Id
-		/// </summary>
-		public static string ItemId => I18NResource.GetString(ResourceDirectory, "ItemId");
-
-		/// <summary>
-		///Cost Price
-		/// </summary>
-		public static string CostPrice => I18NResource.GetString(ResourceDirectory, "CostPrice");
-
-		/// <summary>
-		///Url
-		/// </summary>
-		public static string Url => I18NResource.GetString(ResourceDirectory, "Url");
+		public static string ContactLastName => I18NResource.GetString(ResourceDirectory, "ContactLastName");
 
 		/// <summary>
 		///Contact Middle Name
@@ -1109,9 +324,794 @@ namespace MixERP.Inventory
 		public static string ContactMiddleName => I18NResource.GetString(ResourceDirectory, "ContactMiddleName");
 
 		/// <summary>
+		///Contact Person
+		/// </summary>
+		public static string ContactPerson => I18NResource.GetString(ResourceDirectory, "ContactPerson");
+
+		/// <summary>
+		///Contact Phone
+		/// </summary>
+		public static string ContactPhone => I18NResource.GetString(ResourceDirectory, "ContactPhone");
+
+		/// <summary>
+		///Contact Phone Numbers
+		/// </summary>
+		public static string ContactPhoneNumbers => I18NResource.GetString(ResourceDirectory, "ContactPhoneNumbers");
+
+		/// <summary>
+		///Contact Po Box
+		/// </summary>
+		public static string ContactPoBox => I18NResource.GetString(ResourceDirectory, "ContactPoBox");
+
+		/// <summary>
+		///Contact State
+		/// </summary>
+		public static string ContactState => I18NResource.GetString(ResourceDirectory, "ContactState");
+
+		/// <summary>
+		///Contact Street
+		/// </summary>
+		public static string ContactStreet => I18NResource.GetString(ResourceDirectory, "ContactStreet");
+
+		/// <summary>
+		///Contact Zip Code
+		/// </summary>
+		public static string ContactZipCode => I18NResource.GetString(ResourceDirectory, "ContactZipCode");
+
+		/// <summary>
+		///Cost Center Id
+		/// </summary>
+		public static string CostCenterId => I18NResource.GetString(ResourceDirectory, "CostCenterId");
+
+		/// <summary>
+		///Cost Of Goods Sold
+		/// </summary>
+		public static string CostOfGoodsSold => I18NResource.GetString(ResourceDirectory, "CostOfGoodsSold");
+
+		/// <summary>
+		///Cost Of Goods Sold Account Id
+		/// </summary>
+		public static string CostOfGoodsSoldAccountId => I18NResource.GetString(ResourceDirectory, "CostOfGoodsSoldAccountId");
+
+		/// <summary>
+		///Cost Price
+		/// </summary>
+		public static string CostPrice => I18NResource.GetString(ResourceDirectory, "CostPrice");
+
+		/// <summary>
+		///Cost Price Includes Tax
+		/// </summary>
+		public static string CostPriceIncludesTax => I18NResource.GetString(ResourceDirectory, "CostPriceIncludesTax");
+
+		/// <summary>
 		///Counter Code
 		/// </summary>
 		public static string CounterCode => I18NResource.GetString(ResourceDirectory, "CounterCode");
+
+		/// <summary>
+		///Counter Id
+		/// </summary>
+		public static string CounterId => I18NResource.GetString(ResourceDirectory, "CounterId");
+
+		/// <summary>
+		///Counter Name
+		/// </summary>
+		public static string CounterName => I18NResource.GetString(ResourceDirectory, "CounterName");
+
+		/// <summary>
+		///Country
+		/// </summary>
+		public static string Country => I18NResource.GetString(ResourceDirectory, "Country");
+
+		/// <summary>
+		///Cst Number
+		/// </summary>
+		public static string CstNumber => I18NResource.GetString(ResourceDirectory, "CstNumber");
+
+		/// <summary>
+		///Currency Code
+		/// </summary>
+		public static string CurrencyCode => I18NResource.GetString(ResourceDirectory, "CurrencyCode");
+
+		/// <summary>
+		///Customer
+		/// </summary>
+		public static string Customer => I18NResource.GetString(ResourceDirectory, "Customer");
+
+		/// <summary>
+		///Customer Code
+		/// </summary>
+		public static string CustomerCode => I18NResource.GetString(ResourceDirectory, "CustomerCode");
+
+		/// <summary>
+		///Customer Id
+		/// </summary>
+		public static string CustomerId => I18NResource.GetString(ResourceDirectory, "CustomerId");
+
+		/// <summary>
+		///Customer Name
+		/// </summary>
+		public static string CustomerName => I18NResource.GetString(ResourceDirectory, "CustomerName");
+
+		/// <summary>
+		///Customer Type
+		/// </summary>
+		public static string CustomerType => I18NResource.GetString(ResourceDirectory, "CustomerType");
+
+		/// <summary>
+		///Customer Type Code
+		/// </summary>
+		public static string CustomerTypeCode => I18NResource.GetString(ResourceDirectory, "CustomerTypeCode");
+
+		/// <summary>
+		///Customer Type Id
+		/// </summary>
+		public static string CustomerTypeId => I18NResource.GetString(ResourceDirectory, "CustomerTypeId");
+
+		/// <summary>
+		///Customer Type Name
+		/// </summary>
+		public static string CustomerTypeName => I18NResource.GetString(ResourceDirectory, "CustomerTypeName");
+
+		/// <summary>
+		///Default Account Id For Checks
+		/// </summary>
+		public static string DefaultAccountIdForChecks => I18NResource.GetString(ResourceDirectory, "DefaultAccountIdForChecks");
+
+		/// <summary>
+		///Default Cash Account Id
+		/// </summary>
+		public static string DefaultCashAccountId => I18NResource.GetString(ResourceDirectory, "DefaultCashAccountId");
+
+		/// <summary>
+		///Default Cash Repository Id
+		/// </summary>
+		public static string DefaultCashRepositoryId => I18NResource.GetString(ResourceDirectory, "DefaultCashRepositoryId");
+
+		/// <summary>
+		///Default Discount Account Id
+		/// </summary>
+		public static string DefaultDiscountAccountId => I18NResource.GetString(ResourceDirectory, "DefaultDiscountAccountId");
+
+		/// <summary>
+		///Deleted
+		/// </summary>
+		public static string Deleted => I18NResource.GetString(ResourceDirectory, "Deleted");
+
+		/// <summary>
+		///Delivered
+		/// </summary>
+		public static string Delivered => I18NResource.GetString(ResourceDirectory, "Delivered");
+
+		/// <summary>
+		///Delivered By User Id
+		/// </summary>
+		public static string DeliveredByUserId => I18NResource.GetString(ResourceDirectory, "DeliveredByUserId");
+
+		/// <summary>
+		///Delivered On
+		/// </summary>
+		public static string DeliveredOn => I18NResource.GetString(ResourceDirectory, "DeliveredOn");
+
+		/// <summary>
+		///Delivery Date
+		/// </summary>
+		public static string DeliveryDate => I18NResource.GetString(ResourceDirectory, "DeliveryDate");
+
+		/// <summary>
+		///Delivery Memo
+		/// </summary>
+		public static string DeliveryMemo => I18NResource.GetString(ResourceDirectory, "DeliveryMemo");
+
+		/// <summary>
+		///Destination Store Id
+		/// </summary>
+		public static string DestinationStoreId => I18NResource.GetString(ResourceDirectory, "DestinationStoreId");
+
+		/// <summary>
+		///Discount
+		/// </summary>
+		public static string Discount => I18NResource.GetString(ResourceDirectory, "Discount");
+
+		/// <summary>
+		///Discount Rate
+		/// </summary>
+		public static string DiscountRate => I18NResource.GetString(ResourceDirectory, "DiscountRate");
+
+		/// <summary>
+		///Email
+		/// </summary>
+		public static string Email => I18NResource.GetString(ResourceDirectory, "Email");
+
+		/// <summary>
+		///Exclude From Purchase
+		/// </summary>
+		public static string ExcludeFromPurchase => I18NResource.GetString(ResourceDirectory, "ExcludeFromPurchase");
+
+		/// <summary>
+		///Exclude From Sales
+		/// </summary>
+		public static string ExcludeFromSales => I18NResource.GetString(ResourceDirectory, "ExcludeFromSales");
+
+		/// <summary>
+		///Expiry Date
+		/// </summary>
+		public static string ExpiryDate => I18NResource.GetString(ResourceDirectory, "ExpiryDate");
+
+		/// <summary>
+		///Factory Address
+		/// </summary>
+		public static string FactoryAddress => I18NResource.GetString(ResourceDirectory, "FactoryAddress");
+
+		/// <summary>
+		///Fax
+		/// </summary>
+		public static string Fax => I18NResource.GetString(ResourceDirectory, "Fax");
+
+		/// <summary>
+		///Hot Item
+		/// </summary>
+		public static string HotItem => I18NResource.GetString(ResourceDirectory, "HotItem");
+
+		/// <summary>
+		///Inventory Account Id
+		/// </summary>
+		public static string InventoryAccountId => I18NResource.GetString(ResourceDirectory, "InventoryAccountId");
+
+		/// <summary>
+		///Inventory System
+		/// </summary>
+		public static string InventorySystem => I18NResource.GetString(ResourceDirectory, "InventorySystem");
+
+		/// <summary>
+		///Inventory Transfer Delivery Detail Id
+		/// </summary>
+		public static string InventoryTransferDeliveryDetailId => I18NResource.GetString(ResourceDirectory, "InventoryTransferDeliveryDetailId");
+
+		/// <summary>
+		///Inventory Transfer Delivery Id
+		/// </summary>
+		public static string InventoryTransferDeliveryId => I18NResource.GetString(ResourceDirectory, "InventoryTransferDeliveryId");
+
+		/// <summary>
+		///Inventory Transfer Request Detail Id
+		/// </summary>
+		public static string InventoryTransferRequestDetailId => I18NResource.GetString(ResourceDirectory, "InventoryTransferRequestDetailId");
+
+		/// <summary>
+		///Inventory Transfer Request Id
+		/// </summary>
+		public static string InventoryTransferRequestId => I18NResource.GetString(ResourceDirectory, "InventoryTransferRequestId");
+
+		/// <summary>
+		///Is Component
+		/// </summary>
+		public static string IsComponent => I18NResource.GetString(ResourceDirectory, "IsComponent");
+
+		/// <summary>
+		///Is Taxable Item
+		/// </summary>
+		public static string IsTaxableItem => I18NResource.GetString(ResourceDirectory, "IsTaxableItem");
+
+		/// <summary>
+		///Is Taxed
+		/// </summary>
+		public static string IsTaxed => I18NResource.GetString(ResourceDirectory, "IsTaxed");
+
+		/// <summary>
+		///Is Variant Of
+		/// </summary>
+		public static string IsVariantOf => I18NResource.GetString(ResourceDirectory, "IsVariantOf");
+
+		/// <summary>
+		///Item Code
+		/// </summary>
+		public static string ItemCode => I18NResource.GetString(ResourceDirectory, "ItemCode");
+
+		/// <summary>
+		///Item Group Code
+		/// </summary>
+		public static string ItemGroupCode => I18NResource.GetString(ResourceDirectory, "ItemGroupCode");
+
+		/// <summary>
+		///Item Group Id
+		/// </summary>
+		public static string ItemGroupId => I18NResource.GetString(ResourceDirectory, "ItemGroupId");
+
+		/// <summary>
+		///Item Group Name
+		/// </summary>
+		public static string ItemGroupName => I18NResource.GetString(ResourceDirectory, "ItemGroupName");
+
+		/// <summary>
+		///Item Id
+		/// </summary>
+		public static string ItemId => I18NResource.GetString(ResourceDirectory, "ItemId");
+
+		/// <summary>
+		///Item Name
+		/// </summary>
+		public static string ItemName => I18NResource.GetString(ResourceDirectory, "ItemName");
+
+		/// <summary>
+		///Item Type Code
+		/// </summary>
+		public static string ItemTypeCode => I18NResource.GetString(ResourceDirectory, "ItemTypeCode");
+
+		/// <summary>
+		///Item Type Id
+		/// </summary>
+		public static string ItemTypeId => I18NResource.GetString(ResourceDirectory, "ItemTypeId");
+
+		/// <summary>
+		///Item Type Name
+		/// </summary>
+		public static string ItemTypeName => I18NResource.GetString(ResourceDirectory, "ItemTypeName");
+
+		/// <summary>
+		///Item Variant Id
+		/// </summary>
+		public static string ItemVariantId => I18NResource.GetString(ResourceDirectory, "ItemVariantId");
+
+		/// <summary>
+		///Last Verified On
+		/// </summary>
+		public static string LastVerifiedOn => I18NResource.GetString(ResourceDirectory, "LastVerifiedOn");
+
+		/// <summary>
+		///Lead Time In Days
+		/// </summary>
+		public static string LeadTimeInDays => I18NResource.GetString(ResourceDirectory, "LeadTimeInDays");
+
+		/// <summary>
+		///Login Id
+		/// </summary>
+		public static string LoginId => I18NResource.GetString(ResourceDirectory, "LoginId");
+
+		/// <summary>
+		///Logo
+		/// </summary>
+		public static string Logo => I18NResource.GetString(ResourceDirectory, "Logo");
+
+		/// <summary>
+		///Maintain Inventory
+		/// </summary>
+		public static string MaintainInventory => I18NResource.GetString(ResourceDirectory, "MaintainInventory");
+
+		/// <summary>
+		///Nontaxable Total
+		/// </summary>
+		public static string NontaxableTotal => I18NResource.GetString(ResourceDirectory, "NontaxableTotal");
+
+		/// <summary>
+		///Office
+		/// </summary>
+		public static string Office => I18NResource.GetString(ResourceDirectory, "Office");
+
+		/// <summary>
+		///Office Id
+		/// </summary>
+		public static string OfficeId => I18NResource.GetString(ResourceDirectory, "OfficeId");
+
+		/// <summary>
+		///Pan Number
+		/// </summary>
+		public static string PanNumber => I18NResource.GetString(ResourceDirectory, "PanNumber");
+
+		/// <summary>
+		///Parent Item Group Id
+		/// </summary>
+		public static string ParentItemGroupId => I18NResource.GetString(ResourceDirectory, "ParentItemGroupId");
+
+		/// <summary>
+		///Phone
+		/// </summary>
+		public static string Phone => I18NResource.GetString(ResourceDirectory, "Phone");
+
+		/// <summary>
+		///Photo
+		/// </summary>
+		public static string Photo => I18NResource.GetString(ResourceDirectory, "Photo");
+
+		/// <summary>
+		///Po Box
+		/// </summary>
+		public static string PoBox => I18NResource.GetString(ResourceDirectory, "PoBox");
+
+		/// <summary>
+		///Posted By
+		/// </summary>
+		public static string PostedBy => I18NResource.GetString(ResourceDirectory, "PostedBy");
+
+		/// <summary>
+		///Preferred Supplier Id
+		/// </summary>
+		public static string PreferredSupplierId => I18NResource.GetString(ResourceDirectory, "PreferredSupplierId");
+
+		/// <summary>
+		///Price
+		/// </summary>
+		public static string Price => I18NResource.GetString(ResourceDirectory, "Price");
+
+		/// <summary>
+		///Purchase Account Id
+		/// </summary>
+		public static string PurchaseAccountId => I18NResource.GetString(ResourceDirectory, "PurchaseAccountId");
+
+		/// <summary>
+		///Purchase Discount Account Id
+		/// </summary>
+		public static string PurchaseDiscountAccountId => I18NResource.GetString(ResourceDirectory, "PurchaseDiscountAccountId");
+
+		/// <summary>
+		///Quantity
+		/// </summary>
+		public static string Quantity => I18NResource.GetString(ResourceDirectory, "Quantity");
+
+		/// <summary>
+		///Reason
+		/// </summary>
+		public static string Reason => I18NResource.GetString(ResourceDirectory, "Reason");
+
+		/// <summary>
+		///Receipt Memo
+		/// </summary>
+		public static string ReceiptMemo => I18NResource.GetString(ResourceDirectory, "ReceiptMemo");
+
+		/// <summary>
+		///Received
+		/// </summary>
+		public static string Received => I18NResource.GetString(ResourceDirectory, "Received");
+
+		/// <summary>
+		///Received By User Id
+		/// </summary>
+		public static string ReceivedByUserId => I18NResource.GetString(ResourceDirectory, "ReceivedByUserId");
+
+		/// <summary>
+		///Received On
+		/// </summary>
+		public static string ReceivedOn => I18NResource.GetString(ResourceDirectory, "ReceivedOn");
+
+		/// <summary>
+		///Reference Number
+		/// </summary>
+		public static string ReferenceNumber => I18NResource.GetString(ResourceDirectory, "ReferenceNumber");
+
+		/// <summary>
+		///Rejected
+		/// </summary>
+		public static string Rejected => I18NResource.GetString(ResourceDirectory, "Rejected");
+
+		/// <summary>
+		///Rejected By User Id
+		/// </summary>
+		public static string RejectedByUserId => I18NResource.GetString(ResourceDirectory, "RejectedByUserId");
+
+		/// <summary>
+		///Rejected On
+		/// </summary>
+		public static string RejectedOn => I18NResource.GetString(ResourceDirectory, "RejectedOn");
+
+		/// <summary>
+		///Rejection Reason
+		/// </summary>
+		public static string RejectionReason => I18NResource.GetString(ResourceDirectory, "RejectionReason");
+
+		/// <summary>
+		///Reorder Level
+		/// </summary>
+		public static string ReorderLevel => I18NResource.GetString(ResourceDirectory, "ReorderLevel");
+
+		/// <summary>
+		///Reorder Quantity
+		/// </summary>
+		public static string ReorderQuantity => I18NResource.GetString(ResourceDirectory, "ReorderQuantity");
+
+		/// <summary>
+		///Reorder Unit Id
+		/// </summary>
+		public static string ReorderUnitId => I18NResource.GetString(ResourceDirectory, "ReorderUnitId");
+
+		/// <summary>
+		///Request Date
+		/// </summary>
+		public static string RequestDate => I18NResource.GetString(ResourceDirectory, "RequestDate");
+
+		/// <summary>
+		///Sales Account Id
+		/// </summary>
+		public static string SalesAccountId => I18NResource.GetString(ResourceDirectory, "SalesAccountId");
+
+		/// <summary>
+		///Sales Discount Account Id
+		/// </summary>
+		public static string SalesDiscountAccountId => I18NResource.GetString(ResourceDirectory, "SalesDiscountAccountId");
+
+		/// <summary>
+		///Sales Return Account Id
+		/// </summary>
+		public static string SalesReturnAccountId => I18NResource.GetString(ResourceDirectory, "SalesReturnAccountId");
+
+		/// <summary>
+		///Sales Transaction Id
+		/// </summary>
+		public static string SalesTransactionId => I18NResource.GetString(ResourceDirectory, "SalesTransactionId");
+
+		/// <summary>
+		///Selling Price
+		/// </summary>
+		public static string SellingPrice => I18NResource.GetString(ResourceDirectory, "SellingPrice");
+
+		/// <summary>
+		///Selling Price Includes Tax
+		/// </summary>
+		public static string SellingPriceIncludesTax => I18NResource.GetString(ResourceDirectory, "SellingPriceIncludesTax");
+
+		/// <summary>
+		///Serial Number
+		/// </summary>
+		public static string SerialNumber => I18NResource.GetString(ResourceDirectory, "SerialNumber");
+
+		/// <summary>
+		///Serial Number Id
+		/// </summary>
+		public static string SerialNumberId => I18NResource.GetString(ResourceDirectory, "SerialNumberId");
+
+		/// <summary>
+		///Shipper Code
+		/// </summary>
+		public static string ShipperCode => I18NResource.GetString(ResourceDirectory, "ShipperCode");
+
+		/// <summary>
+		///Shipper Id
+		/// </summary>
+		public static string ShipperId => I18NResource.GetString(ResourceDirectory, "ShipperId");
+
+		/// <summary>
+		///Shipper Name
+		/// </summary>
+		public static string ShipperName => I18NResource.GetString(ResourceDirectory, "ShipperName");
+
+		/// <summary>
+		///Shipping Charge
+		/// </summary>
+		public static string ShippingCharge => I18NResource.GetString(ResourceDirectory, "ShippingCharge");
+
+		/// <summary>
+		///Shipping Expense Account Id
+		/// </summary>
+		public static string ShippingExpenseAccountId => I18NResource.GetString(ResourceDirectory, "ShippingExpenseAccountId");
+
+		/// <summary>
+		///Sst Number
+		/// </summary>
+		public static string SstNumber => I18NResource.GetString(ResourceDirectory, "SstNumber");
+
+		/// <summary>
+		///State
+		/// </summary>
+		public static string State => I18NResource.GetString(ResourceDirectory, "State");
+
+		/// <summary>
+		///Statement Reference
+		/// </summary>
+		public static string StatementReference => I18NResource.GetString(ResourceDirectory, "StatementReference");
+
+		/// <summary>
+		///Status
+		/// </summary>
+		public static string Status => I18NResource.GetString(ResourceDirectory, "Status");
+
+		/// <summary>
+		///Store Code
+		/// </summary>
+		public static string StoreCode => I18NResource.GetString(ResourceDirectory, "StoreCode");
+
+		/// <summary>
+		///Store Id
+		/// </summary>
+		public static string StoreId => I18NResource.GetString(ResourceDirectory, "StoreId");
+
+		/// <summary>
+		///Store Name
+		/// </summary>
+		public static string StoreName => I18NResource.GetString(ResourceDirectory, "StoreName");
+
+		/// <summary>
+		///Store Type Code
+		/// </summary>
+		public static string StoreTypeCode => I18NResource.GetString(ResourceDirectory, "StoreTypeCode");
+
+		/// <summary>
+		///Store Type Id
+		/// </summary>
+		public static string StoreTypeId => I18NResource.GetString(ResourceDirectory, "StoreTypeId");
+
+		/// <summary>
+		///Store Type Name
+		/// </summary>
+		public static string StoreTypeName => I18NResource.GetString(ResourceDirectory, "StoreTypeName");
+
+		/// <summary>
+		///Street
+		/// </summary>
+		public static string Street => I18NResource.GetString(ResourceDirectory, "Street");
+
+		/// <summary>
+		///Supplier Code
+		/// </summary>
+		public static string SupplierCode => I18NResource.GetString(ResourceDirectory, "SupplierCode");
+
+		/// <summary>
+		///Supplier Id
+		/// </summary>
+		public static string SupplierId => I18NResource.GetString(ResourceDirectory, "SupplierId");
+
+		/// <summary>
+		///Supplier Name
+		/// </summary>
+		public static string SupplierName => I18NResource.GetString(ResourceDirectory, "SupplierName");
+
+		/// <summary>
+		///Supplier Type Code
+		/// </summary>
+		public static string SupplierTypeCode => I18NResource.GetString(ResourceDirectory, "SupplierTypeCode");
+
+		/// <summary>
+		///Supplier Type Id
+		/// </summary>
+		public static string SupplierTypeId => I18NResource.GetString(ResourceDirectory, "SupplierTypeId");
+
+		/// <summary>
+		///Supplier Type Name
+		/// </summary>
+		public static string SupplierTypeName => I18NResource.GetString(ResourceDirectory, "SupplierTypeName");
+
+		/// <summary>
+		///Tax
+		/// </summary>
+		public static string Tax => I18NResource.GetString(ResourceDirectory, "Tax");
+
+		/// <summary>
+		///Tax Rate
+		/// </summary>
+		public static string TaxRate => I18NResource.GetString(ResourceDirectory, "TaxRate");
+
+		/// <summary>
+		///Taxable Total
+		/// </summary>
+		public static string TaxableTotal => I18NResource.GetString(ResourceDirectory, "TaxableTotal");
+
+		/// <summary>
+		///Total
+		/// </summary>
+		public static string Total => I18NResource.GetString(ResourceDirectory, "Total");
+
+		/// <summary>
+		///Tran Code
+		/// </summary>
+		public static string TranCode => I18NResource.GetString(ResourceDirectory, "TranCode");
+
+		/// <summary>
+		///Tran Id
+		/// </summary>
+		public static string TranId => I18NResource.GetString(ResourceDirectory, "TranId");
+
+		/// <summary>
+		///Transaction Book
+		/// </summary>
+		public static string TransactionBook => I18NResource.GetString(ResourceDirectory, "TransactionBook");
+
+		/// <summary>
+		///Transaction Code
+		/// </summary>
+		public static string TransactionCode => I18NResource.GetString(ResourceDirectory, "TransactionCode");
+
+		/// <summary>
+		///Transaction Counter
+		/// </summary>
+		public static string TransactionCounter => I18NResource.GetString(ResourceDirectory, "TransactionCounter");
+
+		/// <summary>
+		///Transaction Master Id
+		/// </summary>
+		public static string TransactionMasterId => I18NResource.GetString(ResourceDirectory, "TransactionMasterId");
+
+		/// <summary>
+		///Transaction Timestamp
+		/// </summary>
+		public static string TransactionTimestamp => I18NResource.GetString(ResourceDirectory, "TransactionTimestamp");
+
+		/// <summary>
+		///Transaction Ts
+		/// </summary>
+		public static string TransactionTs => I18NResource.GetString(ResourceDirectory, "TransactionTs");
+
+		/// <summary>
+		///Transaction Type
+		/// </summary>
+		public static string TransactionType => I18NResource.GetString(ResourceDirectory, "TransactionType");
+
+		/// <summary>
+		///Unit Code
+		/// </summary>
+		public static string UnitCode => I18NResource.GetString(ResourceDirectory, "UnitCode");
+
+		/// <summary>
+		///Unit Id
+		/// </summary>
+		public static string UnitId => I18NResource.GetString(ResourceDirectory, "UnitId");
+
+		/// <summary>
+		///Unit Name
+		/// </summary>
+		public static string UnitName => I18NResource.GetString(ResourceDirectory, "UnitName");
+
+		/// <summary>
+		///Url
+		/// </summary>
+		public static string Url => I18NResource.GetString(ResourceDirectory, "Url");
+
+		/// <summary>
+		///Use Pos Checkout Screen
+		/// </summary>
+		public static string UsePosCheckoutScreen => I18NResource.GetString(ResourceDirectory, "UsePosCheckoutScreen");
+
+		/// <summary>
+		///User Id
+		/// </summary>
+		public static string UserId => I18NResource.GetString(ResourceDirectory, "UserId");
+
+		/// <summary>
+		///Valid Units
+		/// </summary>
+		public static string ValidUnits => I18NResource.GetString(ResourceDirectory, "ValidUnits");
+
+		/// <summary>
+		///Value
+		/// </summary>
+		public static string Value => I18NResource.GetString(ResourceDirectory, "Value");
+
+		/// <summary>
+		///Value Date
+		/// </summary>
+		public static string ValueDate => I18NResource.GetString(ResourceDirectory, "ValueDate");
+
+		/// <summary>
+		///Variant Code
+		/// </summary>
+		public static string VariantCode => I18NResource.GetString(ResourceDirectory, "VariantCode");
+
+		/// <summary>
+		///Variant Id
+		/// </summary>
+		public static string VariantId => I18NResource.GetString(ResourceDirectory, "VariantId");
+
+		/// <summary>
+		///Variant Name
+		/// </summary>
+		public static string VariantName => I18NResource.GetString(ResourceDirectory, "VariantName");
+
+		/// <summary>
+		///Verification Reason
+		/// </summary>
+		public static string VerificationReason => I18NResource.GetString(ResourceDirectory, "VerificationReason");
+
+		/// <summary>
+		///Verification Status Id
+		/// </summary>
+		public static string VerificationStatusId => I18NResource.GetString(ResourceDirectory, "VerificationStatusId");
+
+		/// <summary>
+		///Verified By
+		/// </summary>
+		public static string VerifiedBy => I18NResource.GetString(ResourceDirectory, "VerifiedBy");
+
+		/// <summary>
+		///Verified By User Id
+		/// </summary>
+		public static string VerifiedByUserId => I18NResource.GetString(ResourceDirectory, "VerifiedByUserId");
 
 		/// <summary>
 		///Tasks
@@ -1449,9 +1449,19 @@ namespace MixERP.Inventory
 		public static string ExportPdf => I18NResource.GetString(ResourceDirectory, "ExportPdf");
 
 		/// <summary>
+		///FIFO (First In/First Out)
+		/// </summary>
+		public static string FIFO => I18NResource.GetString(ResourceDirectory, "FIFO");
+
+		/// <summary>
 		///From
 		/// </summary>
 		public static string From => I18NResource.GetString(ResourceDirectory, "From");
+
+		/// <summary>
+		///Get Me out of Here
+		/// </summary>
+		public static string GetMeOutOfHere => I18NResource.GetString(ResourceDirectory, "GetMeOutOfHere");
 
 		/// <summary>
 		///Gridview is empty!
@@ -1484,6 +1494,16 @@ namespace MixERP.Inventory
 		public static string InventoryAdjustmentChecklist => I18NResource.GetString(ResourceDirectory, "InventoryAdjustmentChecklist");
 
 		/// <summary>
+		///Inventory Setup
+		/// </summary>
+		public static string InventorySetup => I18NResource.GetString(ResourceDirectory, "InventorySetup");
+
+		/// <summary>
+		///Please do not change anything here before consulting with your CPA first. Please proceed with extreme caution.
+		/// </summary>
+		public static string InventorySetupWarning => I18NResource.GetString(ResourceDirectory, "InventorySetupWarning");
+
+		/// <summary>
 		///Inventory Transfer
 		/// </summary>
 		public static string InventoryTransfer => I18NResource.GetString(ResourceDirectory, "InventoryTransfer");
@@ -1494,9 +1514,29 @@ namespace MixERP.Inventory
 		public static string ItemVarients => I18NResource.GetString(ResourceDirectory, "ItemVarients");
 
 		/// <summary>
+		///I Understand the Risks
+		/// </summary>
+		public static string IUnderstandTheRisks => I18NResource.GetString(ResourceDirectory, "IUnderstandTheRisks");
+
+		/// <summary>
+		///LIFO (Last In/First Out)
+		/// </summary>
+		public static string LIFO => I18NResource.GetString(ResourceDirectory, "LIFO");
+
+		/// <summary>
+		///MAVCO (Moving Average Costing)
+		/// </summary>
+		public static string MAVCO => I18NResource.GetString(ResourceDirectory, "MAVCO");
+
+		/// <summary>
 		///Memo
 		/// </summary>
 		public static string Memo => I18NResource.GetString(ResourceDirectory, "Memo");
+
+		/// <summary>
+		///No
+		/// </summary>
+		public static string No => I18NResource.GetString(ResourceDirectory, "No");
 
 		/// <summary>
 		///Nothing to transfer!
@@ -1527,6 +1567,16 @@ namespace MixERP.Inventory
 		///Out
 		/// </summary>
 		public static string Out => I18NResource.GetString(ResourceDirectory, "Out");
+
+		/// <summary>
+		///Periodic
+		/// </summary>
+		public static string Periodic => I18NResource.GetString(ResourceDirectory, "Periodic");
+
+		/// <summary>
+		///Perpetual
+		/// </summary>
+		public static string Perpetual => I18NResource.GetString(ResourceDirectory, "Perpetual");
 
 		/// <summary>
 		///Please enter a code of the new item variant.
@@ -1694,14 +1744,29 @@ namespace MixERP.Inventory
 		public static string ViewTransfers => I18NResource.GetString(ResourceDirectory, "ViewTransfers");
 
 		/// <summary>
+		///Warning
+		/// </summary>
+		public static string Warning => I18NResource.GetString(ResourceDirectory, "Warning");
+
+		/// <summary>
 		///We only have {0} {1} in inventory
 		/// </summary>
 		public static string WeOnlyHaveInInventory => I18NResource.GetString(ResourceDirectory, "WeOnlyHaveInInventory");
 
 		/// <summary>
+		///Yes
+		/// </summary>
+		public static string Yes => I18NResource.GetString(ResourceDirectory, "Yes");
+
+		/// <summary>
 		///You
 		/// </summary>
 		public static string You => I18NResource.GetString(ResourceDirectory, "You");
+
+		/// <summary>
+		///Validate Returns
+		/// </summary>
+		public static string ValidateReturns => I18NResource.GetString(ResourceDirectory, "ValidateReturns");
 
 	}
 }
