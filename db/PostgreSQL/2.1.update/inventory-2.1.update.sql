@@ -1,9 +1,9 @@
-﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x.update/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
+﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.1.update/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
 ALTER TABLE inventory.inventory_setup
 ADD COLUMN IF NOT EXISTS validate_returns boolean NOT NULL DEFAULT(true);
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x.update/src/02.functions-and-logic/inventory.get_total_customer_due.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.1.update/src/02.functions-and-logic/inventory.get_total_customer_due.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_total_customer_due(office_id integer, customer_id integer);
 
 CREATE FUNCTION inventory.get_total_customer_due(office_id integer, customer_id integer)
@@ -55,7 +55,7 @@ LANGUAGE plpgsql;
 
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x.update/src/02.functions-and-logic/inventory.get_total_supplier_due.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.1.update/src/02.functions-and-logic/inventory.get_total_supplier_due.sql --<--<--
 DROP FUNCTION IF EXISTS inventory.get_total_supplier_due(office_id integer, supplier_id integer);
 
 CREATE FUNCTION inventory.get_total_supplier_due(office_id integer, supplier_id integer)
@@ -106,7 +106,7 @@ $$
 LANGUAGE plpgsql;
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x.update/src/03.menus/menus.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.1.update/src/03.menus/menus.sql --<--<--
 SELECT * FROM core.create_menu('MixERP.Inventory', 'InventorySetup', 'Inventory Setup', '/dashboard/inventory/setup/is', 'content', 'Setup');
 
 
@@ -120,7 +120,7 @@ SELECT * FROM auth.create_app_menu_policy
 
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.x.update/src/99.ownership.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/PostgreSQL/2.1.update/src/99.ownership.sql --<--<--
 DO
 $$
     DECLARE this record;

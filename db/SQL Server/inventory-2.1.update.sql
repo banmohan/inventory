@@ -1,4 +1,4 @@
-﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x.update/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
+﻿-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/01.types-domains-tables-and-constraints/tables-and-constraints.sql --<--<--
 IF COL_LENGTH('inventory.inventory_setup', 'validate_returns') IS NULL
 BEGIN
     ALTER TABLE inventory.inventory_setup
@@ -7,7 +7,7 @@ END
 
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x.update/src/03.menus/menus.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/03.menus/menus.sql --<--<--
 EXECUTE core.create_menu 'MixERP.Inventory', 'InvestorySetup','Investory Setup', '/dashboard/inventory/setup/is', 'child', 'Setup';
 
 DECLARE @office_id integer = core.get_office_id_by_office_name('Default');
@@ -21,7 +21,7 @@ EXECUTE auth.create_app_menu_policy
 GO
 
 
--->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.x.update/src/99.ownership.sql --<--<--
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/99.ownership.sql --<--<--
 EXEC sp_addrolemember  @rolename = 'db_owner', @membername  = 'frapid_db_user'
 GO
 
