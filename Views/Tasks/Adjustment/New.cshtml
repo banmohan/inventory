@@ -247,11 +247,11 @@
                     return;
                 };
 
-                saveButton.addClass("loading");
+                saveButton.addClass("loading").prop("disabled", true);
                 const ajax = request(model);
 
                 ajax.success(function(response) {
-                    saveButton.removeClass("loading");
+                    saveButton.removeClass("loading").prop("disabled", false);
                     const tranId = response;
 
                     if (tranId) {
@@ -260,7 +260,7 @@
                 });
 
                 ajax.fail(function (xhr) {
-                    saveButton.removeClass("loading");
+                    saveButton.removeClass("loading").prop("disabled", false);
                     window.logAjaxErrorMessage(xhr);
                 });
             });
