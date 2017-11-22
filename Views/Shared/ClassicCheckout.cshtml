@@ -247,14 +247,14 @@
 
             $.each(candidates, function () {
                 const candidate = $(this);
-                const itemId = window.parseInt2(candidate.attr("data-item-id"));
-                const quantity = window.parseFloat2(candidate.attr("data-quantity"));
-                const unitId = window.parseInt2(candidate.attr("data-unit-id"));
-                const price = window.parseFloat2(candidate.attr("data-price"));
-                const shipping = window.parseFloat2(candidate.attr("data-shipping"));
-                const storeId = window.parseInt2($("#StoreSelect").val());
+                const itemId = window.parseInt(candidate.attr("data-item-id"));
+                const quantity = window.parseFloat(candidate.attr("data-quantity"));
+                const unitId = window.parseInt(candidate.attr("data-unit-id"));
+                const price = window.parseFloat(candidate.attr("data-price"));
+                const shipping = window.parseFloat(candidate.attr("data-shipping"));
+                const storeId = window.parseInt($("#StoreSelect").val());
 
-                const discount = window.parseFloat2(candidate.attr("data-line-discount"));
+                const discount = window.parseFloat(candidate.attr("data-line-discount"));
 
                 const amount = (price * quantity) + shipping;
 
@@ -282,19 +282,19 @@
 
         const valueDate = $("#ValueDateInputDate").datepicker("getDate");
         const bookDate = $("#BookDateInputDate").datepicker("getDate");
-        const storeId = window.parseInt2($("#StoreSelect").val());
-        const counterId = window.parseInt2($("#CounterSelect").val());
-        const priceTypeId = window.parseInt2($("#PriceTypeSelect").val());
-        const customerId = window.parseInt2($("#CustomerSelect").val());
-        const supplierId = window.parseInt2($("#SupplierSelect").val());
+        const storeId = window.parseInt($("#StoreSelect").val());
+        const counterId = window.parseInt($("#CounterSelect").val());
+        const priceTypeId = window.parseInt($("#PriceTypeSelect").val());
+        const customerId = window.parseInt($("#CustomerSelect").val());
+        const supplierId = window.parseInt($("#SupplierSelect").val());
 
-        const costCenterId = window.parseInt2($("#CostCenterSelect").val());
-        const shipperId = window.parseInt2($("#ShipperSelect").val());
+        const costCenterId = window.parseInt($("#CostCenterSelect").val());
+        const shipperId = window.parseInt($("#ShipperSelect").val());
         const referenceNumber = $("#ReferenceNumberInputText").val();
         const statementReference = $("#StatementReferenceInputText").val();
 
         const couponCode = $("#CouponCodeInputText").val();
-        const discountType = window.parseInt2($("#DiscountTypeSelect").val());
+        const discountType = window.parseInt($("#DiscountTypeSelect").val());
 
         var discountRate = window.parseFloat2($("#DiscountInputText").val()) || 0;
         const discount = window.parseFloat2($("input.invoice.discount").val()) || 0;
@@ -302,7 +302,7 @@
         const tax = window.parseFloat2($("#TaxInputText").val()) || 0;
         const nonTaxableTotal = window.parseFloat2($("#NonTaxableTotalInputText").val()) || 0;
         const invoiceTotal = window.parseFloat2($("#InvoiceTotalInputText").val()) || 0;
-        const taxRate = window.parseFloat2($("#SalesTaxRateHidden").val()) || 0;
+        const taxRate = window.parseFloat($("#SalesTaxRateHidden").val()) || 0;
 
 
         if(discountType === 1) {
@@ -363,32 +363,31 @@
             const option = itemSelect.find("option:selected");
             const priceInputEl = $("#PriceInputText");
 
-            const defaultUnitId = window.parseInt2(option.attr("data-unit-id"));
-            const selectedUnitId = window.parseInt2(unitSelect.val());
-            const supplierId = window.parseInt2($("#SupplierSelect").val());
-            const customerId = window.parseInt2($("#CustomerSelect").val());
+            const defaultUnitId = window.parseInt(option.attr("data-unit-id"));
+            const selectedUnitId = window.parseInt(unitSelect.val());
+            const supplierId = window.parseInt($("#SupplierSelect").val());
+            const customerId = window.parseInt($("#CustomerSelect").val());
 
             if (!(supplierId || customerId) && defaultUnitId === selectedUnitId) {
-                const salesTaxRate = window.parseFloat2(option.attr("data-sales-tax-rate"));
+                const salesTaxRate = window.parseFloat(option.attr("data-sales-tax-rate"));
 
                 const costPriceIncludesTax = option.attr("data-cost-price-includes-tax") === "true";
                 const sellingPriceIncludesTax = option.attr("data-selling-price-includes-tax") === "true";
 
-                var costPrice = window.parseFloat2(option.attr("data-cost-price"));
-                var sellingPrice = window.parseFloat2(option.attr("data-selling-price"));
+                var costPrice = window.parseFloat(option.attr("data-cost-price"));
+                var sellingPrice = window.parseFloat(option.attr("data-selling-price"));
 
                 if (sellingPriceIncludesTax) {
-                    sellingPrice = (100 * sellingPrice) / (100 + window.parseFloat2(salesTaxRate));
+                    sellingPrice = (100 * sellingPrice) / (100 + salesTaxRate);
                     sellingPrice = window.round(sellingPrice, 2);
                 };
 
                 if (costPriceIncludesTax) {
-                    costPrice = (100 * costPrice) / (100 + window.parseFloat2(salesTaxRate));
+                    costPrice = (100 * costPrice) / (100 + salesTaxRate);
                     costPrice = window.round(costPrice, 2);
                 };
 
                 const price = costPrice || sellingPrice;
-
 
                 priceInputEl.val(price).trigger("keyup").trigger("change");
 
@@ -420,7 +419,7 @@
 
             const unitId = option.attr("data-unit-id");
             const validUnits = option.attr("data-valid-units");
-            loadUnits(unitSelect, window.parseInt2(unitId), validUnits.split(','));
+            loadUnits(unitSelect, window.parseInt(unitId), validUnits.split(','));
             displayPrice(itemSelect, unitSelect);
         });
 
@@ -563,7 +562,7 @@
             const ajax = request();
 
             ajax.success(function (response) {
-                const salesTaxRate = window.parseFloat2(response[0].SalesTaxRate) || 0;
+                const salesTaxRate = window.parseFloat(response[0].SalesTaxRate) || 0;
                 $("#SalesTaxRateHidden").val(salesTaxRate);
             });
         };
@@ -628,7 +627,7 @@
             //Invoice wise totals
             (function () {
                 const rateOfDiscount = $("#DiscountInputText").val();
-                const discountType = window.parseInt2($("#DiscountTypeSelect").val());
+                const discountType = window.parseInt($("#DiscountTypeSelect").val());
                 var invoiceDiscount = rateOfDiscount;
                 const taxableTotalBeforeDiscount = window.parseFloat2($("input.taxable.total.before.discount").val());
                 const nonTaxableTotal = window.parseFloat2($("input.nontaxable.total").val());
@@ -647,7 +646,7 @@
                 const taxableTotal = taxableTotalBeforeDiscount - invoiceDiscount;
                 $("input.taxable.total.after.discount").val(window.getFormattedNumber(window.round(taxableTotal, 2)));
 
-                const taxRate = window.parseFloat2($("#SalesTaxRateHidden").val()) || 0;
+                const taxRate = window.parseFloat($("#SalesTaxRateHidden").val()) || 0;
                 const tax = taxableTotal * (taxRate / 100);
                 const invoiceTotal = taxableTotal + tax + nonTaxableTotal;
 
@@ -685,10 +684,10 @@
                 }
 
                 //Serial Number
-                const storeId = parseInt2($("#StoreSelect").val() || 0);
-                const itemId = parseInt2($("#ItemSelect").val() || 0);
-                const unitId = parseInt2($("#UnitSelect").val() || 0);
-                var quantity = parseInt2($("#QuantityInputText").val() || 0);
+                const storeId = parseInt($("#StoreSelect").val() || 0);
+                const itemId = parseInt($("#ItemSelect").val() || 0);
+                const unitId = parseInt($("#UnitSelect").val() || 0);
+                var quantity = parseInt($("#QuantityInputText").val() || 0);
 
                 var serials = $("#QuantityInputText").attr("data-serials");
                 if (serials) {
@@ -858,12 +857,12 @@
 
             function getModel() {
                 const option = $("#ItemSelect option:selected");
-                const itemId = window.parseInt2(option.attr("value"));
+                const itemId = window.parseInt(option.attr("value"));
                 const isTaxableItem = option.attr("data-is-taxable-item") === "true";
 
                 const itemName = option.text().trim();
 
-                const unitId = window.parseInt2($("#UnitSelect").val());
+                const unitId = window.parseInt($("#UnitSelect").val());
                 const unitName = $("#UnitSelect option:selected").text().trim();
 
                 const quantity = window.parseFloat2($("#QuantityInputText").val());

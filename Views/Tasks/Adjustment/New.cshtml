@@ -123,7 +123,7 @@
                         actual = quantity;
                     }
 
-                    if (window.parseInt2(actual) > quantity) {
+                    if (window.parseInt(actual) > quantity) {
                         window.makeDirty($(this).parent());
                         return;
                     };
@@ -135,7 +135,7 @@
 
                 $("input.difference").blur(function () {
                     const quantity = window.parseFloat2($(this).parent().parent().find("td:nth-last-child(3)").html());
-                    const difference = window.parseInt2($(this).val());
+                    const difference = window.parseInt($(this).val());
 
                     if (difference > quantity) {
                         window.makeDirty($(this).parent());
@@ -155,7 +155,7 @@
                     return window.getAjaxRequest(url);
                 };
 
-                const storeId = window.parseInt2(storeSelect.val());
+                const storeId = window.parseInt(storeSelect.val());
 
                 if (!storeId) {
                     window.displayMessage(window.translate("PleaseSelectStore"));
@@ -207,7 +207,7 @@
                         return model;
                     };
 
-                    const storeId = window.parseInt2(storeSelect.val());
+                    const storeId = window.parseInt(storeSelect.val());
                     const valueDate = window.parseLocalizedDate(valueDateInputText.val());
                     const bookDate = window.parseLocalizedDate(bookDateInputText.val());
                     const referenceNumber = referenceNumberInputText.val();

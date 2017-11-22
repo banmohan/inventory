@@ -258,13 +258,13 @@ else
 
                 var barCode = el.attr("data-barcode");
                 var brand = el.attr("data-brand");
-                var unitId = window.parseInt2(el.attr("data-unit-id"));
+                var unitId = window.parseInt(el.attr("data-unit-id"));
                 var validUnits = el.attr("data-valid-units");
                 var itemGroup = el.attr("data-item-group");
                 var itemName = el.attr("data-item-name");
                 var itemCode = el.attr("data-item-code");
-                var itemId = window.parseInt2(el.attr("data-item-id"));
-                var price = window.parseFloat2(costPrice || 0);
+                var itemId = window.parseInt(el.attr("data-item-id"));
+                var price = window.parseFloat(costPrice || 0);
                 var isTaxableItem = el.attr("data-is-taxable-item") === "true";
 
                 if (!price) {
@@ -343,7 +343,7 @@ else
 
                     const quantity = window.parseFloat2(quantityEl.val() || 0);
                     const price = window.parseFloat2(el.find("input.price").val());
-                    //var price = window.parseFloat2(el.attr("data-price") || 0);
+                    //var price = window.parseFloat(el.attr("data-price") || 0);
 
                     const amount = (price * quantity).toFixed(2);
 
@@ -427,14 +427,14 @@ else
 
                 const quantity = window.parseFloat2(quantityEl.val() || 0);
                 const price = window.parseFloat2(el.find("input.price").val());
-                //var price = window.parseFloat2(el.attr("data-price") || 0);
+                //var price = window.parseFloat(el.attr("data-price") || 0);
 
                 const amount = price * quantity;
                 totalPrice += amount;
                 //totalQuantity += quantity;
             });
 
-            totalPrice = window.parseFloat2(totalPrice.toFixed(2));
+            totalPrice = window.round(totalPrice, 2);
 
             amountEl.html(totalPrice);
         };
@@ -515,7 +515,7 @@ else
                 var costPrice = product.CostPrice;
 
                 if (product.CostPriceIncludesTax) {
-                    costPrice = (100 * costPrice) / (100 + window.parseFloat2(product.SalesTaxRate));
+                    costPrice = (100 * costPrice) / (100 + window.parseFloat(product.SalesTaxRate));
                     costPrice = window.round(costPrice, 2);
                 };
 
@@ -590,9 +590,9 @@ else
 
                     $.each(items, function () {
                         const el = $(this);
-                        const itemId = window.parseInt2(el.attr("data-item-id"));
+                        const itemId = window.parseInt(el.attr("data-item-id"));
                         const quantity = window.parseFloat2(el.find("input.quantity").val());
-                        const unitId = window.parseInt2(el.find("select.unit").val());
+                        const unitId = window.parseInt(el.find("select.unit").val());
                         const price = window.parseFloat2(el.find("input.price").val() || 0);
 
                         model.push({
