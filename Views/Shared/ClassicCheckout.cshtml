@@ -304,7 +304,6 @@
         const invoiceTotal = window.parseFloat2($("#InvoiceTotalInputText").val()) || 0;
         const taxRate = window.parseFloat($("#SalesTaxRateHidden").val()) || 0;
 
-
         if(discountType === 1) {
             discountRate = (discount / taxableTotal) * 100;
         };
@@ -389,13 +388,14 @@
 
                 const price = costPrice || sellingPrice;
 
+
                 priceInputEl.val(price).trigger("keyup").trigger("change");
 
                 return;
             };
 
             if (typeof (model.UpdatePrice) === "function") {
-                model.UpdatePrice();
+				model.UpdatePrice();
             };
         };
 
@@ -436,6 +436,10 @@
             });
         };
 
+		$("#CustomerSelect").off("change").on("change", function () {
+			fetchProducts();
+		});
+		
         function fetchProducts() {
             function displayProducts() {
                 const target = $("#ItemSelect");
@@ -469,18 +473,43 @@
             };
 
             function request() {
-                const url = model.ProductApi;
+				const customerId = $("#CustomerSelect").val();
+
+				var url = model.ProductApi;	
+				if(customerId) {
+					url += "/" + customerId;
+				}
                 return window.getAjaxRequest(url);
             };
-
+		
             const ajax = request();
-
+			
             ajax.success(function (response) {
                 window.products = response;
                 displayProducts();
             });
         };
 
+		function setTaxable(){
+			function request(customerId) {
+				const url = "/api/forms/sales/customerwise-selling-prices/get-where/-1";
+				const filters = [];
+				filters.push(window.getAjaxColumnFilter("WHERE", "CustomerId", "int", window.FilterConditions.IsEqualTo,
+					customerId));
+
+				return window.getAjaxRequest(url, "POST", filters);
+			};
+
+			
+			
+			const ajax = request(customerId);
+
+			ajax.success(function (response) {
+				const salesTaxRate = window.parseFloat2(response[0].SalesTaxRate) || 0;
+				$("#SalesTaxRateHidden").val(salesTaxRate);
+			});
+        };
+		
         function setBinder() {
             $("#StoreSelect").off("change").on("change", function () {
                 var el = $(this);
@@ -768,7 +797,7 @@
                 row.attr("data-quantity", model.Quantity);
                 row.attr("data-line-discount", model.LineDiscount);
                 row.attr("data-shipping", model.Shipping);
-                row.attr("data-is-taxable-item", model.IsTaxableItem);
+                row.attr("data-is-taxable-item", model.IsTaxableItem);				
             };
 
             function getCell(text, cssClass, id) {
