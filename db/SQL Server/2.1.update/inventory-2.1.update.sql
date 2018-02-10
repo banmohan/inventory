@@ -132,6 +132,34 @@ GO
 
 
 
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/02.functions-and-logic/inventory.get_root_unit_id.sql --<--<--
+IF OBJECT_ID('inventory.get_root_unit_id') IS NOT NULL
+DROP FUNCTION inventory.get_root_unit_id;
+
+GO
+
+CREATE FUNCTION inventory.get_root_unit_id(@any_unit_id integer)
+RETURNS integer
+AS
+BEGIN
+    DECLARE @root_unit_id integer;
+
+    SELECT @root_unit_id = base_unit_id
+    FROM inventory.compound_units
+    WHERE inventory.compound_units.compare_unit_id=@any_unit_id
+    AND inventory.compound_units.deleted = 0;
+
+    IF(@root_unit_id IS NULL OR @root_unit_id = @any_unit_id)
+    BEGIN
+        RETURN @any_unit_id;
+    END
+
+    RETURN inventory.get_root_unit_id(@root_unit_id);
+END;
+
+GO
+
+
 -->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/03.menus/menus.sql --<--<--
 EXECUTE core.create_menu 'MixERP.Inventory', 'InventorySetup','Inventory Setup', '/dashboard/inventory/setup/is', 'child', 'Setup';
 
@@ -142,6 +170,107 @@ EXECUTE auth.create_app_menu_policy
 'MixERP.Inventory',
 '{*}';
 
+
+GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/05.scrud-views/inventory.compound_unit_scrud_view.sql --<--<--
+IF OBJECT_ID('inventory.compound_unit_scrud_view') IS NOT NULL
+DROP VIEW inventory.compound_unit_scrud_view;
+
+GO
+
+CREATE VIEW inventory.compound_unit_scrud_view
+AS
+SELECT
+    compound_unit_id,
+    base_unit.unit_name base_unit_name,
+    value,
+    compare_unit.unit_name compare_unit_name
+FROM
+    inventory.compound_units,
+    inventory.units base_unit,
+    inventory.units compare_unit
+WHERE inventory.compound_units.base_unit_id = base_unit.unit_id
+AND inventory.compound_units.compare_unit_id = compare_unit.unit_id;
+
+GO
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/05.scrud-views/inventory.customer_scrud_view.sql --<--<--
+IF OBJECT_ID('inventory.customer_scrud_view') IS NOT NULL
+DROP VIEW inventory.customer_scrud_view;
+
+GO
+
+
+
+CREATE VIEW inventory.customer_scrud_view
+AS
+SELECT
+    inventory.customers.customer_id,
+    inventory.customers.customer_code,
+    inventory.customers.customer_name,
+    inventory.customer_types.customer_type_code + ' (' + inventory.customer_types.customer_type_name + ')' AS customer_type,
+    inventory.customers.currency_code,
+    inventory.customers.company_name,
+    inventory.customers.company_phone_numbers,
+    inventory.customers.contact_first_name,
+    inventory.customers.contact_middle_name,
+    inventory.customers.contact_last_name,
+    inventory.customers.contact_phone_numbers,
+    inventory.customers.photo
+FROM inventory.customers
+INNER JOIN inventory.customer_types
+ON inventory.customer_types.customer_type_id = inventory.customers.customer_type_id;
+
+
+GO
+
+
+-->-->-- src/Frapid.Web/Areas/MixERP.Inventory/db/SQL Server/2.1.update/src/05.scrud-views/inventory.item_scrud_view.sql --<--<--
+IF OBJECT_ID('inventory.item_scrud_view') IS NOT NULL
+DROP VIEW inventory.item_scrud_view;
+
+GO
+
+
+
+CREATE VIEW inventory.item_scrud_view
+AS
+SELECT
+    inventory.items.item_id,
+    inventory.items.item_code,
+    inventory.items.item_name,
+    inventory.items.barcode,
+    inventory.items.item_group_id,
+    inventory.item_groups.item_group_name,
+    inventory.item_types.item_type_id,
+    inventory.item_types.item_type_name,
+    inventory.items.brand_id,
+    inventory.brands.brand_name,
+    inventory.suppliers.supplier_name,
+    inventory.items.unit_id,
+    inventory.units.unit_code,
+    inventory.units.unit_name,
+    inventory.items.hot_item,
+    inventory.items.cost_price,
+    inventory.items.selling_price,
+    inventory.items.maintain_inventory,
+    inventory.items.allow_sales,
+    inventory.items.allow_purchase,
+    inventory.items.photo
+FROM inventory.items
+LEFT JOIN inventory.item_groups
+ON inventory.item_groups.item_group_id = inventory.items.item_group_id
+LEFT JOIN inventory.item_types
+ON inventory.item_types.item_type_id = inventory.items.item_type_id
+LEFT JOIN inventory.brands
+ON inventory.brands.brand_id = inventory.items.brand_id
+LEFT JOIN inventory.units
+ON inventory.units.unit_id = inventory.items.unit_id
+LEFT JOIN inventory.suppliers
+ON inventory.suppliers.supplier_id = inventory.items.preferred_supplier_id
+WHERE inventory.items.deleted = 0;
 
 GO
 
