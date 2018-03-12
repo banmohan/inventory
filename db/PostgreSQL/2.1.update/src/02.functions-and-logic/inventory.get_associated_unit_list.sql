@@ -1,6 +1,4 @@
-﻿DROP FUNCTION IF EXISTS inventory.get_associated_unit_list(_any_unit_id integer);
-
-CREATE FUNCTION inventory.get_associated_unit_list(_any_unit_id integer)
+﻿CREATE OR REPLACE FUNCTION inventory.get_associated_unit_list(_any_unit_id integer)
 RETURNS integer[]
 VOLATILE
 AS
