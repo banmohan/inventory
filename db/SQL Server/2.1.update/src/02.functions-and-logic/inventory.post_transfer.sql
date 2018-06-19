@@ -24,10 +24,6 @@ BEGIN
     DECLARE @book_name                      national character varying(1000)='Inventory Transfer';
     DECLARE @can_post_transaction           bit;
     DECLARE @error_message                  national character varying(MAX);
-    DECLARE @error_item                     national character varying(1000);
-    DECLARE @error_store                    national character varying(1000);
-    DECLARE @error_unit                     national character varying(1000);
-    DECLARE @error_quantity                 numeric(30, 6);
 
     DECLARE @temp_stock_details TABLE
     (
@@ -36,11 +32,9 @@ BEGIN
         store_name                          national character varying(500),
         item_id                             integer,
         item_code                           national character varying(24),
-		item_name							national character varying(1000),
         unit_id                             integer,
         base_unit_id                        integer,
         unit_name                           national character varying(500),
-		total_count							numeric(30, 6),
         quantity                            numeric(30, 6),
         base_quantity                       numeric(30, 6),                
         price                               numeric(30, 6)
@@ -77,7 +71,15 @@ BEGIN
             HAVING COUNT(item_code) <> 1
         )
         BEGIN
-            RAISERROR('An item can appear only once in a store.', 13, 1);
+			SET @error_message = 'An item can appear only once in a store. <br /> <br />';
+
+            SELECT @error_message = @error_message + item_code + ' (' + CAST(COUNT(item_code) AS varchar(50)) + ') --> ' + store_name + '<br />'
+            FROM @temp_stock_details
+            GROUP BY item_code, store_name
+            HAVING COUNT(item_code) <> 1
+			ORDER BY item_code;
+
+            RAISERROR(@error_message, 13, 1);
         END;
 
         UPDATE @temp_stock_details 
@@ -133,22 +135,23 @@ BEGIN
             RAISERROR('Access is denied!\nA stock journal transaction cannot references multiple branches.', 13, 1);
         END;
 
-		UPDATE @temp_stock_details
-		SET total_count = inventory.count_item_in_stock(item_id, unit_id, store_id);
-
-        SELECT
-			@error_item = inventory.get_item_name_by_item_id(item_id),
-			@error_unit = unit_name,
-			@error_quantity = inventory.count_item_in_stock(item_id, unit_id, store_id),
-			@error_store = store_name
-        FROM  @temp_stock_details
-        WHERE tran_type = 'Cr'
-        AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id);
-
-
-        IF(@error_store IS NOT NULL)
+        IF EXISTS
+        (
+            SELECT 1
+            FROM 
+            @temp_stock_details
+            WHERE tran_type = 'Cr'
+            AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id)
+        )
         BEGIN
-			SET @error_message = 'Negative stock is not allowed. We only have ' + CAST(@error_quantity AS varchar(100)) + ' ' + @error_unit + ' of ' + @error_item + ' in ' + @error_store + '.';
+			SET @error_message = 'Negative stock is not allowed. <br /> <br />';
+
+            SELECT @error_message = @error_message + inventory.get_item_name_by_item_id(item_id) + ' --> required: ' + CAST(quantity AS varchar(50))+ ', actual: ' + CAST(inventory.count_item_in_stock(item_id, unit_id, store_id)  AS varchar(50)) + ' / ' + inventory.get_unit_name_by_unit_id(unit_id) +  ' <br />'
+            FROM 
+            @temp_stock_details
+            WHERE tran_type = 'Cr'
+            AND quantity > inventory.count_item_in_stock(item_id, unit_id, store_id);
+
             RAISERROR(@error_message, 13, 1);
         END;
 

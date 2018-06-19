@@ -4,7 +4,8 @@ namespace MixERP.Inventory.ViewModels
 {
     public sealed class AdjustmentType
     {
-        public string TransactionType => "Cr";
+        [Required]
+        public string TransactionType { get; set; }
         [Required]
         public string ItemCode { get; set; }
         [Required]

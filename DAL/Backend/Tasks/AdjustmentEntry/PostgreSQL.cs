@@ -72,7 +72,7 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.AdjustmentEntry
             {
                 for (int i = 0; i < details.Count; i++)
                 {
-                    parameters.Add(new NpgsqlParameter("@TransactionType" + i, details[i].TransactionType)); //Inventory is decreased
+                    parameters.Add(new NpgsqlParameter("@TransactionType" + i, details[i].TransactionType));
                     parameters.Add(new NpgsqlParameter("@ItemCode" + i, details[i].ItemCode));
                     parameters.Add(new NpgsqlParameter("@UnitName" + i, details[i].UnitName));
                     parameters.Add(new NpgsqlParameter("@Quantity" + i, details[i].Quantity));

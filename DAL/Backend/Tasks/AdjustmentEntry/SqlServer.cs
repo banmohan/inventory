@@ -17,8 +17,7 @@ namespace MixERP.Inventory.DAL.Backend.Tasks.AdjustmentEntry
             string sql = @"EXECUTE inventory.post_adjustment
                             @OfficeId, @UserId, @LoginId, @StoreId, @ValueDate, @BookDate, 
                             @ReferenceNumber, @StatementReference, 
-                            @Details, @TransactionMasterId OUTPUT
-                          ;";
+                            @Details, @TransactionMasterId OUTPUT;";
 
 
             using (var connection = new SqlConnection(connectionString))
