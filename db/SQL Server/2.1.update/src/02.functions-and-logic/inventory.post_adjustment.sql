@@ -88,7 +88,7 @@ BEGIN
 
         IF
         (
-            SELECT COUNT(tran_type) FROM @temp_stock_details
+            SELECT COUNT(DISTINCT tran_type) FROM @temp_stock_details
         ) > 1
         BEGIN
             RAISERROR('This transaction cannot have both positive and negative adjustment entries.', 13, 1);
