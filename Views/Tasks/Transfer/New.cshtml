@@ -42,11 +42,11 @@
                         <th>
                             <label for="ItemSelect">@I18N.ItemName</label>
                         </th>
-                        <th style="width:200px;">
-                            <label for="UnitSelect">@I18N.Unit</label>
-                        </th>
                         <th style="width:100px" class="text-right">
                             <label for="QuantityInputText">@I18N.Quantity</label>
+                        </th>
+                        <th style="width:200px;">
+                            <label for="UnitSelect">@I18N.Unit</label>
                         </th>
                         <th>Action</th>
                     </tr>
@@ -69,10 +69,10 @@
                             <select id="ItemSelect" class="ui fluid dropdown"></select>
                         </td>
                         <td>
-                            <select id="UnitSelect" class="ui fluid dropdown"></select>
+                            <input id="QuantityInputText" class="text-right decimal4" type="text">
                         </td>
                         <td>
-                            <input id="QuantityInputText" class="text-right decimal4" type="text">
+                            <select id="UnitSelect" class="ui fluid dropdown"></select>
                         </td>
                         <td>
                             <input id="AddButton" value="@I18N.Add" class="ui small red button" type="button">
@@ -218,7 +218,7 @@
             });
 
             if (!match) {
-                html = "<tr class='grid2-row'><td>" + tranType + "</td><td>" + storeName + "</td><td>" + itemCode + "</td><td>" + itemName + "</td><td>" + unitName + "</td><td class='text-right'>" + getFormattedNumber(quantity) + "</td>"
+                html = "<tr class='grid2-row'><td>" + tranType + "</td><td>" + storeName + "</td><td>" + itemCode + "</td><td>" + itemName + "</td><td class='text-right'>" + getFormattedNumber(quantity) + "</td><td>" + unitName + "</td>"
                     + "</td><td><a class='pointer' onclick='removeRow($(this));'><i class='ui delete icon'></i></a><a class='pointer' onclick='toggleDanger($(this));'><i class='ui pointer check mark icon'></a></i><a class='pointer' onclick='toggleSuccess($(this));'><i class='ui pointer thumbs up icon'></i></a></td></tr>";
                 transferGridView.find("tr:last").before(html);
             };
@@ -248,7 +248,7 @@
         });
 
         if (!match) {
-            html = "<tr class='grid2-row'><td>" + storeName + "</td><td>" + itemCode + "</td><td>" + itemName + "</td><td>" + unitName + "</td><td class='text-right'>" + getFormattedNumber(quantity) + "</td>"
+            html = "<tr class='grid2-row'><td>" + storeName + "</td><td>" + itemCode + "</td><td>" + itemName + "</td><td class='text-right'>" + getFormattedNumber(quantity) + "</td><td>" + unitName + "</td>"
                 + "</td><td><a class='pointer' onclick='removeRow($(this));'><i class='ui delete icon'></i></a><a class='pointer' onclick='toggleDanger($(this));'><i class='ui pointer check mark icon'></a></i><a class='pointer' onclick='toggleSuccess($(this));'><i class='ui pointer thumbs up icon'></i></a></td></tr>";
             transferGridView.find("tr:last").before(html);
         };
@@ -272,8 +272,8 @@
                     const storeName = row.find("td:nth-child(2)").html();
                     const itemCode = row.find("td:nth-child(3)").html();
                     const itemName = row.find("td:nth-child(4)").html();
-                    const unitName = row.find("td:nth-child(5)").html();
-                    const quantity = window.parseFloat2(row.find("td:nth-child(6)").html());
+                    const quantity = window.parseFloat2(row.find("td:nth-child(5)").html());
+                    const unitName = row.find("td:nth-child(6)").html();
 
                     model.push({
                         ItemCode: itemCode,

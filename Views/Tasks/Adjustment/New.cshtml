@@ -139,7 +139,7 @@
                     var final = quantity - actual;
 
                     if (isPositiveAdjustment()) {
-                        final = Math.abs(final);
+                        final = actual - quantity;
                     };
 
                     if (final < 0) {
@@ -154,7 +154,11 @@
 
                 $("input.difference").blur(function () {
                     const quantity = window.parseFloat2($(this).parent().parent().find("td:nth-last-child(3)").html());
-                    const difference = window.parseFloat2($(this).val());
+                    var difference = window.parseFloat2($(this).val());
+                    if (difference < 0) {
+                        $(this).val("");
+                        difference = 0;
+                    }
 
                     var final = quantity - difference;
 
@@ -209,6 +213,15 @@
                 };
 
                 function getModel(tranType) {
+                    var isValid = true;
+                    closingInventoryGrid.find("tbody tr").each(function() {
+                        if ($(this).hasClass("error")) {
+                            isValid = false;
+                            return;
+                        }
+                    });
+                    if (!isValid) return null;
+
                     function getDetails() {
                         var model = [];
 
