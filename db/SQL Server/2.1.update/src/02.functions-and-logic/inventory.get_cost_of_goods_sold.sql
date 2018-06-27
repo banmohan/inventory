@@ -48,6 +48,7 @@ BEGIN
 			WHERE item_id = @item_id
 			AND store_id = @store_id
 			AND transaction_type = 'Dr'
+			AND base_quantity != 0
 		), purchase_prices
 		AS
 		(
