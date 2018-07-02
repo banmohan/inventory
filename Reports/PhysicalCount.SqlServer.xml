@@ -41,13 +41,14 @@
 		SELECT 
 			store_id, 
 			store_name, 
-			item_id,
-			inventory.get_item_code_by_item_id(item_id) AS item_code,
-			inventory.get_item_name_by_item_id(item_id) AS item_name,
-			inventory.convert_unit(base_unit_id, inventory.get_root_unit_id(base_unit_id)) *  base_total_quantity AS quantity,
-			inventory.get_unit_name_by_unit_id(inventory.get_root_unit_id(base_unit_id)) AS unit,
-			purchase.get_item_cost_price(@OfficeId, item_id, NULL, base_unit_id) * (inventory.convert_unit(base_unit_id, inventory.get_root_unit_id(base_unit_id)) *  base_total_quantity) AS amount
+			summary.item_id,
+			items.item_code,
+			items.item_name,
+			inventory.convert_unit(base_unit_id, items.unit_id) *  base_total_quantity AS quantity,
+			inventory.get_unit_name_by_unit_id(items.unit_id) AS unit,
+			purchase.get_item_cost_price(@OfficeId, summary.item_id, NULL, base_unit_id) * (inventory.convert_unit(base_unit_id, inventory.get_root_unit_id(base_unit_id)) *  base_total_quantity) AS amount
 		FROM summary
+		JOIN inventory.items ON summary.item_id = items.item_id
 		ORDER BY store_id, item_id;
       </Query>
       <Parameters>

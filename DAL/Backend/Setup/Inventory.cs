@@ -14,5 +14,11 @@ namespace MixERP.Inventory.DAL.Backend.Setup
 
             return awaiter.FirstOrDefault();
         }
+
+        public static async Task<decimal> GetCogs(string tenant, int itemId, int unitId, int storeId, decimal quantity)
+        {
+            const string sql = "SELECT inventory.get_cost_of_goods_sold(@0, @1, @2, @3);";
+            return await Factory.ScalarAsync<decimal>(tenant, sql, itemId, unitId, storeId, quantity).ConfigureAwait(false);
+        }
     }
 }
