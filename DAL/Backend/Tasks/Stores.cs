@@ -15,5 +15,13 @@ namespace MixERP.Inventory.DAL.Backend.Tasks
 
             return awaiter.ToList();
         }
+
+        public static async Task<List<QueryModels.DisplayField>> GetSalesStores(string tenant)
+        {
+            const string sql = "SELECT store_id AS \"key\", store_name AS \"value\" FROM inventory.stores WHERE allow_sales=1";
+            var awaiter = await Factory.GetAsync<QueryModels.DisplayField>(tenant, sql).ConfigureAwait(false);
+
+            return awaiter.ToList();
+        }
     }
 }

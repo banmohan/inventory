@@ -541,7 +541,11 @@
             });
 
             function loadStores() {
-                window.displayFieldBinder($("#StoreSelect"), "/api/forms/inventory/stores/display-fields", true);
+				var url = "/api/forms/inventory/stores/display-fields";
+				if(window.isSales){
+					url = "/dashboard/inventory/store/sales"
+				}
+                window.displayFieldBinder($("#StoreSelect"), url, true);
             };
 
             function loadShippers() {
