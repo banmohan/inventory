@@ -61,7 +61,7 @@ BEGIN
 
 
         INSERT INTO @temp_stock_details(tran_type, store_name, item_code, unit_name, quantity, price)
-        SELECT tran_type, store_name, item_code, unit_name, quantity, rate * quantity
+        SELECT tran_type, store_name, item_code, unit_name, quantity, rate
         FROM @details;
 
         IF EXISTS

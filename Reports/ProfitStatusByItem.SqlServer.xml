@@ -89,6 +89,8 @@
         <Parameter Name="@From" FieldLabel="From Date" Type="System.DateTime" />
         <Parameter Name="@To" FieldLabel="To Date" Type="System.DateTime" />
       </Parameters>
+      <RunningTotalTextColumnIndex>4</RunningTotalTextColumnIndex>
+      <RunningTotalFieldIndices>7</RunningTotalFieldIndices>
 	</DataSource>
   </DataSources>
 </FrapidReport>
