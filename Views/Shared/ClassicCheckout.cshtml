@@ -676,12 +676,15 @@
 
                 $("input.invoice.discount").val(window.getFormattedNumber(window.round(invoiceDiscount, 2)));
 
-                const taxableTotal = taxableTotalBeforeDiscount - invoiceDiscount;
+                var taxableTotal = taxableTotalBeforeDiscount;
+                //if (taxableTotalBeforeDiscount > invoiceDiscount)
+                //    taxableTotal = taxableTotalBeforeDiscount - invoiceDiscount
+
                 $("input.taxable.total.after.discount").val(window.getFormattedNumber(window.round(taxableTotal, 2)));
 
                 const taxRate = window.parseFloat($("#SalesTaxRateHidden").val()) || 0;
                 const tax = taxableTotal * (taxRate / 100);
-                const invoiceTotal = taxableTotal + tax + nonTaxableTotal;
+                const invoiceTotal = taxableTotal + tax + nonTaxableTotal - invoiceDiscount;
 
                 $("input.invoice.tax").val(window.getFormattedNumber(window.round(tax, 2)));
                 $("input.invoice.total").val(window.getFormattedNumber(window.round(invoiceTotal, 2)));

@@ -136,6 +136,10 @@
         const unitName = unitSelect.getSelectedText();
         const quantity = window.parseFloat2(quantityInputText.val() || 0);
 
+        const storeId = storeSelect.val();
+        const itemId = itemSelect.val();
+        const unitId = unitSelect.val();
+
         if (transactionTypeSelect.length) {
             if (window.isNullOrWhiteSpace(tranType) || tranType === "Select") {
                 window.makeDirty(transactionTypeSelect);
@@ -175,7 +179,22 @@
         window.removeDirty(unitSelect);
         window.removeDirty(quantityInputText);
 
-        appendToTable(tranType, storeName, itemCode, itemName, unitName, quantity);
+        var isEdit = $("#TransferGridView tbody").find("tr.edit-active").length > 0;
+        if (isEdit) {
+            const row = $("#TransferGridView tbody").find("tr.edit-active");
+            row.find("td:eq(0)").html(tranType);
+            row.find("td:eq(1)").attr("val", storeId).html(storeName);
+            row.find("td:eq(2)").html(itemCode);
+            row.find("td:eq(3)").attr("val", itemId).html(itemName);
+            row.find("td:eq(4)").html(quantity);
+            row.find("td:eq(5)").attr("val", unitId).html(unitName);
+
+            row.removeClass('edit-active');
+            row.css("color", "");
+        } else {
+            appendToTable(tranType, storeName, itemCode, itemName, unitName, quantity, storeId, itemId, unitId);
+        }
+
         itemCodeInputText.val("");
         quantityInputText.val("");
 
@@ -188,7 +207,7 @@
         itemCodeInputText.focus();
     };
 
-    function appendToTable(tranType, storeName, itemCode, itemName, unitName, quantity) {
+    function appendToTable(tranType, storeName, itemCode, itemName, unitName, quantity, storeId, itemId, unitId) {
         const rows = transferGridView.find("tbody tr:not(:last-child)");
         var match = false;
         var html;
@@ -218,9 +237,9 @@
             });
 
             if (!match) {
-                html = "<tr class='grid2-row'><td>" + tranType + "</td><td>" + storeName + "</td><td>" + itemCode + "</td><td>" + itemName + "</td><td class='text-right'>" + getFormattedNumber(quantity) + "</td><td>" + unitName + "</td>"
-                    + "</td><td><a class='pointer' onclick='removeRow($(this));'><i class='ui delete icon'></i></a><a class='pointer' onclick='toggleDanger($(this));'><i class='ui pointer check mark icon'></a></i><a class='pointer' onclick='toggleSuccess($(this));'><i class='ui pointer thumbs up icon'></i></a></td></tr>";
-                transferGridView.find("tr:last").before(html);
+                html = "<tr class='grid2-row'><td>" + tranType + "</td><td val="+ storeId +">" + storeName + "</td><td>" + itemCode + "</td><td val="+ itemId +">" + itemName + "</td><td class='text-right'>" + getFormattedNumber(quantity) + "</td><td val="+ unitId +">" + unitName + "</td>"
+                    + "</td><td><a title=" + window.translate('Edit') +" class='edit-row'><i class='edit icon'/></a><a class='pointer' onclick='removeRow($(this));'><i class='ui delete icon'></i></a><a class='pointer' onclick='toggleDanger($(this));'><i class='ui pointer check mark icon'></a></i><a class='pointer' onclick='toggleSuccess($(this));'><i class='ui pointer thumbs up icon'></i></a></td></tr>";
+                    transferGridView.find("tr:last").before(html);
             };
 
             return;
@@ -441,4 +460,27 @@
         const row = $(el).closest("tr");
         row.remove();
     };
+
+    $(document).on("click", ".edit-row", function () {
+        const row = $(this).closest("tr");
+
+        row.closest("table").find("tr").css("color", "");
+        row.closest("table").find(".edit-active").removeClass("edit-active");
+        row.css("color", "red");
+        row.addClass("edit-active");
+
+        const type = row.find("td:eq(0)").html();
+        const storeId = row.find("td:eq(1)").attr("val");
+        const itemCode = row.find("td:eq(2)").html();
+        const itemId = row.find("td:eq(3)").attr("val");
+        const quantity = row.find("td:eq(4)").html();
+        const unitId = row.find("td:eq(5)").attr("val");
+
+        transactionTypeSelect.val(type);
+        storeSelect.val(storeId);
+        itemCodeInputText.val(itemCode);
+        itemSelect.val(itemId);
+        quantityInputText.val(quantity);
+        unitSelect.val(unitId);
+    })
 </script>

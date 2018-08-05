@@ -6,8 +6,8 @@ GO
 CREATE VIEW inventory.transfer_search_view
 AS
 SELECT
-	finance.transaction_master.book,
 	finance.transaction_master.transaction_master_id AS tran_id,
+	finance.transaction_master.book,
 	finance.transaction_master.transaction_code AS tran_code,
 	SUM(inventory.checkout_details.price * inventory.checkout_details.quantity) AS amount,
 	finance.transaction_master.value_date,

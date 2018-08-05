@@ -101,7 +101,7 @@
         inventory.checkout_details.quantity,
         inventory.units.unit_name,
         inventory.checkout_details.price,
-        inventory.checkout_details.price as amount
+        inventory.checkout_details.price * inventory.checkout_details.quantity as amount
         FROM
         inventory.checkout_details
         INNER JOIN

@@ -173,6 +173,7 @@
     <Compile Include="Controllers\Backend\Setup\UnitsOfMeasureController.cs" />
     <Compile Include="Controllers\Backend\Setup\VariantController.cs" />
     <Compile Include="Controllers\Backend\Tasks\AdjustmentController.cs" />
+    <Compile Include="Controllers\Backend\Tasks\ConsoleController.cs" />
     <Compile Include="Controllers\Backend\Tasks\TransferController.cs" />
     <Compile Include="Controllers\InventoryBackendController.cs" />
     <Compile Include="Controllers\Services\AttachmentController.cs" />
@@ -267,6 +268,7 @@
     <Content Include="Views\Setup\OpeningInventory\Checklist.cshtml" />
     <Content Include="Views\Shared\ClassicCheckout.cshtml" />
     <Content Include="Views\Setup\IS.cshtml" />
+    <Content Include="Views\Tasks\Console\Index.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
