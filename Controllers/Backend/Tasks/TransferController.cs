@@ -75,14 +75,14 @@ namespace MixERP.Inventory.Controllers.Backend.Tasks
             {
                 if (item.TransferTypeEnum == TransferTypeEnum.Cr)
                 {
-                    decimal existingQuantity = await Items.CountItemsByItemCodeAsync(this.Tenant, item.ItemCode,
-                        item.UnitName, item.StoreName).ConfigureAwait(true);
+                    //decimal existingQuantity = await Items.CountItemsByItemCodeAsync(this.Tenant, item.ItemCode,
+                    //    item.UnitName, item.StoreName).ConfigureAwait(true);
 
-                    if (existingQuantity < item.Quantity)
-                    {
-                        return this.Failed(string.Format(I18N.WeOnlyHaveInInventory, existingQuantity, item.UnitName),
-                            HttpStatusCode.InternalServerError);
-                    }
+                    //if (existingQuantity < item.Quantity)
+                    //{
+                    //    return this.Failed(string.Format(I18N.WeOnlyHaveInInventory, existingQuantity, item.UnitName),
+                    //        HttpStatusCode.InternalServerError);
+                    //}
                 }
             }
 

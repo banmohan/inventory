@@ -670,7 +670,7 @@
                         $("#DiscountInputText").val("0");
                         invoiceDiscount = 0;
                     } else {
-                        invoiceDiscount = taxableTotalBeforeDiscount * (rateOfDiscount / 100);
+                        invoiceDiscount = (taxableTotalBeforeDiscount + nonTaxableTotal) * (rateOfDiscount / 100);
                     };
                 };
 
